@@ -1,0 +1,15 @@
+.graphWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+    height: 350px;
+}
+
+.graphContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 300px;
+}
