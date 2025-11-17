@@ -1,5 +1,7 @@
 #include "telemetry.h"
 #include "config.h"
+#include "variables.h"
+#include "observer.h"
 
 #include <chrono>
 #include <sstream>
@@ -10,6 +12,9 @@
 #include <numeric>
 #include <filesystem>
 #include <fstream>
+#include <dbcppp/Network.h>
+#include <dbcppp/Message.h>
+#include <typeinfo>
 
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -61,8 +66,8 @@ namespace frucd::daq
 
     void TelemetryManager::init_can()
     {
-        std::ifstream feDbc(mConfig.feDbcFile);
-        std::ifstream mcDbc(mConfig.mcDbcFile);
+        std::ifstream feDbc(mConfig.feDbcFile); // Fe12.dbc
+        std::ifstream mcDbc(mConfig.mcDbcFile); // 20240129 Gen5 CAN CB.dbc
         if (!feDbc.is_open() || !mcDbc.is_open())
             throw std::runtime_error("Failed to open DBC files from config.json");
 
@@ -117,18 +122,17 @@ namespace frucd::daq
 
     void TelemetryManager::log_can()
     {
+
         if (!mCanInitialized || mCanSock < 0)
         {
             std::cerr << "log_can called but CAN not initialized!\n";
             return;
         }
-
         if (!mFeSpec || !mMcSpec)
         {
             std::cerr << "log_can called without loaded DBC specs!\n";
             return;
         }
-
         can_frame frame{};
         int numBytes = read(mCanSock, &frame, sizeof(can_frame));
         if (numBytes < 0)
@@ -158,7 +162,7 @@ namespace frucd::daq
             values[i] = frame.data[i];
         }
         write_row(frame.can_id, std::move(values));
-    }
+    } 
 
     void TelemetryManager::write_row(int32_t id, std::array<double, 8>&& values)
     {

@@ -39,6 +39,7 @@ namespace frucd::daq
 
     private:
         void write_row(int32_t id, std::array<double, 8>&& values);
+        
 
         struct TelemObserver
         {

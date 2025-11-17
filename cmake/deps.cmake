@@ -31,5 +31,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(nlohmann_json)
 
 if(TARGET nlohmann_json)
-    add_library(nlohmann_json::nlohmann_json ALIAS nlohmann_json)
+    # add_library(nlohmann_json::nlohmann_json ALIAS nlohmann_json)
 endif()
