@@ -1,5 +1,6 @@
 #include "variables.h"
 
+#include <algorithm>
 
 namespace frucd::daq
 {
@@ -7,11 +8,25 @@ namespace frucd::daq
     Variables* Variables::s_instance = nullptr;
     int Variables::m_mph = 0;
 
-    // delcaration of instance variables
+    // delcaration of instance variablesm (need defualt values)
     QString Variables::m_vehiclestate = "Startup";
     QString Variables::m_vehiclestate_color = "green";
 
-    // int Variables::m_whichPopupVisible = -1;
+    int Variables::m_soc =  -1;
+
+    int Variables::m_mctemp = -1;
+    QString Variables::m_mctemp_color = "green";
+
+    double Variables::m_glvv = -1.0;
+    QString Variables::m_glvv_color = "green";
+
+    QString Variables:: m_shutdowncircuit = "temp";
+
+    QString Variables::m_mcfault = "temp";
+
+    int Variables::m_whichPopupVisible = -1;
+
+    QString Variables::m_dashboardpage = "debug.qml"; 
 
     // singleton stuff
     Variables* Variables::instance() 
@@ -49,9 +64,39 @@ namespace frucd::daq
         return m_vehiclestate_color;
     }
 
-    // int Variables::whichPopupVisible() const {
-    //     return m_whichPopupVisible;
-    // }
+    int Variables::soc() {
+        return m_soc;
+    }
+
+    int Variables::mctemp() {
+        return m_mctemp;
+    }
+    QString Variables::mctemp_color() {
+        return m_mctemp_color;
+    }
+
+    double Variables::glvv() {
+        return m_glvv;
+    }
+    QString Variables::glvv_color() {
+        return m_glvv_color;
+    }
+
+    QString Variables::shutdowncircuit() {
+        return m_shutdowncircuit;
+    }
+
+    QString Variables::mcfault() {
+        return m_mcfault;
+    }
+
+    int Variables::whichPopupVisible() {
+        return m_whichPopupVisible;
+    }
+
+    QString Variables::dashboardpage() {
+        return m_dashboardpage;
+    }
 
 
     // defining setter classes
@@ -71,19 +116,74 @@ namespace frucd::daq
         }
     }
 
-    // void Variables::showEventPopUp(int which) {
-    //     if (m_whichPopupVisible != which) {
-    //         m_whichPopupVisible = which;
-    //         emit whichPopupVisibleChanged();
-    //         qDebug() << "Popup shown";
-    //     }
-    // }
+    void Variables::setsoc(int charge) {
+        if (m_soc != charge) {
+            m_soc = charge;
+            emit Variables::instance()->socChanged();
+        }
+    }
 
-    // void Variables::hidePopup() {
-    //     if (m_whichPopupVisible != -1) {
-    //         m_whichPopupVisible = -1;
-    //         emit whichPopupVisibleChanged();
-    //         qDebug() << "Popup hidden";
-    //     }
-    // }
+    void Variables::setmctemp(int tempA, int tempB, int tempC) {
+        int max_temp = std::max({tempA, tempB, tempC});
+        if (m_mctemp != max_temp) {
+            m_mctemp = max_temp;
+            if (m_mctemp < 45) {
+                m_mctemp_color = "green";
+            } else if (m_mctemp < 50) {
+                m_mctemp_color = "yellow";
+            } else {
+                m_mctemp_color = "red";
+            }
+            emit Variables::instance()->mctempChanged();
+        }
+    }
+
+    void Variables::setglvv(double volt) {
+        if (m_glvv != volt) {
+            m_glvv = volt;
+            if (m_glvv > 10) {
+                m_glvv_color = "green";
+            } else if (m_glvv > 9) {
+                m_glvv_color = "yellow";
+            } else {
+                m_glvv_color = "red";
+            }
+            emit Variables::instance()->glvvChanged();
+        }
+    }
+
+    void Variables::setshutdowncircuit(std::string flippedswitch) {
+        QString qswitch = QString::fromStdString(flippedswitch);
+        if (m_shutdowncircuit != qswitch) {
+            m_shutdowncircuit = qswitch;
+            emit Variables::instance()->shutdowncircuitChanged();
+        }
+    }
+
+    void Variables::setmcfault(std::string fault) {
+        QString qfault = QString::fromStdString(fault);
+        if (m_mcfault != qfault) {
+            m_mcfault = qfault;
+            emit Variables::instance()->mcfaultChanged();
+        }
+    }
+
+    void Variables::showEventPopUp(int which) {
+        m_whichPopupVisible = which;
+        emit Variables::instance()->whichPopupVisibleChanged();
+    }
+    void Variables::hidePopup() {
+        if (m_whichPopupVisible != -1) {
+            m_whichPopupVisible = -1;
+            emit Variables::instance()->whichPopupVisibleChanged();
+        }
+    }
+
+    void Variables::setdashboardpage(std::string page) {
+        QString qpage = QString::fromStdString(page);
+        if (m_dashboardpage != qpage) {
+            m_dashboardpage = qpage;
+            emit Variables::instance()->dashboardpageChanged();
+        }
+    } 
 }

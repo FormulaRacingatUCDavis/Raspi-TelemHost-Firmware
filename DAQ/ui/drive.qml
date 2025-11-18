@@ -9,25 +9,32 @@ Rectangle {
     anchors.fill: parent
     color: "black"
 
+    // for debugging
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            mainpage.currPage = (mainpage.currPage+1) % 3
+        }
+    }
+
     property string typeface: "Helvetica"
     property real fullfontsize: mainwindow.width * 0.1
     property real smallerfontsize: mainwindow.width * 0.08
     property real titlefontsize: mainwindow.width * 0.04
-
-    property int borderwidth: 5
     
     GridLayout {
         id: grid
 
+        // x and y moves the grid away from origin 
         x: mainwindow.width/30
-        y: 45 // mainwindow.height/15
+        y: mainwindow.height * (3/32)
         width: mainwindow.width * (14/15)
         height: mainwindow.height * (13/15)
 
         columns: 2
         rows: 2
-        columnSpacing: mainwindow.width/38
-        rowSpacing: 48 // mainwindow.height/15
+        columnSpacing: mainwindow.width/39
+        rowSpacing: grid.y
 
         uniformCellWidths: true
         uniformCellHeights: true
@@ -58,8 +65,8 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter 
-                anchors.bottom: speedbox.top
-                y: 45
+                anchors.bottom: parent.top
+                y: grid.y
             }
         }
 
@@ -71,13 +78,13 @@ Rectangle {
 
             Rectangle {
                 id: chargebox
-                color: "green"
+                color: "red"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Text {
                     id: chargevalue
-                    text: "charge"
+                    text: Data.soc + "%"
                     font.pixelSize: mainwindow.smallerfontsize
                     font.family: mainwindow.typeface
                     color: "white" 
@@ -95,20 +102,20 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     horizontalAlignment: Text.AlignHCenter 
-                    anchors.bottom: chargebox.top
-                    y: 45
+                    anchors.bottom: parent.top
+                    y: grid.y
                     }
             }
 
             Rectangle {
                 id: mctempbox
-                color: "green"
+                color: Data.mctemp_color
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Text {
-                    id: temptext
-                    text: "temp" + "C"
+                    id: mctemptext
+                    text: Data.mctemp + "C"
                     font.pixelSize: mainwindow.smallerfontsize
                     font.family: mainwindow.typeface
                     color: "white"
@@ -121,13 +128,13 @@ Rectangle {
 
         Rectangle {
             id: vehiclestatebox
-            color: "green"
+            color: Data.vehiclestate_color
             Layout.fillWidth: true
             Layout.fillHeight: true
         
             Text {
                 id: vehiclestateavalue
-                text: "" + Data.vehiclestate
+                text:  Data.vehiclestate
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 color: "white" 
@@ -142,21 +149,23 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainwindow.typeface
                 color: "yellow" 
+                anchors.left: parent.left
+                anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
-                anchors.bottom: vehiclestatebox.top
-                y: 45
+                anchors.bottom: parent.top
+                y: grid.y
             }
         }
 
         Rectangle {
-            id: glvvoltbox
-            color: "green"
+            id: glvvbox
+            color: Data.glvv_color
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             Text {
-                id: glvvoltagevalue
-                text: "volt"
+                id: glvvvalue
+                text: "" + Data.glvv
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 color: "white" 
@@ -166,7 +175,7 @@ Rectangle {
             }
 
             Text {
-                id: glvvoltagetext
+                id: glvvtext
                 text: "GLV V"
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainwindow.typeface
@@ -174,8 +183,8 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter 
-                anchors.bottom: glvvoltbox.top
-                y: 45
+                anchors.bottom: parent.top
+                y: grid.y
             }
         }
     }

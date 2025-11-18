@@ -34,8 +34,6 @@ int main(int argc, char *argv[])
     {
         auto cfg = frucd::daq::load_config("DAQ/config.json");
         frucd::daq::TelemetryManager telem(cfg);
-        // std::cout << "feDbcFile: " << cfg.feDbcFile << "\n";
-        // std::cout << "mcDbcFile: " << cfg.mcDbcFile << "\n";
 
         frucd::daq::DashboardObserver dashboard(telem); 
         

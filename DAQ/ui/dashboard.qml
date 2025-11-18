@@ -1,28 +1,32 @@
 import QtQuick
 import QtQuick.Window
-// import Variables.Data
+import VariablesData
 
 Window {
     id: mainpage
     visible: true
 
-    // size of the dahsboard but unused as we set the visibility to full screen
+    // size of the dashboard but will be unused if we set fullscreen
     width: 800 
     height: 480
+    // need to implement when to be full screen
     // visibility: Window.FullScreen
     
     color: "black"
 
-    /* to be implemented - need to load the correct page */
+    property var pages: ["drive.qml", "debug.qml", "practice.qml"]
+    property int currPage: 0
+     MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            currPage = (currPage+1) % 3
+        }
+    }
+
     Loader {
         id: pageLoader
         anchors.fill: parent
-        source: "drive.qml"
-        /*
-        source: (Data.dashboardPage == 0) ? "drive.qml"
-            : (Data.dashboardPage == 1) ? "debug.qml"
-            : "practice.qml"
-        */
+        source: mainpage.pages[mainpage.currPage] //Data.dashboardpage
     } 
 
     /*
@@ -30,6 +34,6 @@ Window {
         id: popuploader
         anchors.fill: parent
         source: "flashes.qml"
-    }
+    } 
     */
 }

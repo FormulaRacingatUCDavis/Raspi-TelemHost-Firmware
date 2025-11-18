@@ -21,7 +21,21 @@ namespace frucd::daq
         Q_PROPERTY(QString vehiclestate READ vehiclestate NOTIFY vehiclestateChanged)
         Q_PROPERTY(QString vehiclestate_color READ vehiclestate_color NOTIFY vehiclestate_colorChanged)
 
-        // Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
+        Q_PROPERTY(int soc READ soc NOTIFY socChanged)
+
+        Q_PROPERTY(int mctemp READ mctemp NOTIFY mctempChanged)
+        Q_PROPERTY(QString mctemp_color READ mctemp_color NOTIFY mctemp_colorChanged)
+
+        Q_PROPERTY(double glvv READ glvv NOTIFY glvvChanged)
+        Q_PROPERTY(QString glvv_color READ glvv_color NOTIFY glvv_colorChanged)
+
+        Q_PROPERTY(QString shutdowncircuit READ shutdowncircuit NOTIFY shutdowncircuitChanged)
+
+        Q_PROPERTY(QString mcfault READ mcfault NOTIFY mcfaultChanged)
+
+        Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
+
+        Q_PROPERTY(QString dashboardpage READ dashboardpage NOTIFY dashboardpageChanged)
 
     public:
         // for the singleton thing
@@ -34,7 +48,21 @@ namespace frucd::daq
         static QString vehiclestate();
         static QString vehiclestate_color();
 
-        // int whichPopupVisible() const;
+        static int soc();
+
+        static int mctemp();
+        static QString mctemp_color();
+
+        static double glvv();
+        static QString glvv_color();
+
+        static QString shutdowncircuit();
+
+        static QString mcfault();
+
+        static int whichPopupVisible();
+
+        static QString dashboardpage();
 
 
         // setter functions
@@ -42,8 +70,20 @@ namespace frucd::daq
 
         static void setvehiclestate(std::string state);
 
-        // void showEventPopUp(int which);
-        // Q_INVOKABLE void hidePopup();
+        static void setsoc(int charge);
+
+        static void setmctemp(int tempA, int tempB, int tempC);
+
+        static void setglvv(double volt);
+
+        static void setshutdowncircuit(std::string flippedswitch);
+
+        static void setmcfault(std::string fault);
+
+        static void showEventPopUp(int which);
+        Q_INVOKABLE static void hidePopup();
+
+        static void setdashboardpage(std::string page);
 
     signals:
         // for all the notify functions that get emitted in the setters
@@ -52,7 +92,21 @@ namespace frucd::daq
         void vehiclestateChanged();
         void vehiclestate_colorChanged();
 
-        // void whichPopupVisibleChanged();
+        void socChanged();
+
+        void mctempChanged();
+        void mctemp_colorChanged();
+
+        void glvvChanged();
+        void glvv_colorChanged();
+
+        void shutdowncircuitChanged();
+
+        void mcfaultChanged();
+
+        void whichPopupVisibleChanged();
+
+        void dashboardpageChanged();
 
     private:
 
@@ -68,7 +122,25 @@ namespace frucd::daq
         static QString m_vehiclestate;
         static QString m_vehiclestate_color;
 
-        // static int m_whichPopupVisible;
+        static int m_soc;
+
+        static int m_mctemp;
+        static QString m_mctemp_color;
+
+        static double m_glvv;
+        static QString m_glvv_color;
+
+        static QString m_shutdowncircuit;
+
+        static QString m_mcfault;
+
+        static int m_whichPopupVisible;
+        // -1 no flashscreens
+        // 0 state
+        // 1 knob1
+        // 2 knob2
+
+        static QString m_dashboardpage;
 
     };
 }

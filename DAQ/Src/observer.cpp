@@ -14,7 +14,6 @@ namespace frucd::daq
         for (const dbcppp::ISignal& sig : msg.Signals())
         {
             double phys = sig.RawToPhys(sig.Decode(frame.data));
-            std::cout << phys << "\n";
             sig_map[sig.Name()] = std::make_pair(&sig, phys);
         }
 
@@ -27,6 +26,10 @@ namespace frucd::daq
                     Variables::setvehiclestate(state.value());
                 }
                 break;
+            
+            // case 0:
+            //     Variables::setglvv(sig_map[""].second);
+            //     break;
         }
     }
 

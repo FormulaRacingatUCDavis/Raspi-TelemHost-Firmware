@@ -4,7 +4,6 @@ import QtQuick.Layouts
 
 Item {
 
-    /* to be implemented to automatically close the popup
     Timer {
         id: closetimer
         interval: 5000
@@ -14,14 +13,11 @@ Item {
             Data.hidePopup()
         }
     }
-    */
 
     Rectangle {
         id: faultpopup
-        /* tp be implemented
         visible: Data.whichPopupVisible == 0 ? true
                 : false
-        */
         anchors.fill: parent
 
         color: "red"
@@ -41,10 +37,8 @@ Item {
 
     Rectangle {
         id: torque1popup
-        /* to be implemented
         visible: Data.whichPopupVisible == 1 ? true
                 : false
-        */
         anchors.fill: parent
 
         GridLayout {
@@ -67,7 +61,7 @@ Item {
                     id: torque1text
                     color: "black"
                     font.pixelSize: torque1popup.width * 0.1
-                    text: "torque"
+                    text: "torque1"
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -109,10 +103,8 @@ Item {
 
     Rectangle {
         id: torque2popup
-        /* 
         visible: Data.whichPopupVisible == 2 ? true
                 : false
-        */
         anchors.fill: parent
 
         GridLayout {
@@ -135,7 +127,7 @@ Item {
                     id: torque2text
                     color: "black"
                     font.pixelSize: torque1popup.width * 0.1
-                    text: "torque"
+                    text: "torque2"
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
