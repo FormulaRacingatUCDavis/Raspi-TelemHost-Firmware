@@ -39,17 +39,17 @@ Rectangle {
 
         Rectangle {
             id: speedbox
-            color: "blue"
+            color: mainpage.blue
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: 1
 
             Text {
                 id: speedvalue
-                text: "" + Data.mph
+                text: (Data.mph == -1) ? "" : "" + Data.mph
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -81,7 +81,7 @@ Rectangle {
                 text: "temp"
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -111,16 +111,16 @@ Rectangle {
 
             Rectangle {
                 id: chargebox
-                color: "red"
+                color: mainpage.red
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Text {
                 id: chargevalue
-                text: Data.soc + "%"
+                text: (Data.soc == -1) ? "" : Data.soc + "%"
                 font.pixelSize: grid.smallerfontsize
                 font.family: grid.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -148,10 +148,10 @@ Rectangle {
 
                 Text {
                 id: mctempvalue
-                text: Data.mctemp + "C"
+                text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                 font.pixelSize: grid.smallerfontsize
                 font.family: grid.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -185,7 +185,7 @@ Rectangle {
                 text: Data.vehiclestate
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -221,7 +221,7 @@ Rectangle {
 
                 Text {
                 id: glvvvalue
-                text: "" + Data.glvv
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv
                 font.pixelSize: grid.smallerfontsize
                 font.family: grid.typeface
                 color: "white" 
@@ -246,7 +246,7 @@ Rectangle {
 
             Rectangle {
                 id: laptimebox
-                color: "gray"
+                color: "white"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
@@ -255,8 +255,8 @@ Rectangle {
                 text: "temp"
                 font.pixelSize: grid.smallerfontsize
                 font.family: grid.typeface
-                color: "white" 
-                anchors.fill: parent
+                color: "black" 
+                anchors.fill:parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
                 }

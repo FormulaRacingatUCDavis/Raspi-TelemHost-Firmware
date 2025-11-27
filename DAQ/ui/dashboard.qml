@@ -23,17 +23,20 @@ Window {
         }
     }
 
+    property string green: "#00FF00"
+    property string yellow: "#FFFF00"
+    property string red: "#FF4500"
+    property string blue: "#0000FF"
+
     Loader {
         id: pageLoader
         anchors.fill: parent
         source: mainpage.pages[mainpage.currPage] //Data.dashboardpage
     } 
 
-    /*
     Loader {
         id: popuploader
         anchors.fill: parent
         source: "flashes.qml"
     } 
-    */
 }

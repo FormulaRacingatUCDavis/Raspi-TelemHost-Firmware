@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
+import VariablesData
 
 Item {
 
@@ -20,13 +21,13 @@ Item {
                 : false
         anchors.fill: parent
 
-        color: "red"
+        color: mainpage.red
 
         Text {
             id: faulttext
-            color: "white"
+            color: "black"
             font.pixelSize: faultpopup.width * 0.1
-            text: "fault"
+            text: Data.vehiclestate
 
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
@@ -36,13 +37,13 @@ Item {
     }
 
     Rectangle {
-        id: torque1popup
+        id: torquepopup
         visible: Data.whichPopupVisible == 1 ? true
                 : false
         anchors.fill: parent
 
         GridLayout {
-            id: torque1bar
+            id: torquebar
             anchors.fill: parent
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -51,17 +52,17 @@ Item {
             columnSpacing: 0
 
             Rectangle {
-                id: torque1percentagebox
+                id: torquepercentagebox
                 Layout.fillWidth: true
                 Layout.preferredWidth: 0.4
                 Layout.fillHeight: true
-                color: "green"
+                color: mainpage.red
 
                 Text {
-                    id: torque1text
+                    id: torquetext
                     color: "black"
-                    font.pixelSize: torque1popup.width * 0.1
-                    text: "torque1"
+                    font.pixelSize: torquepopup.width * 0.1
+                    text: "torque"
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -71,7 +72,7 @@ Item {
             }
 
             Rectangle {
-                id: torque1barbox
+                id: torquebarbox
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredWidth: 0.6
@@ -81,8 +82,8 @@ Item {
                     spacing: 0
                     
                     Rectangle {
-                        id: torque1missingspace
-                        color: "blue"
+                        id: torquemissingspace
+                        color: "black"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.preferredHeight: parent.height * 1.0
@@ -90,7 +91,7 @@ Item {
                     }
 
                     Rectangle {
-                        color: "red"
+                        color: "white"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.preferredHeight: parent.height * 0.0
@@ -126,7 +127,7 @@ Item {
                 Text {
                     id: torque2text
                     color: "black"
-                    font.pixelSize: torque1popup.width * 0.1
+                    font.pixelSize: torque2popup.width * 0.1
                     text: "torque2"
 
                     anchors.horizontalCenter: parent.horizontalCenter

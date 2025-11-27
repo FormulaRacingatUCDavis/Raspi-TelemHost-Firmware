@@ -40,17 +40,17 @@ Rectangle {
         
         Rectangle {
             id: packsocbox
-            color: "red"
+            color: mainpage.red
             Layout.fillWidth: true
             Layout.fillHeight: true
             
             Text {
                 id: packsocvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: Data.soc
+                text: (Data.soc == -1) ? "" : Data.soc + "%"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -71,17 +71,17 @@ Rectangle {
         
         Rectangle {
             id: packtempbox
-            color: "blue"
+            color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
             
             Text {
                 id: packtempvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "temp"
+                text: (Data.packtemp == -1) ? "" : Data.packtemp + "C"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -102,17 +102,17 @@ Rectangle {
 
         Rectangle {
             id: shutdowncircuitbox
-            color: "blue"
+            color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
             
             Text {
                 id: shutdowncircuitvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "temp"
+                text: Data.shutdowncircuit
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -139,11 +139,11 @@ Rectangle {
             
             Text {
                 id: mctempvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "" + Data.mctemp
+                text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -164,17 +164,17 @@ Rectangle {
 
         Rectangle {
             id: motortempbox
-            color: "blue"
+            color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
             
             Text {
                 id: motortempvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "temp"
+                text: (Data.motortemp == -1) ? "" : Data.motortemp + "C"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -195,17 +195,17 @@ Rectangle {
 
         Rectangle {
             id: mcstatebox
-            color: "blue"
+            color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
             
             Text {
                 id: mcstatevalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "temp"
+                text: Data.mcfault
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -232,7 +232,7 @@ Rectangle {
             
             Text {
                 id: vehiclestatevalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -263,11 +263,11 @@ Rectangle {
             
             Text {
                 id: glvvvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "" + Data.glvv
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
@@ -288,13 +288,13 @@ Rectangle {
 
         Rectangle {
             id: freebox
-            color: "blue"
+            color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
             
             Text {
                 id: freeboxvalue
-                color: "white"
+                color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter

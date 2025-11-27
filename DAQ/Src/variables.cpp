@@ -6,27 +6,36 @@ namespace frucd::daq
 {
     // singleton stuff
     Variables* Variables::s_instance = nullptr;
-    int Variables::m_mph = 0;
+
+    const QString Variables::green = "#00FF00";
+    const QString Variables::yellow = "#FFFF00";
+    const QString Variables::red = "#FF4500";
 
     // delcaration of instance variablesm (need defualt values)
-    QString Variables::m_vehiclestate = "Startup";
-    QString Variables::m_vehiclestate_color = "green";
+    int Variables::m_mph = -1;
 
-    int Variables::m_soc =  -1;
+    QString Variables::m_vehiclestate = "Startup";
+    QString Variables::m_vehiclestate_color = green;
+
+    int Variables::m_soc = -1;
 
     int Variables::m_mctemp = -1;
-    QString Variables::m_mctemp_color = "green";
+    QString Variables::m_mctemp_color = "white";
 
-    double Variables::m_glvv = -1.0;
-    QString Variables::m_glvv_color = "green";
+    double Variables::m_glvv = -1;
+    QString Variables::m_glvv_color = "white";
 
-    QString Variables:: m_shutdowncircuit = "temp";
+    QString Variables:: m_shutdowncircuit = NULL;
 
-    QString Variables::m_mcfault = "temp";
+    QString Variables::m_mcfault = NULL;
+
+    int Variables::m_packtemp = -1;
+
+    int Variables::m_motortemp = -1;
 
     int Variables::m_whichPopupVisible = -1;
 
-    QString Variables::m_dashboardpage = "debug.qml"; 
+    QString Variables::m_dashboardpage = "drive.qml"; 
 
     // singleton stuff
     Variables* Variables::instance() 
@@ -90,6 +99,14 @@ namespace frucd::daq
         return m_mcfault;
     }
 
+    int Variables::packtemp() {
+        return m_packtemp;
+    }
+
+    int Variables::motortemp() {
+        return m_motortemp;
+    }
+
     int Variables::whichPopupVisible() {
         return m_whichPopupVisible;
     }
@@ -107,11 +124,21 @@ namespace frucd::daq
         }
     }
 
-    void Variables::setvehiclestate(std::string state) {
+    void Variables::setvehiclestate(std::string state, int faultid) {
         QString qstate = QString::fromStdString(state);
         if (m_vehiclestate != qstate) {
             m_vehiclestate = qstate;
-            // add vechiclestate_color here
+            
+            if (faultid > 5) {
+                if (faultid == 134 || faultid == 136) {
+                    m_vehiclestate_color = yellow;
+                } else {
+                    m_vehiclestate_color = red;
+                }
+            } else {
+                m_vehiclestate_color = green;
+            }
+            emit Variables::instance()->vehiclestate_colorChanged();
             emit Variables::instance()->vehiclestateChanged();
         }
     }
@@ -139,8 +166,8 @@ namespace frucd::daq
     }
 
     void Variables::setglvv(double volt) {
-        if (m_glvv != volt) {
-            m_glvv = volt;
+        if (m_glvv != (volt * 100) / 100) {
+            m_glvv = (volt * 100) / 100;
             if (m_glvv > 10) {
                 m_glvv_color = "green";
             } else if (m_glvv > 9) {
@@ -160,17 +187,168 @@ namespace frucd::daq
         }
     }
 
-    void Variables::setmcfault(std::string fault) {
-        QString qfault = QString::fromStdString(fault);
+    void Variables::setmcfault(uint32_t fault, bool post) {
+        QString qfault = NULL;
+
+        if (post) {
+            if (fault == (uint32_t) pow(2, 0)) {
+                qfault = "Hardware Gate/Desaturation";
+            } else if (fault == (uint32_t) pow(2, 1)) {
+                qfault = "HW Overcurrent";
+            } else if (fault == (uint32_t) pow(2, 2)) {
+                qfault = "Accelerator Shorted";
+            } else if (fault == (uint32_t) pow(2, 3)) {
+                qfault = "Accelerator Open";
+            } else if (fault == (uint32_t) pow(2, 4)) {
+                qfault = "Curr Sensor Lo";
+            } else if (fault == (uint32_t) pow(2, 5)) {
+                qfault = "Curr Sensor Hi";
+            } else if (fault == (uint32_t) pow(2, 6)) {
+                qfault = "Module Temp Lo";
+            } else if (fault == (uint32_t) pow(2, 7)) {
+                qfault = "Module Temp Hi";
+            } else if (fault == (uint32_t) pow(2, 8)) {
+                qfault = "Ctrl PCB Temp Lo";
+            } else if (fault == (uint32_t) pow(2, 9)) {
+                qfault = "Ctrl PCB Temp Hi";
+            } else if (fault == (uint32_t) pow(2, 10)) {
+                qfault = "Gate Drive PCB Temp Low";
+            } else if (fault == (uint32_t) pow(2, 11)) {
+                qfault = "Gate Drive PCB Temp Hi";
+            } else if (fault == (uint32_t) pow(2, 12)) {
+                qfault = "5V Sense Volt Lo";
+            } else if (fault == (uint32_t) pow(2, 13)) {
+                qfault = "5V Sense Volt Hi";
+            } else if (fault == (uint32_t) pow(2, 14)) {
+                qfault = "12V Sense Volt Lo";
+            } else if (fault == (uint32_t) pow(2, 15)) {
+                qfault = "12V Sense Volt Hi";
+            } else if (fault == (uint32_t) pow(2, 16)) {
+                qfault = "2.5V Sense Volt Lo";
+            } else if (fault == (uint32_t) pow(2, 17)) {
+                qfault = "2.5V Sense Volt Hi";
+            } else if (fault == (uint32_t) pow(2, 18)) {
+                qfault = "1.5V Sense Volt Lo";
+            } else if (fault == (uint32_t) pow(2, 19)) {
+                qfault = "1.5V Sense Volt Hi";
+            } else if (fault == (uint32_t) pow(2, 20)) {
+                qfault = "DC Bus Volt Hi";
+            } else if (fault == (uint32_t) pow(2, 21)) {
+                qfault = "DC Bus Volt Lo";
+            } else if (fault == (uint32_t) pow(2, 22)) {
+                qfault = "Precharge Timeout";
+            } else if (fault == (uint32_t) pow(2, 23)) {
+                qfault = "Precharge Volt Fail";
+            } else if (fault == (uint32_t) pow(2, 24)) {
+                qfault = "EEPROM Checksum Invalid";
+            } else if (fault == (uint32_t) pow(2, 25)) {
+                qfault = "EEPROM Data Out of Range";
+            } else if (fault == (uint32_t) pow(2, 26)) {
+                qfault = "EEPROM Update Req";
+            } else if (fault == (uint32_t) pow(2, 27)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 28)) {
+                qfault = "Gate Drive Init";
+            } else if (fault == (uint32_t) pow(2, 29)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 30)) {
+                qfault = "Brake Shorted";
+            } else if (fault == (uint32_t) pow(2, 31)) {
+                qfault = "Brake Open";
+            }
+        } else {
+            if (fault == (uint32_t) pow(2, 0)) {
+                qfault = "Motor Overspeed";
+            } else if (fault == (uint32_t) pow(2, 1)) {
+                qfault = "Overcurrent fault";
+            }else if (fault == (uint32_t) pow(2, 2)) {
+                qfault = "Overvolt fault";
+            } else if (fault == (uint32_t) pow(2, 3)) {
+                qfault = "Inverter Overtemp";
+            } else if (fault == (uint32_t) pow(2, 4)) {
+                qfault = "Accelerator Input Shorted";
+            } else if (fault == (uint32_t) pow(2, 5)) {
+                qfault = "Accelerator Input Open";
+            } else if (fault == (uint32_t) pow(2, 6)) {
+                qfault = "Direction Command Fault";
+            } else if (fault == (uint32_t) pow(2, 7)) {
+                qfault = "Inverter Response Timeout";
+            } else if (fault == (uint32_t) pow(2, 8)) {
+                qfault = "Hardware Gate/Desaturation";
+            } else if (fault == (uint32_t) pow(2, 9)) {
+                qfault = "Hardware Overcurrent";
+            } else if (fault == (uint32_t) pow(2, 10)) {
+                qfault = "Undervolt";
+            } else if (fault == (uint32_t) pow(2, 11)) {
+                qfault = "CAN Cmd Msg Lost";
+            } else if (fault == (uint32_t) pow(2, 12)) {
+                qfault = "Motor Overtemp";
+            } else if (fault == (uint32_t) pow(2, 13)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 14)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 15)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 16)) {
+                qfault = "Brake Input Shorted";
+            } else if (fault == (uint32_t) pow(2, 17)) {
+                qfault = "Brake Input Open";
+            } else if (fault == (uint32_t) pow(2, 18)) {
+                qfault = "Module A Overtemp";
+            } else if (fault == (uint32_t) pow(2, 19)) {
+                qfault = "Module B Overtemp";
+            } else if (fault == (uint32_t) pow(2, 20)) {
+                qfault = "Module C Overtemp";
+            } else if (fault == (uint32_t) pow(2, 21)) {
+                qfault = "PCB Overtemp";
+            } else if (fault == (uint32_t) pow(2, 22)) {
+                qfault = "GDB1 Overtemp";
+            } else if (fault == (uint32_t) pow(2, 23)) {
+                qfault = "GDB2 Overtemp";
+            } else if (fault == (uint32_t) pow(2, 24)) {
+                qfault = "GDB3 Overtemp";
+            } else if (fault == (uint32_t) pow(2, 25)) {
+                qfault = "Curr Sensor fault";
+            } else if (fault == (uint32_t) pow(2, 26)) {
+                qfault = "Gate Driver Overvolt";
+            } else if (fault == (uint32_t) pow(2, 27)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 28)) {
+                qfault = "Hardware Overvolt";
+            } else if (fault == (uint32_t) pow(2, 29)) {
+                qfault = "Reserved";
+            } else if (fault == (uint32_t) pow(2, 30)) {
+                qfault = "Resolver Fault";
+            } else if (fault == (uint32_t) pow(2, 31)) {
+                qfault = "Reserved";
+            }
+        }
+
         if (m_mcfault != qfault) {
             m_mcfault = qfault;
             emit Variables::instance()->mcfaultChanged();
         }
     }
 
+    void Variables::setpacktemp(int temp) {
+        if (m_packtemp != temp) {
+            m_packtemp = temp;
+            emit Variables::instance()->packtempChanged();
+        }
+    }
+
+    void Variables::setmotortemp(int temp) {
+        if (m_motortemp != temp) {
+            m_motortemp = temp;
+            emit Variables::instance()->motortempChanged();
+        }
+    }
+
     void Variables::showEventPopUp(int which) {
-        m_whichPopupVisible = which;
-        emit Variables::instance()->whichPopupVisibleChanged();
+        if (m_whichPopupVisible != which) {
+            m_whichPopupVisible = which;
+            emit Variables::instance()->whichPopupVisibleChanged();
+        }
     }
     void Variables::hidePopup() {
         if (m_whichPopupVisible != -1) {

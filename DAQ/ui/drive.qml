@@ -41,16 +41,16 @@ Rectangle {
 
         Rectangle {
             id: speedbox
-            color: "blue"
+            color: mainpage.blue
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             Text {
                 id: speedvalue
-                text: "" + Data.mph
+                text: (Data.mph == -1) ? "" : "" + Data.mph
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -78,16 +78,16 @@ Rectangle {
 
             Rectangle {
                 id: chargebox
-                color: "red"
+                color: mainpage.red
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Text {
                     id: chargevalue
-                    text: Data.soc + "%"
+                    text: (Data.soc == -1) ? "" : Data.soc + "%"
                     font.pixelSize: mainwindow.smallerfontsize
                     font.family: mainwindow.typeface
-                    color: "white" 
+                    color: "black" 
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter 
                     verticalAlignment: Text.AlignVCenter
@@ -115,10 +115,10 @@ Rectangle {
 
                 Text {
                     id: mctemptext
-                    text: Data.mctemp + "C"
+                    text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                     font.pixelSize: mainwindow.smallerfontsize
                     font.family: mainwindow.typeface
-                    color: "white"
+                    color: "black"
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter 
                     verticalAlignment: Text.AlignVCenter
@@ -134,10 +134,10 @@ Rectangle {
         
             Text {
                 id: vehiclestateavalue
-                text:  Data.vehiclestate
+                text: Data.vehiclestate
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter
@@ -165,10 +165,10 @@ Rectangle {
 
             Text {
                 id: glvvvalue
-                text: "" + Data.glvv
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter

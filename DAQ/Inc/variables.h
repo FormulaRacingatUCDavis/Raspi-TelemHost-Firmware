@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QString>
 #include <string>
+#include <cmath>
+#include <cstdlib>
 
 
 namespace frucd::daq
@@ -33,6 +35,10 @@ namespace frucd::daq
 
         Q_PROPERTY(QString mcfault READ mcfault NOTIFY mcfaultChanged)
 
+        Q_PROPERTY(int packtemp READ packtemp NOTIFY packtempChanged)
+
+        Q_PROPERTY(int motortemp READ motortemp NOTIFY motortempChanged)
+
         Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
 
         Q_PROPERTY(QString dashboardpage READ dashboardpage NOTIFY dashboardpageChanged)
@@ -60,6 +66,10 @@ namespace frucd::daq
 
         static QString mcfault();
 
+        static int packtemp();
+        
+        static int motortemp();
+
         static int whichPopupVisible();
 
         static QString dashboardpage();
@@ -68,7 +78,7 @@ namespace frucd::daq
         // setter functions
         static void setmph(int speed);
 
-        static void setvehiclestate(std::string state);
+        static void setvehiclestate(std::string state, int faultid);
 
         static void setsoc(int charge);
 
@@ -78,7 +88,11 @@ namespace frucd::daq
 
         static void setshutdowncircuit(std::string flippedswitch);
 
-        static void setmcfault(std::string fault);
+        static void setmcfault(uint32_t faultid, bool post);
+
+        static void setpacktemp(int temp);
+
+        static void setmotortemp(int temp);
 
         static void showEventPopUp(int which);
         Q_INVOKABLE static void hidePopup();
@@ -103,6 +117,10 @@ namespace frucd::daq
         void shutdowncircuitChanged();
 
         void mcfaultChanged();
+
+        void packtempChanged();
+
+        void motortempChanged();
 
         void whichPopupVisibleChanged();
 
@@ -134,6 +152,10 @@ namespace frucd::daq
 
         static QString m_mcfault;
 
+        static int m_packtemp;
+
+        static int m_motortemp;
+
         static int m_whichPopupVisible;
         // -1 no flashscreens
         // 0 state
@@ -141,6 +163,10 @@ namespace frucd::daq
         // 2 knob2
 
         static QString m_dashboardpage;
+
+        const static QString green;
+        const static QString yellow;
+        const static QString red;
 
     };
 }
