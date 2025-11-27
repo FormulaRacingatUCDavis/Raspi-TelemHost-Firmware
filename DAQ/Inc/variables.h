@@ -39,6 +39,10 @@ namespace frucd::daq
 
         Q_PROPERTY(int motortemp READ motortemp NOTIFY motortempChanged)
 
+        Q_PROPERTY(int torquelimit READ torquelimit NOTIFY torquelimitChanged)
+
+        Q_PROPERTY(int launchcontrol READ launchcontrol NOTIFY launchcontrolChanged)
+
         Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
 
         Q_PROPERTY(QString dashboardpage READ dashboardpage NOTIFY dashboardpageChanged)
@@ -70,6 +74,10 @@ namespace frucd::daq
         
         static int motortemp();
 
+        static int torquelimit();
+
+        static int launchcontrol();
+
         static int whichPopupVisible();
 
         static QString dashboardpage();
@@ -94,10 +102,14 @@ namespace frucd::daq
 
         static void setmotortemp(int temp);
 
+        static void settorquelimit(int limit);
+
+        static void setlaunchcontrol(int param);
+
         static void showEventPopUp(int which);
         Q_INVOKABLE static void hidePopup();
 
-        static void setdashboardpage(std::string page);
+        static void setdashboardpage(int page);
 
     signals:
         // for all the notify functions that get emitted in the setters
@@ -121,6 +133,10 @@ namespace frucd::daq
         void packtempChanged();
 
         void motortempChanged();
+    
+        void torquelimitChanged();
+
+        void launchcontrolChanged();
 
         void whichPopupVisibleChanged();
 
@@ -155,6 +171,10 @@ namespace frucd::daq
         static int m_packtemp;
 
         static int m_motortemp;
+
+        static int m_torquelimit;
+
+        static int m_launchcontrol;
 
         static int m_whichPopupVisible;
         // -1 no flashscreens

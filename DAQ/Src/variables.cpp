@@ -33,6 +33,10 @@ namespace frucd::daq
 
     int Variables::m_motortemp = -1;
 
+    int Variables::m_torquelimit = -1;
+
+    int Variables::m_launchcontrol = -1;
+
     int Variables::m_whichPopupVisible = -1;
 
     QString Variables::m_dashboardpage = "drive.qml"; 
@@ -105,6 +109,14 @@ namespace frucd::daq
 
     int Variables::motortemp() {
         return m_motortemp;
+    }
+
+    int Variables::torquelimit() {
+        return m_torquelimit;
+    }
+
+    int Variables::launchcontrol() {
+        return m_launchcontrol;
     }
 
     int Variables::whichPopupVisible() {
@@ -344,6 +356,22 @@ namespace frucd::daq
         }
     }
 
+    void Variables::settorquelimit(int limit) {
+        if (m_torquelimit != limit) {
+            m_torquelimit = limit;
+            showEventPopUp(1);
+            emit Variables::instance()->torquelimitChanged();
+        }
+    }
+
+    void Variables::setlaunchcontrol(int param) {
+        if (m_launchcontrol != param) {
+            m_launchcontrol = param;
+            showEventPopUp(2);
+            emit Variables::instance()->launchcontrolChanged();
+        }
+    }
+
     void Variables::showEventPopUp(int which) {
         if (m_whichPopupVisible != which) {
             m_whichPopupVisible = which;
@@ -357,8 +385,13 @@ namespace frucd::daq
         }
     }
 
-    void Variables::setdashboardpage(std::string page) {
-        QString qpage = QString::fromStdString(page);
+    void Variables::setdashboardpage(int page) {
+        QString qpage = "drive.qml";
+        if (page == 1) {
+            qpage = "debug.qml";
+        } else if (page == 2) {
+            qpage = "practice.qml";
+        }
         if (m_dashboardpage != qpage) {
             m_dashboardpage = qpage;
             emit Variables::instance()->dashboardpageChanged();

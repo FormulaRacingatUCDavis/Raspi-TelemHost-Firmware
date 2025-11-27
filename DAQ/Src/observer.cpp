@@ -18,6 +18,12 @@ namespace frucd::daq
         }
 
         switch (msg.Id()) {
+            case 0x501:
+                Variables::setdashboardpage(sig_map["DISPLAY_MODE"].second);
+                Variables::settorquelimit(sig_map["KNOB1"].second);
+                Variables::setlaunchcontrol(sig_map["KNOB2"].second);
+                break;
+
             case 0x766:
                 if (auto state = GetStringEncoding(*(sig_map["State"].first), static_cast<int64_t>(sig_map["State"].second));
                     state.has_value())

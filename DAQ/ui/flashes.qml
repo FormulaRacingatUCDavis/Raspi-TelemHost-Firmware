@@ -59,10 +59,10 @@ Item {
                 color: mainpage.red
 
                 Text {
-                    id: torquetext
+                    id: torqueval
                     color: "black"
                     font.pixelSize: torquepopup.width * 0.1
-                    text: "torque"
+                    text: (Data.torquelimit == -1) ? "" + Data.torquelimit + "%"
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -86,7 +86,7 @@ Item {
                         color: "black"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * 1.0
+                        Layout.preferredHeight: parent.height * (Data.torquelimit / 100.0)
                         Layout.minimumHeight: 0
                     }
 
@@ -94,7 +94,7 @@ Item {
                         color: "white"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * 0.0
+                        Layout.preferredHeight: parent.height * (1 - (Data.torquelimit / 100.0))
                         Layout.minimumHeight: 0
                     }
                 }
@@ -103,13 +103,13 @@ Item {
     }
 
     Rectangle {
-        id: torque2popup
+        id: launchcontrol
         visible: Data.whichPopupVisible == 2 ? true
                 : false
         anchors.fill: parent
 
         GridLayout {
-            id: torque2bar
+            id: launchcontrolbar
             anchors.fill: parent
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -118,17 +118,17 @@ Item {
             columnSpacing: 0
 
             Rectangle {
-                id: torque2percentagebox
+                id: launchcontrolpercentagebox
                 Layout.fillWidth: true
                 Layout.preferredWidth: 0.4
                 Layout.fillHeight: true
-                color: "green"
+                color: mainpage.blue
 
                 Text {
-                    id: torque2text
+                    id: launchcontrolval
                     color: "black"
                     font.pixelSize: torque2popup.width * 0.1
-                    text: "torque2"
+                    text: (Data.launchcontrol == -1) ? "" : Data.launchcontrol + "%"
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -138,7 +138,7 @@ Item {
             }
 
             Rectangle {
-                id: torque2barbox
+                id: launchcontrolbarbox
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredWidth: 0.6
@@ -148,19 +148,19 @@ Item {
                     spacing: 0
                     
                     Rectangle {
-                        id: torque2missingspace
-                        color: "blue"
+                        id: launchcontrolmissingspace
+                        color: "black"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * 1.0
+                        Layout.preferredHeight: parent.height * (Data.launchcontrol / 100.0)
                         Layout.minimumHeight: 0
                     }
 
                     Rectangle {
-                        color: "red"
+                        color: "white"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * 0.0
+                        Layout.preferredHeight: parent.height * (1 - (Data.launchcontrol / 100.0))
                         Layout.minimumHeight: 0
                     }
                 }
