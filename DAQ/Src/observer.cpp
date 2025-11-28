@@ -25,10 +25,18 @@ namespace frucd::daq
                 break;
 
             case 0x766:
-                if (auto state = GetStringEncoding(*(sig_map["State"].first), static_cast<int64_t>(sig_map["State"].second));
+                if (auto state = GetStringEncoding(*(sig_map["STATE"].first), static_cast<int64_t>(sig_map["STATE"].second));
                     state.has_value())
                 {
                     Variables::setvehiclestate(state.value(), sig_map["State"].second);
+                }
+                break;
+
+            case 0x380:
+                if (auto state = GetStringEncoding(*(sig_map["BMS_STATUS"].first), static_cast<int64_t>(sig_map["BMS_STATUS"].second));
+                    state.has_value() && sig_map["BMS_STATUS"].second > 2)
+                {
+                    Variables::setvehiclestate(state.value(), sig_map["BMS_STATUS"].second);
                 }
                 break;
             
