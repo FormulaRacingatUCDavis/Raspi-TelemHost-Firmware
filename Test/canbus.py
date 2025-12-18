@@ -20,16 +20,16 @@ bus = can.interface.Bus(channel='vcan0', interface='socketcan')
 msg_names = [
     'M160_Temperature_Set_1',
     'M162_Temperature_Set_3',
-    'PEI_Diagnostic_BMS_Data',
-    'Dashboard_Random_Shit',
+    'Diagnostic_BMS_Data',
+    'Random_Shit',
     'M169_Internal_Voltages',
-    'PEI_Status',
+    'Status',
     'M171_Fault_Codes',
     'M165_Motor_Position_Info',
     'M172_Torque_And_Timer_Info',
-    'Dashboard_Vehicle_State',
-    'PEI_BMS_Status',
-    'Dashboard_Inputs'
+    'Vehicle_State',
+    'BMS_Status',
+    'Inputs'
 ]
 
 vcu_states = [
@@ -50,10 +50,12 @@ bms_states = [
 
 while True:
     if N != None:
-        msg_name = msg_names[random.randint(0,N)]
+        msg_name = msg_names[random.randint(0, N)]
     else:
         msg_name = msg_names[MSG_IND]
 
+    source_db = None
+    message = None
     for db_name, db in [('fe', fe_db), ('cm200', cm200_db)]:
         try:
             message = db.get_message_by_name(msg_name)
@@ -64,53 +66,53 @@ while True:
 
     if source_db == 'fe':
         match msg_name:
-            case 'Dashboard_Vehicle_State':
+            case 'Vehicle_State':
                 data = {
-                    'HV_Requested': random.randint(0, 1),
-                    'Throttle1_Level': random.randint(0, 100),
-                    'Throttle2_Level': random.randint(0, 100),
-                    'Brake_Level': random.randint(0, 100),
-                    'VCU_ticks': random.randint(0,65535),
-                    'State': vcu_states[random.randint(0,15)]
+                    'Dashboard_HV_Requested': random.randint(0, 1),
+                    'Dashboard_Throttle1_Level': random.randint(0, 100),
+                    'Dashboard_Throttle2_Level': random.randint(0, 100),
+                    'Dashboard_Brake_Level': random.randint(0, 100),
+                    'Dashboard_VCU_Ticks': random.randint(0, 65535),
+                    'Dashboard_State': vcu_states[random.randint(0, 15)]
                 }
-            case 'PEI_BMS_Status':
+            case 'BMS_Status':
                 data = {
-                    'BMS_Status': bms_states[random.randint(0, 4)],
-                    'SPI_Error_Flags': random.randint(0, 65535),
-                    'Max_Faulting_IC_Address': random.randint(0, 9),
-                    'Communication_Break_ID': random.randint(-1, 9)
+                    'PEI_BMS_Status': bms_states[random.randint(0, 4)],
+                    'PEI_SPI_Error_Flags': random.randint(0, 65535),
+                    'PEI_Max_Faulting_IC_Address': random.randint(0, 9),
+                    'PEI_Communication_Break_ID': random.randint(-1, 9)
                 }
-            case 'PEI_Diagnostic_BMS_Data':
+            case 'Diagnostic_BMS_Data':
                 data = {
-                    'HI_Temp': random.randint(0, 255),
-                    'SOC': random.randint(0, 100),
-                    'Pack_Voltage': random.randint(-32768, 32767)
+                    'PEI_HI_Temp': random.randint(0, 255),
+                    'PEI_SOC': random.randint(0, 100),
+                    'PEI_Pack_Voltage': random.randint(-32768, 32767)
                 }
-            case 'Dashboard_Random_Shit':
+            case 'Random_Shit':
                 data = {
-                    'Front_Strain_Gauge': random.randint(0, 65535),
-                    'Front_Wheel_Speed': random.randint(0, 65535),
-                    'TC_Torque_Request': round(random.uniform(0, 6553.5), 1)
+                    'Dashboard_Front_Strain_Gauge': random.randint(0, 65535),
+                    'Dashboard_Front_Wheel_Speed': random.randint(0, 65535),
+                    'Dashboard_TC_Torque_Request': round(random.uniform(0, 6553.5), 1)
                 }
-            case 'Dashboard_Inputs':
+            case 'Inputs':
                 data = {
-                    'Knob1': random.randint(0, 100),
-                    'Knob2': random.randint(0, 100),
-                    'OVERTAKE': random.randint(0, 1),
-                    'MARKER': random.randint(0, 1),
-                    'TC': random.randint(0, 1),
-                    'DISPLAY_MODE': random.randint(0, 1)
+                    'Dashboard_Knob1': random.randint(0, 100),
+                    'Dashboard_Knob2': random.randint(0, 100),
+                    'Dashboard_OVERTAKE': random.randint(0, 1),
+                    'Dashboard_MARKER': random.randint(0, 1),
+                    'Dashboard_TC': random.randint(0, 1),
+                    'Dashboard_DISPLAY_MODE': random.randint(0, 1)
                 }
-            case 'PEI_Status':
+            case 'Status':
                 data = {
-                    'Current_ADC': random.randint(0, 65535),
-                    'Current_Reference': random.randint(-2048, 2047),
-                    'IMD_OK': random.randint(0, 1),
-                    'BMS_OK': random.randint(0, 1),
-                    'SHUTDOWN_FINAL': random.randint(0, 1),
-                    'AIR_NEG': random.randint(0, 1),
-                    'AIR_POS': random.randint(0, 1),
-                    'PRECHARGE': random.randint(0, 1),
+                    'PEI_Current_ADC': random.randint(0, 65535),
+                    'PEI_Current_Reference': random.randint(-2048, 2047),
+                    'PEI_IMD_OK': random.randint(0, 1),
+                    'PEI_BMS_OK': random.randint(0, 1),
+                    'PEI_SHUTDOWN_FINAL': random.randint(0, 1),
+                    'PEI_AIR_NEG': random.randint(0, 1),
+                    'PEI_AIR_POS': random.randint(0, 1),
+                    'PEI_PRECHARGE': random.randint(0, 1),
                 }
     elif source_db == 'cm200':
         match msg_name:
@@ -140,7 +142,7 @@ while True:
                     'INV_Post_Fault_Lo': random.randint(0, 65535),
                     'INV_Post_Fault_Hi': random.randint(0, 65535),
                     'INV_Run_Fault_Lo': random.randint(0, 65535),
-                    'INV_Run_Fault_Hi': random.randint(0, 65535) 
+                    'INV_Run_Fault_Hi': random.randint(0, 65535)
                 }
             case 'M165_Motor_Position_Info':
                 data = {
@@ -153,7 +155,7 @@ while True:
                 data = {
                     'INV_Commanded_Torque': round(random.uniform(-3276.8, 3276.7), 1),
                     'INV_Torque_Feedback': round(random.uniform(-3276.8, 3276.7), 1),
-                    'INV_Power_On_Timer': random.randint(0, 1.28848e07)
+                    'INV_Power_On_Timer': random.randint(0, 12884800)
                 }
 
     encoded = message.encode(data)
