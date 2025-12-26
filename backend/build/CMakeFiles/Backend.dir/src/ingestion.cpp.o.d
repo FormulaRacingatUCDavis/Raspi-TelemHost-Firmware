@@ -1,5 +1,5 @@
-CMakeFiles/Backend.dir/src/main.cpp.o: \
- /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/main.cpp \
+CMakeFiles/Backend.dir/src/ingestion.cpp.o: \
+ /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/ingestion.cpp \
  /usr/include/stdc-predef.h \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/include/ingestion.h \
  /usr/include/c++/14/cstring /usr/include/c++/14/bits/version.h \
@@ -191,9 +191,4 @@ CMakeFiles/Backend.dir/src/main.cpp.o: \
  /usr/include/c++/14/bits/locale_facets.tcc \
  /usr/include/c++/14/bits/basic_ios.tcc \
  /usr/include/c++/14/bits/ostream.tcc /usr/include/c++/14/istream \
- /usr/include/c++/14/bits/istream.tcc /usr/include/c++/14/thread \
- /usr/include/c++/14/bits/std_thread.h \
- /usr/include/c++/14/bits/unique_ptr.h \
- /usr/include/c++/14/bits/this_thread_sleep.h \
- /usr/include/c++/14/bits/chrono.h /usr/include/c++/14/ratio \
- /usr/include/c++/14/limits /usr/include/c++/14/bits/parse_numbers.h
+ /usr/include/c++/14/bits/istream.tcc

@@ -9,9 +9,15 @@
 #include <ctime>
 #include <cstdlib>
 #include <stdio.h>
+#include <iostream>
 
 namespace frucd
 {
+    struct Capture {
+        struct can_frame frame;
+        struct timespec timestamp;
+    };
+
     class Bus
     {
     public:
@@ -36,14 +42,14 @@ namespace frucd
             bind(s, (struct sockaddr *)&addr, sizeof(addr));
         }
 
-        void dump();
+        Capture get_frame();
         
     private:
         int s = socket(PF_CAN, SOCK_RAW, CAN_RAW);;
         struct ifreq ifr;
         struct sockaddr_can addr;
 
-        struct can_frame frame;
+        Capture cap;
         int nbytes;
 
         struct iovec iov;
@@ -54,6 +60,6 @@ namespace frucd
         bool have_start = false;
         timespec start_ts = {};
 
-        static inline timespec ts_sub(const timespec& ti, const timespec& tf);
+        timespec ts_sub(const timespec& ti, const timespec& tf);
     };
 }

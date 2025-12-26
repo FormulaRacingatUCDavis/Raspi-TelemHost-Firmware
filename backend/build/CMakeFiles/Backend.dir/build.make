@@ -86,30 +86,30 @@ CMakeFiles/Backend.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Backend.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/main.cpp -o CMakeFiles/Backend.dir/src/main.cpp.s
 
-CMakeFiles/Backend.dir/src/canbus.cpp.o: CMakeFiles/Backend.dir/flags.make
-CMakeFiles/Backend.dir/src/canbus.cpp.o: /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/canbus.cpp
-CMakeFiles/Backend.dir/src/canbus.cpp.o: CMakeFiles/Backend.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/frucd/Projects/Raspi-TelemHost-Firmware/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Backend.dir/src/canbus.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Backend.dir/src/canbus.cpp.o -MF CMakeFiles/Backend.dir/src/canbus.cpp.o.d -o CMakeFiles/Backend.dir/src/canbus.cpp.o -c /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/canbus.cpp
+CMakeFiles/Backend.dir/src/ingestion.cpp.o: CMakeFiles/Backend.dir/flags.make
+CMakeFiles/Backend.dir/src/ingestion.cpp.o: /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/ingestion.cpp
+CMakeFiles/Backend.dir/src/ingestion.cpp.o: CMakeFiles/Backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/frucd/Projects/Raspi-TelemHost-Firmware/backend/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Backend.dir/src/ingestion.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Backend.dir/src/ingestion.cpp.o -MF CMakeFiles/Backend.dir/src/ingestion.cpp.o.d -o CMakeFiles/Backend.dir/src/ingestion.cpp.o -c /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/ingestion.cpp
 
-CMakeFiles/Backend.dir/src/canbus.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Backend.dir/src/canbus.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/canbus.cpp > CMakeFiles/Backend.dir/src/canbus.cpp.i
+CMakeFiles/Backend.dir/src/ingestion.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Backend.dir/src/ingestion.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/ingestion.cpp > CMakeFiles/Backend.dir/src/ingestion.cpp.i
 
-CMakeFiles/Backend.dir/src/canbus.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Backend.dir/src/canbus.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/canbus.cpp -o CMakeFiles/Backend.dir/src/canbus.cpp.s
+CMakeFiles/Backend.dir/src/ingestion.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Backend.dir/src/ingestion.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frucd/Projects/Raspi-TelemHost-Firmware/backend/src/ingestion.cpp -o CMakeFiles/Backend.dir/src/ingestion.cpp.s
 
 # Object files for target Backend
 Backend_OBJECTS = \
 "CMakeFiles/Backend.dir/src/main.cpp.o" \
-"CMakeFiles/Backend.dir/src/canbus.cpp.o"
+"CMakeFiles/Backend.dir/src/ingestion.cpp.o"
 
 # External object files for target Backend
 Backend_EXTERNAL_OBJECTS =
 
 Backend: CMakeFiles/Backend.dir/src/main.cpp.o
-Backend: CMakeFiles/Backend.dir/src/canbus.cpp.o
+Backend: CMakeFiles/Backend.dir/src/ingestion.cpp.o
 Backend: CMakeFiles/Backend.dir/build.make
 Backend: CMakeFiles/Backend.dir/compiler_depend.ts
 Backend: CMakeFiles/Backend.dir/link.txt
