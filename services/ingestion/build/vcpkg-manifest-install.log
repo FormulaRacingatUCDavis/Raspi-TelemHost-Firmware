@@ -1,0 +1,29 @@
+Fetching registry information from https://github.com/microsoft/vcpkg (HEAD)...
+Detecting compiler hash for triplet arm64-linux...
+Compiler found: /usr/bin/c++
+The following packages will be built and installed:
+    concurrentqueue:arm64-linux@1.0.4#1 -- git+https://github.com/microsoft/vcpkg@cb1a9a521f0db90d6ccceaef6d7428b61836b82d
+  * vcpkg-cmake:arm64-linux@2024-04-23 -- git+https://github.com/microsoft/vcpkg@e74aa1e8f93278a8e71372f1fa08c3df420eb840
+  * vcpkg-cmake-config:arm64-linux@2024-05-23 -- git+https://github.com/microsoft/vcpkg@97a63e4bc1a17422ffe4eff71da53b4b561a7841
+Additional packages (*) will be modified to complete this operation.
+Restored 3 package(s) from /home/frucd/.cache/vcpkg/archives in 22.4 ms. Use --debug to see more details.
+Installing 1/3 vcpkg-cmake-config:arm64-linux@2024-05-23...
+Elapsed time to handle vcpkg-cmake-config:arm64-linux: 1.77 ms
+vcpkg-cmake-config:arm64-linux package ABI: 8581ecd4896a1309198c25ef6f2102955c5f37089ba498860790554662fbabf0
+Installing 2/3 vcpkg-cmake:arm64-linux@2024-04-23...
+Elapsed time to handle vcpkg-cmake:arm64-linux: 1.04 ms
+vcpkg-cmake:arm64-linux package ABI: f71f73f0b9270629534c491a13f215cc0253aba78ce1dcc0d667fe3d0b0c728e
+Installing 3/3 concurrentqueue:arm64-linux@1.0.4#1...
+Elapsed time to handle concurrentqueue:arm64-linux: 4.4 ms
+concurrentqueue:arm64-linux package ABI: ad2251b20168d950153afdda65fec9f6b55482425b9e101658b86b973c935712
+Installed contents are licensed to you by owners. Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+Packages installed in this vcpkg installation declare the following licenses:
+(BSD-2-Clause OR BSL-1.0)
+MIT
+concurrentqueue provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(concurrentqueue CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE concurrentqueue::concurrentqueue)
+
+All requested installations completed successfully in: 8.21 ms

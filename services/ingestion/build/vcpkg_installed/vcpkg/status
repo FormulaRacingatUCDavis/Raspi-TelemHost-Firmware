@@ -1,0 +1,24 @@
+Package: vcpkg-cmake-config
+Version: 2024-05-23
+Architecture: arm64-linux
+Multi-Arch: same
+Abi: 8581ecd4896a1309198c25ef6f2102955c5f37089ba498860790554662fbabf0
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2024-04-23
+Architecture: arm64-linux
+Multi-Arch: same
+Abi: f71f73f0b9270629534c491a13f215cc0253aba78ce1dcc0d667fe3d0b0c728e
+Status: install ok installed
+
+Package: concurrentqueue
+Version: 1.0.4
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: arm64-linux
+Multi-Arch: same
+Abi: ad2251b20168d950153afdda65fec9f6b55482425b9e101658b86b973c935712
+Description: A fast multi-producer, multi-consumer lock-free concurrent queue for C++11
+Status: install ok installed
+

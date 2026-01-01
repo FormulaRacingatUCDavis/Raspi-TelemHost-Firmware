@@ -1,0 +1,6 @@
+# ninja log v6
+2	2553	1767232297198800048	CMakeFiles/Backend.dir/src/ingestion.cpp.o	d7f3303a89e7b455
+1	2582	1767232297198800048	CMakeFiles/Backend.dir/src/main.cpp.o	8e0e45b1ccbe1af0
+2583	2904	1767232299778667036	Backend	d26784ab39da1e83
+3	1936	1767232460920853668	CMakeFiles/Backend.dir/src/main.cpp.o	8e0e45b1ccbe1af0
+1936	2254	1767232462856711839	Backend	d26784ab39da1e83
