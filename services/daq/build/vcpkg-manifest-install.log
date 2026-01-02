@@ -1,0 +1,46 @@
+Fetching registry information from https://github.com/microsoft/vcpkg (HEAD)...
+Detecting compiler hash for triplet arm64-linux...
+Compiler found: /usr/bin/c++
+The following packages will be built and installed:
+    concurrentqueue:arm64-linux@1.0.4#1 -- git+https://github.com/microsoft/vcpkg@cb1a9a521f0db90d6ccceaef6d7428b61836b82d
+    nlohmann-json:arm64-linux@3.12.0#1 -- git+https://github.com/microsoft/vcpkg@f89a58e6478ca1e39120e93e7ed535c4aaf8198c
+  * vcpkg-cmake:arm64-linux@2024-04-23 -- git+https://github.com/microsoft/vcpkg@e74aa1e8f93278a8e71372f1fa08c3df420eb840
+  * vcpkg-cmake-config:arm64-linux@2024-05-23 -- git+https://github.com/microsoft/vcpkg@97a63e4bc1a17422ffe4eff71da53b4b561a7841
+Additional packages (*) will be modified to complete this operation.
+Restored 4 package(s) from /home/frucd/.cache/vcpkg/archives in 25.2 ms. Use --debug to see more details.
+Installing 1/4 vcpkg-cmake-config:arm64-linux@2024-05-23...
+Elapsed time to handle vcpkg-cmake-config:arm64-linux: 1.1 ms
+vcpkg-cmake-config:arm64-linux package ABI: 8581ecd4896a1309198c25ef6f2102955c5f37089ba498860790554662fbabf0
+Installing 2/4 vcpkg-cmake:arm64-linux@2024-04-23...
+Elapsed time to handle vcpkg-cmake:arm64-linux: 914 us
+vcpkg-cmake:arm64-linux package ABI: f71f73f0b9270629534c491a13f215cc0253aba78ce1dcc0d667fe3d0b0c728e
+Installing 3/4 concurrentqueue:arm64-linux@1.0.4#1...
+Elapsed time to handle concurrentqueue:arm64-linux: 1.45 ms
+concurrentqueue:arm64-linux package ABI: ad2251b20168d950153afdda65fec9f6b55482425b9e101658b86b973c935712
+Installing 4/4 nlohmann-json:arm64-linux@3.12.0#1...
+Elapsed time to handle nlohmann-json:arm64-linux: 4.98 ms
+nlohmann-json:arm64-linux package ABI: 35d909cc8285afe886edc6e0d6277e70d1f7ae5eb546b1c34ff6bf05c447dcf9
+Installed contents are licensed to you by owners. Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+Packages installed in this vcpkg installation declare the following licenses:
+(BSD-2-Clause OR BSL-1.0)
+MIT
+concurrentqueue provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(concurrentqueue CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE concurrentqueue::concurrentqueue)
+
+The package nlohmann-json provides CMake targets:
+
+    find_package(nlohmann_json CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
+
+The package nlohmann-json can be configured to not provide implicit conversions via a custom triplet file:
+
+    set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
+
+For more information, see the docs here:
+    
+    https://json.nlohmann.me/api/macros/json_use_implicit_conversions/
+
+All requested installations completed successfully in: 9.55 ms

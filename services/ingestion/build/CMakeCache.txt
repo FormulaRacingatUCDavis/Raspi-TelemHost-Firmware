@@ -33,6 +33,9 @@ CMAKE_AR:FILEPATH=/usr/bin/ar
 // MinSizeRel ...
 CMAKE_BUILD_TYPE:STRING=
 
+//Enable/Disable color output during build.
+CMAKE_COLOR_MAKEFILE:BOOL=ON
+
 //CXX compiler
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
 
@@ -103,9 +106,6 @@ CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=
 //Flags used by the linker during RELWITHDEBINFO builds.
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
-//Enable/Disable output of build database during the build.
-CMAKE_EXPORT_BUILD_DATABASE:BOOL=
-
 //Enable/Disable output of compile commands during generation.
 CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=
 
@@ -118,8 +118,8 @@ CMAKE_INSTALL_PREFIX:PATH=/usr/local
 //Path to a program.
 CMAKE_LINKER:FILEPATH=/usr/bin/ld
 
-//Program used to build from build.ninja files.
-CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/ninja
+//Path to a program.
+CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/gmake
 
 //Flags used by the linker during the creation of modules during
 // all build types.
@@ -316,6 +316,9 @@ _VCPKG_INSTALLED_DIR:PATH=/home/frucd/Projects/Raspi-TelemHost-Firmware/services
 //The directory containing a CMake configuration file for concurrentqueue.
 concurrentqueue_DIR:PATH=/home/frucd/Projects/Raspi-TelemHost-Firmware/services/ingestion/build/vcpkg_installed/arm64-linux/share/concurrentqueue
 
+//The directory containing a CMake configuration file for nlohmann_json.
+nlohmann_json_DIR:PATH=/home/frucd/Projects/Raspi-TelemHost-Firmware/services/ingestion/build/vcpkg_installed/arm64-linux/share/nlohmann_json
+
 //Path to a library.
 pkgcfg_lib_MOSQUITTO_mosquitto:FILEPATH=/usr/lib/aarch64-linux-gnu/libmosquitto.so
 
@@ -336,6 +339,8 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=31
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
+//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
+CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=/usr/bin/cmake
 //Path to cpack program executable.
@@ -388,14 +393,12 @@ CMAKE_EXE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_EXPORT_BUILD_DATABASE
-CMAKE_EXPORT_BUILD_DATABASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXPORT_COMPILE_COMMANDS
 CMAKE_EXPORT_COMPILE_COMMANDS-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=Ninja
+CMAKE_GENERATOR:INTERNAL=Unix Makefiles
 //Generator instance identifier.
 CMAKE_GENERATOR_INSTANCE:INTERNAL=
 //Name of generator platform.
@@ -473,6 +476,8 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
+//Details about finding nlohmann_json
+FIND_PACKAGE_MESSAGE_DETAILS_nlohmann_json:INTERNAL=[/home/frucd/Projects/Raspi-TelemHost-Firmware/services/ingestion/build/vcpkg_installed/arm64-linux/share/nlohmann_json/nlohmann_jsonConfig.cmake][v3.12.0()]
 MOSQUITTO_CFLAGS:INTERNAL=-I/usr/include
 MOSQUITTO_CFLAGS_I:INTERNAL=
 MOSQUITTO_CFLAGS_OTHER:INTERNAL=
