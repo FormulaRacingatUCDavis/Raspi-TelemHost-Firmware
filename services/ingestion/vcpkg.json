@@ -1,6 +1,0 @@
-{
-  "dependencies": [
-    "concurrentqueue",
-    "nlohmann-json"
-  ]
-}

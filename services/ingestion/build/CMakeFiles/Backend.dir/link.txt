@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/Backend.dir/link.d CMakeFiles/Backend.dir/src/main.cpp.o CMakeFiles/Backend.dir/src/ingestion.cpp.o CMakeFiles/Backend.dir/src/decode.cpp.o CMakeFiles/Backend.dir/src/fe12_db.c.o CMakeFiles/Backend.dir/src/cm200_db.c.o -o Backend  -lmosquitto

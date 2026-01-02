@@ -1,3 +1,0 @@
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/ingestion/build/CMakeFiles/Backend.dir
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/ingestion/build/CMakeFiles/edit_cache.dir
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/ingestion/build/CMakeFiles/rebuild_cache.dir

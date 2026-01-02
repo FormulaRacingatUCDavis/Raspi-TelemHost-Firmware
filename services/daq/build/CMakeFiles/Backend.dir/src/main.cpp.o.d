@@ -219,43 +219,15 @@ CMakeFiles/Backend.dir/src/main.cpp.o: \
  /usr/include/c++/14/cstdint /usr/include/c++/14/limits \
  /usr/include/c++/14/ctime /usr/include/c++/14/bits/parse_numbers.h \
  /usr/include/c++/14/chrono \
- /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/include/ingestion.h \
- /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/concurrentqueue/moodycamel/concurrentqueue.h \
- /usr/include/c++/14/atomic /usr/include/c++/14/bits/atomic_base.h \
- /usr/include/c++/14/bits/atomic_lockfree_defines.h \
- /usr/include/c++/14/cassert /usr/include/assert.h \
+ /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/json.hpp \
  /usr/include/c++/14/algorithm /usr/include/c++/14/bits/stl_algo.h \
  /usr/include/c++/14/bits/algorithmfwd.h \
  /usr/include/c++/14/bits/stl_heap.h \
  /usr/include/c++/14/bits/uniform_int_dist.h \
  /usr/include/c++/14/bits/stl_tempbuf.h \
  /usr/include/c++/14/pstl/glue_algorithm_defs.h \
- /usr/include/c++/14/pstl/execution_defs.h /usr/include/c++/14/utility \
- /usr/include/c++/14/bits/stl_relops.h /usr/include/c++/14/climits \
- /usr/lib/gcc/aarch64-linux-gnu/14/include/limits.h \
- /usr/lib/gcc/aarch64-linux-gnu/14/include/syslimits.h \
- /usr/include/limits.h /usr/include/aarch64-linux-gnu/bits/posix1_lim.h \
- /usr/include/aarch64-linux-gnu/bits/local_lim.h \
- /usr/include/linux/limits.h \
- /usr/include/aarch64-linux-gnu/bits/posix2_lim.h \
- /usr/include/aarch64-linux-gnu/bits/xopen_lim.h \
- /usr/include/aarch64-linux-gnu/bits/uio_lim.h /usr/include/c++/14/array \
- /usr/include/c++/14/compare /usr/include/c++/14/mutex \
- /usr/include/c++/14/bits/std_mutex.h \
- /usr/include/c++/14/bits/unique_lock.h /usr/include/linux/can.h \
- /usr/include/linux/socket.h /usr/include/net/if.h \
- /usr/include/aarch64-linux-gnu/sys/socket.h \
- /usr/include/aarch64-linux-gnu/bits/types/struct_iovec.h \
- /usr/include/aarch64-linux-gnu/bits/socket.h \
- /usr/include/aarch64-linux-gnu/bits/socket_type.h \
- /usr/include/aarch64-linux-gnu/bits/sockaddr.h \
- /usr/lib/linux/uapi/arm64/asm/socket.h /usr/include/asm-generic/socket.h \
- /usr/lib/linux/uapi/arm64/asm/sockios.h \
- /usr/include/asm-generic/sockios.h \
- /usr/include/aarch64-linux-gnu/bits/types/struct_osockaddr.h \
- /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/include/decode.h \
- /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/json.hpp \
- /usr/include/c++/14/functional /usr/include/c++/14/bits/std_function.h \
+ /usr/include/c++/14/pstl/execution_defs.h /usr/include/c++/14/functional \
+ /usr/include/c++/14/bits/std_function.h \
  /usr/include/c++/14/unordered_map \
  /usr/include/c++/14/bits/unordered_map.h \
  /usr/include/c++/14/bits/hashtable.h \
@@ -263,7 +235,8 @@ CMakeFiles/Backend.dir/src/main.cpp.o: \
  /usr/include/c++/14/ext/aligned_buffer.h \
  /usr/include/c++/14/bits/enable_special_members.h \
  /usr/include/c++/14/bits/node_handle.h \
- /usr/include/c++/14/bits/erase_if.h /usr/include/c++/14/iterator \
+ /usr/include/c++/14/bits/erase_if.h /usr/include/c++/14/array \
+ /usr/include/c++/14/compare /usr/include/c++/14/iterator \
  /usr/include/c++/14/bits/stream_iterator.h /usr/include/c++/14/memory \
  /usr/include/c++/14/bits/stl_raw_storage_iter.h \
  /usr/include/c++/14/bits/align.h /usr/include/c++/14/bits/shared_ptr.h \
@@ -271,8 +244,11 @@ CMakeFiles/Backend.dir/src/main.cpp.o: \
  /usr/include/c++/14/bits/allocated_ptr.h \
  /usr/include/c++/14/ext/concurrence.h \
  /usr/include/c++/14/bits/shared_ptr_atomic.h \
+ /usr/include/c++/14/bits/atomic_base.h \
+ /usr/include/c++/14/bits/atomic_lockfree_defines.h \
  /usr/include/c++/14/backward/auto_ptr.h \
- /usr/include/c++/14/pstl/glue_memory_defs.h \
+ /usr/include/c++/14/pstl/glue_memory_defs.h /usr/include/c++/14/utility \
+ /usr/include/c++/14/bits/stl_relops.h \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/adl_serializer.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/abi_macros.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/conversions/from_json.hpp \
@@ -318,7 +294,8 @@ CMakeFiles/Backend.dir/src/main.cpp.o: \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/meta/detected.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/meta/void_t.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/thirdparty/hedley/hedley.hpp \
- /usr/include/c++/14/version \
+ /usr/include/c++/14/version /usr/include/c++/14/cassert \
+ /usr/include/assert.h \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/string_escape.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/input/position_t.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/meta/cpp_future.hpp \
@@ -370,6 +347,30 @@ CMakeFiles/Backend.dir/src/main.cpp.o: \
  /usr/include/c++/14/any \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/detail/macro_unscope.hpp \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/nlohmann/thirdparty/hedley/hedley_undef.hpp \
+ /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/include/ingestion.h \
+ /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/vcpkg_installed/arm64-linux/include/concurrentqueue/moodycamel/concurrentqueue.h \
+ /usr/include/c++/14/atomic /usr/include/c++/14/climits \
+ /usr/lib/gcc/aarch64-linux-gnu/14/include/limits.h \
+ /usr/lib/gcc/aarch64-linux-gnu/14/include/syslimits.h \
+ /usr/include/limits.h /usr/include/aarch64-linux-gnu/bits/posix1_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/local_lim.h \
+ /usr/include/linux/limits.h \
+ /usr/include/aarch64-linux-gnu/bits/posix2_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/xopen_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/uio_lim.h /usr/include/c++/14/mutex \
+ /usr/include/c++/14/bits/std_mutex.h \
+ /usr/include/c++/14/bits/unique_lock.h /usr/include/linux/can.h \
+ /usr/include/linux/socket.h /usr/include/net/if.h \
+ /usr/include/aarch64-linux-gnu/sys/socket.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_iovec.h \
+ /usr/include/aarch64-linux-gnu/bits/socket.h \
+ /usr/include/aarch64-linux-gnu/bits/socket_type.h \
+ /usr/include/aarch64-linux-gnu/bits/sockaddr.h \
+ /usr/lib/linux/uapi/arm64/asm/socket.h /usr/include/asm-generic/socket.h \
+ /usr/lib/linux/uapi/arm64/asm/sockios.h \
+ /usr/include/asm-generic/sockios.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_osockaddr.h \
+ /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/include/decode.h \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/include/fe12_db.h \
  /usr/lib/gcc/aarch64-linux-gnu/14/include/stdbool.h \
  /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/include/cm200_db.h

@@ -7,23 +7,36 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <nlohmann/json.hpp>
 
 #include "ingestion.h"
 #include "decode.h"
 
 int main()
 {
-    /* Publish CAN bus data to MQTT broker */
+    nlohmann::json cfg;
+    std::ifstream cfg_file("config/config.json");
+    if (!cfg_file.is_open()) {
+        std::cerr << "Failed to open config.json\n";
+        return 1;
+    }
+    cfg_file >> cfg;
+    cfg_file.close();
+
+    std::string pcan = cfg["interfaces"]["pcan"];
+    std::string tcan = cfg["interfaces"]["tcan"];
+
     pid_t pid = fork();
 
     if (pid == 0)
     {
+        /* Publish CAN bus data to MQTT broker */
         mosquitto_lib_init();
         struct mosquitto* mosq = mosquitto_new(nullptr, true, nullptr);
         mosquitto_connect(mosq, "localhost", 1883, 60);
 
         std::vector<std::thread> threads;
-        auto q = telem::queue_can({"vcan0", "vcan1"}, threads);
+        auto q = telem::queue_can({pcan, tcan}, threads);
 
         telem::Capture cap;
         while (true)
@@ -55,10 +68,21 @@ int main()
         /* Log CAN bus data to CSV */
         std::cout << "CAN publisher started, pid = " << pid << "\n";
         auto start = std::chrono::system_clock::now();
-        std::ofstream log((std::stringstream() << telem::format_timestamp(start) << ".csv").str());
+
+        std::filesystem::path log_dir;
+
+        if (pcan.rfind("vcan", 0) == 0 || tcan.rfind("vcan", 0) == 0)
+            log_dir = "testlogs";
+        else
+            log_dir = "logs";
+
+        std::filesystem::create_directories(log_dir);
+
+        std::filesystem::path log_file = log_dir / (telem::format_timestamp(start) + ".csv");
+        std::ofstream log(log_file, std::ios::out | std::ios::app);
 
         std::vector<std::thread> threads;
-        auto q = telem::queue_can({"vcan0", "vcan1"}, threads);
+        auto q = telem::queue_can({pcan, tcan}, threads);
 
         telem::Capture cap;
         while (true)
