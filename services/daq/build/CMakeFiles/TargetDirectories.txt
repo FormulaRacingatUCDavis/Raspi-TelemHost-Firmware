@@ -1,4 +1,0 @@
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/CMakeFiles/Backend.dir
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/CMakeFiles/Logger.dir
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/CMakeFiles/edit_cache.dir
-/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/CMakeFiles/rebuild_cache.dir

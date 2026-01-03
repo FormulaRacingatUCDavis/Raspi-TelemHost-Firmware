@@ -2,3 +2,5 @@
 */__pycache__
 testlogs
 logs
+build
+CMakeUserPresets.json

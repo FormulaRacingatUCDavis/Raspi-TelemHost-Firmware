@@ -17,4 +17,4 @@ pip install -r requirements.txt
 ```
 
 ## Dashboard Example
-![DashboardScreenshot](Assets/example.png)
+![DashboardScreenshot](assets/example.png)

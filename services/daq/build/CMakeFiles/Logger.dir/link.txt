@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/Logger.dir/link.d CMakeFiles/Logger.dir/src/logger.cpp.o CMakeFiles/Logger.dir/src/ingestion.cpp.o CMakeFiles/Logger.dir/src/decode.cpp.o CMakeFiles/Logger.dir/src/fe12_db.c.o CMakeFiles/Logger.dir/src/cm200_db.c.o -o Logger  -lmosquitto

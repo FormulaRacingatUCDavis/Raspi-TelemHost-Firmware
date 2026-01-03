@@ -19,7 +19,8 @@ namespace telem
     {
     public:
         Bus(const char* interface);
-        void add_frames(moodycamel::ConcurrentQueue<Capture>& q);
+        ~Bus();
+        bool read_frame(telem::Capture& cap);
 
     private:
         int s;
@@ -28,5 +29,8 @@ namespace telem
         int nbytes;
     };
 
-    moodycamel::ConcurrentQueue<telem::Capture> queue_can(const std::vector<std::string>& ifaces, std::vector<std::thread>& threads);
+    moodycamel::ConcurrentQueue<telem::Capture> queue_can(
+        const std::vector<std::string>& ifaces,
+        std::vector<std::thread>& threads,
+        std::atomic<bool>* logging_enabled);
 }
