@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import json
+import subprocess
 
 app = FastAPI()
 
@@ -13,7 +14,29 @@ app.mount("/static", StaticFiles(directory='services/web/public'), name="static"
 
 @app.post("/toggle_log")
 async def toggle_log():
-    return {"status": "Start Logging"}
+    result = subprocess.run(
+        ["sudo", "systemctl", "is-active", "can-logger.service"],
+        capture_output=True,
+        text=True
+    )
+    active = result.stdout.strip() == "active"
+
+    if active:
+        subprocess.run(["sudo", "systemctl", "stop", "can-logger.service"])
+    else:
+        subprocess.run(["sudo", "systemctl", "start", "can-logger.service"])
+
+    return {"logging": not active}
+    
+@app.get("/log_status")
+async def log_status():
+    result = subprocess.run(
+        ["sudo", "systemctl", "is-active", "can-logger.service"],
+        capture_output=True,
+        text=True
+    )
+    active = result.stdout.strip() == "active"
+    return {"logging": active}
 
 @app.get("/list_logs")
 async def list_logs():
