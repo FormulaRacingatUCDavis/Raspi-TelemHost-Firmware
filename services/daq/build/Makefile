@@ -136,12 +136,26 @@ Backend/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/build
 .PHONY : Backend/fast
 
+#=============================================================================
+# Target rules for targets named Logger
+
+# Build rule for target.
+Logger: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Logger
+.PHONY : Logger
+
+# fast build rule for target.
+Logger/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/build
+.PHONY : Logger/fast
+
 src/cm200_db.o: src/cm200_db.c.o
 .PHONY : src/cm200_db.o
 
 # target to build an object file
 src/cm200_db.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/cm200_db.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/cm200_db.c.o
 .PHONY : src/cm200_db.c.o
 
 src/cm200_db.i: src/cm200_db.c.i
@@ -150,6 +164,7 @@ src/cm200_db.i: src/cm200_db.c.i
 # target to preprocess a source file
 src/cm200_db.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/cm200_db.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/cm200_db.c.i
 .PHONY : src/cm200_db.c.i
 
 src/cm200_db.s: src/cm200_db.c.s
@@ -158,6 +173,7 @@ src/cm200_db.s: src/cm200_db.c.s
 # target to generate assembly for a file
 src/cm200_db.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/cm200_db.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/cm200_db.c.s
 .PHONY : src/cm200_db.c.s
 
 src/decode.o: src/decode.cpp.o
@@ -166,6 +182,7 @@ src/decode.o: src/decode.cpp.o
 # target to build an object file
 src/decode.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/decode.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/decode.cpp.o
 .PHONY : src/decode.cpp.o
 
 src/decode.i: src/decode.cpp.i
@@ -174,6 +191,7 @@ src/decode.i: src/decode.cpp.i
 # target to preprocess a source file
 src/decode.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/decode.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/decode.cpp.i
 .PHONY : src/decode.cpp.i
 
 src/decode.s: src/decode.cpp.s
@@ -182,6 +200,7 @@ src/decode.s: src/decode.cpp.s
 # target to generate assembly for a file
 src/decode.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/decode.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/decode.cpp.s
 .PHONY : src/decode.cpp.s
 
 src/fe12_db.o: src/fe12_db.c.o
@@ -190,6 +209,7 @@ src/fe12_db.o: src/fe12_db.c.o
 # target to build an object file
 src/fe12_db.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/fe12_db.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/fe12_db.c.o
 .PHONY : src/fe12_db.c.o
 
 src/fe12_db.i: src/fe12_db.c.i
@@ -198,6 +218,7 @@ src/fe12_db.i: src/fe12_db.c.i
 # target to preprocess a source file
 src/fe12_db.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/fe12_db.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/fe12_db.c.i
 .PHONY : src/fe12_db.c.i
 
 src/fe12_db.s: src/fe12_db.c.s
@@ -206,6 +227,7 @@ src/fe12_db.s: src/fe12_db.c.s
 # target to generate assembly for a file
 src/fe12_db.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/fe12_db.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/fe12_db.c.s
 .PHONY : src/fe12_db.c.s
 
 src/ingestion.o: src/ingestion.cpp.o
@@ -214,6 +236,7 @@ src/ingestion.o: src/ingestion.cpp.o
 # target to build an object file
 src/ingestion.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/ingestion.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/ingestion.cpp.o
 .PHONY : src/ingestion.cpp.o
 
 src/ingestion.i: src/ingestion.cpp.i
@@ -222,6 +245,7 @@ src/ingestion.i: src/ingestion.cpp.i
 # target to preprocess a source file
 src/ingestion.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/ingestion.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/ingestion.cpp.i
 .PHONY : src/ingestion.cpp.i
 
 src/ingestion.s: src/ingestion.cpp.s
@@ -230,31 +254,56 @@ src/ingestion.s: src/ingestion.cpp.s
 # target to generate assembly for a file
 src/ingestion.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/ingestion.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/ingestion.cpp.s
 .PHONY : src/ingestion.cpp.s
 
-src/main.o: src/main.cpp.o
-.PHONY : src/main.o
+src/logger.o: src/logger.cpp.o
+.PHONY : src/logger.o
 
 # target to build an object file
-src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/main.cpp.o
-.PHONY : src/main.cpp.o
+src/logger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/logger.cpp.o
+.PHONY : src/logger.cpp.o
 
-src/main.i: src/main.cpp.i
-.PHONY : src/main.i
+src/logger.i: src/logger.cpp.i
+.PHONY : src/logger.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/logger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/logger.cpp.i
+.PHONY : src/logger.cpp.i
 
-src/main.s: src/main.cpp.s
-.PHONY : src/main.s
+src/logger.s: src/logger.cpp.s
+.PHONY : src/logger.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/logger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Logger.dir/build.make CMakeFiles/Logger.dir/src/logger.cpp.s
+.PHONY : src/logger.cpp.s
+
+src/publisher.o: src/publisher.cpp.o
+.PHONY : src/publisher.o
+
+# target to build an object file
+src/publisher.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/publisher.cpp.o
+.PHONY : src/publisher.cpp.o
+
+src/publisher.i: src/publisher.cpp.i
+.PHONY : src/publisher.i
+
+# target to preprocess a source file
+src/publisher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/publisher.cpp.i
+.PHONY : src/publisher.cpp.i
+
+src/publisher.s: src/publisher.cpp.s
+.PHONY : src/publisher.s
+
+# target to generate assembly for a file
+src/publisher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Backend.dir/build.make CMakeFiles/Backend.dir/src/publisher.cpp.s
+.PHONY : src/publisher.cpp.s
 
 # Help Target
 help:
@@ -266,6 +315,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Backend"
+	@echo "... Logger"
 	@echo "... src/cm200_db.o"
 	@echo "... src/cm200_db.i"
 	@echo "... src/cm200_db.s"
@@ -278,9 +328,12 @@ help:
 	@echo "... src/ingestion.o"
 	@echo "... src/ingestion.i"
 	@echo "... src/ingestion.s"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
+	@echo "... src/logger.o"
+	@echo "... src/logger.i"
+	@echo "... src/logger.s"
+	@echo "... src/publisher.o"
+	@echo "... src/publisher.i"
+	@echo "... src/publisher.s"
 .PHONY : help
 
 

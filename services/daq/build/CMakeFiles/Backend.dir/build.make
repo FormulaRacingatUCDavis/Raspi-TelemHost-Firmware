@@ -72,19 +72,19 @@ include CMakeFiles/Backend.dir/flags.make
 CMakeFiles/Backend.dir/codegen:
 .PHONY : CMakeFiles/Backend.dir/codegen
 
-CMakeFiles/Backend.dir/src/main.cpp.o: CMakeFiles/Backend.dir/flags.make
-CMakeFiles/Backend.dir/src/main.cpp.o: /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/main.cpp
-CMakeFiles/Backend.dir/src/main.cpp.o: CMakeFiles/Backend.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Backend.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Backend.dir/src/main.cpp.o -MF CMakeFiles/Backend.dir/src/main.cpp.o.d -o CMakeFiles/Backend.dir/src/main.cpp.o -c /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/main.cpp
+CMakeFiles/Backend.dir/src/publisher.cpp.o: CMakeFiles/Backend.dir/flags.make
+CMakeFiles/Backend.dir/src/publisher.cpp.o: /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/publisher.cpp
+CMakeFiles/Backend.dir/src/publisher.cpp.o: CMakeFiles/Backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Backend.dir/src/publisher.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Backend.dir/src/publisher.cpp.o -MF CMakeFiles/Backend.dir/src/publisher.cpp.o.d -o CMakeFiles/Backend.dir/src/publisher.cpp.o -c /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/publisher.cpp
 
-CMakeFiles/Backend.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Backend.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/main.cpp > CMakeFiles/Backend.dir/src/main.cpp.i
+CMakeFiles/Backend.dir/src/publisher.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Backend.dir/src/publisher.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/publisher.cpp > CMakeFiles/Backend.dir/src/publisher.cpp.i
 
-CMakeFiles/Backend.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Backend.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/main.cpp -o CMakeFiles/Backend.dir/src/main.cpp.s
+CMakeFiles/Backend.dir/src/publisher.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Backend.dir/src/publisher.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/publisher.cpp -o CMakeFiles/Backend.dir/src/publisher.cpp.s
 
 CMakeFiles/Backend.dir/src/ingestion.cpp.o: CMakeFiles/Backend.dir/flags.make
 CMakeFiles/Backend.dir/src/ingestion.cpp.o: /home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/ingestion.cpp
@@ -144,7 +144,7 @@ CMakeFiles/Backend.dir/src/cm200_db.c.s: cmake_force
 
 # Object files for target Backend
 Backend_OBJECTS = \
-"CMakeFiles/Backend.dir/src/main.cpp.o" \
+"CMakeFiles/Backend.dir/src/publisher.cpp.o" \
 "CMakeFiles/Backend.dir/src/ingestion.cpp.o" \
 "CMakeFiles/Backend.dir/src/decode.cpp.o" \
 "CMakeFiles/Backend.dir/src/fe12_db.c.o" \
@@ -153,7 +153,7 @@ Backend_OBJECTS = \
 # External object files for target Backend
 Backend_EXTERNAL_OBJECTS =
 
-Backend: CMakeFiles/Backend.dir/src/main.cpp.o
+Backend: CMakeFiles/Backend.dir/src/publisher.cpp.o
 Backend: CMakeFiles/Backend.dir/src/ingestion.cpp.o
 Backend: CMakeFiles/Backend.dir/src/decode.cpp.o
 Backend: CMakeFiles/Backend.dir/src/fe12_db.c.o

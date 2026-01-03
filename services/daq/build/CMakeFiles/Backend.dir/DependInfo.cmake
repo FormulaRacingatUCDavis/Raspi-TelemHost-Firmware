@@ -12,7 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/fe12_db.c" "CMakeFiles/Backend.dir/src/fe12_db.c.o" "gcc" "CMakeFiles/Backend.dir/src/fe12_db.c.o.d"
   "/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/decode.cpp" "CMakeFiles/Backend.dir/src/decode.cpp.o" "gcc" "CMakeFiles/Backend.dir/src/decode.cpp.o.d"
   "/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/ingestion.cpp" "CMakeFiles/Backend.dir/src/ingestion.cpp.o" "gcc" "CMakeFiles/Backend.dir/src/ingestion.cpp.o.d"
-  "/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/main.cpp" "CMakeFiles/Backend.dir/src/main.cpp.o" "gcc" "CMakeFiles/Backend.dir/src/main.cpp.o.d"
+  "/home/frucd/Projects/Raspi-TelemHost-Firmware/services/daq/src/publisher.cpp" "CMakeFiles/Backend.dir/src/publisher.cpp.o" "gcc" "CMakeFiles/Backend.dir/src/publisher.cpp.o.d"
   "" "Backend" "gcc" "CMakeFiles/Backend.dir/link.d"
   )
 

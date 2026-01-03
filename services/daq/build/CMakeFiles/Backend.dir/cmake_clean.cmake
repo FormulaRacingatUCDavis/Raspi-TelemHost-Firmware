@@ -10,8 +10,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Backend.dir/src/fe12_db.c.o.d"
   "CMakeFiles/Backend.dir/src/ingestion.cpp.o"
   "CMakeFiles/Backend.dir/src/ingestion.cpp.o.d"
-  "CMakeFiles/Backend.dir/src/main.cpp.o"
-  "CMakeFiles/Backend.dir/src/main.cpp.o.d"
+  "CMakeFiles/Backend.dir/src/publisher.cpp.o"
+  "CMakeFiles/Backend.dir/src/publisher.cpp.o.d"
 )
 
 # Per-language clean rules from dependency scanning.
