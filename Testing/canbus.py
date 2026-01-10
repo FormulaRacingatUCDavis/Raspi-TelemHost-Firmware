@@ -5,13 +5,16 @@ import cantools
 
 
 # Test CAN messages 0 to N
-N = 8
+N = 11
 # Or test one CAN message if N = None
 MSG_IND = 7
 
 
-cm200_db = cantools.database.load_file('20240129 Gen5 CAN DB.dbc')
-fe_db = cantools.database.load_file('FE12.dbc')
+root = os.path.dirname(os.path.dirname(__file__))
+fe_dbc_path = os.path.join(root, 'FE12.dbc')
+cm200_dbc_path = os.path.join(root, '20240129 Gen5 CAN DB.dbc')
+cm200_db = cantools.database.load_file(cm200_dbc_path)
+fe_db = cantools.database.load_file(fe_dbc_path)
 bus = can.interface.Bus(channel='vcan0', interface='socketcan')
 
 msg_names = [
@@ -26,7 +29,7 @@ msg_names = [
     'M172_Torque_And_Timer_Info',
     'Dashboard_Vehicle_State',
     'PEI_BMS_Status',
-    'Dashboard_Knobs'
+    'Dashboard_Inputs'
 ]
 
 vcu_states = [
@@ -55,55 +58,60 @@ while True:
         try:
             message = db.get_message_by_name(msg_name)
             source_db = db_name
-            break  # Exit loop once found
+            break
         except KeyError:
             continue
 
     if source_db == 'fe':
         match msg_name:
-            case 'Dashboard_Vehicle_State':
+            case 'Vehicle_State':
                 data = {
-                    'HV_Requested': random.randint(0, 1),
-                    'Throttle1_Level': random.randint(0, 100),
-                    'Throttle2_Level': random.randint(0, 100),
-                    'Brake_Level': random.randint(0, 100),
-                    'VCU_ticks': random.randint(0,65535),
-                    'State': vcu_states[random.randint(0,15)]
+                    'Dashboard_HV_Requested': random.randint(0, 1),
+                    'Dashboard_Throttle1_Level': random.randint(0, 100),
+                    'Dashboard_Throttle2_Level': random.randint(0, 100),
+                    'Dashboard_Brake_Level': random.randint(0, 100),
+                    'Dashboard_VCU_ticks': random.randint(0,65535),
+                    'Dashboard_State': vcu_states[random.randint(0,15)]
                 }
-            case 'PEI_BMS_Status':
+            case 'BMS_Status':
                 data = {
-                    'BMS_Status': bms_states[random.randint(0, 4)],
-                    'SPI_Error_Flags': random.randint(0, 65535),
-                    'Max_Faulting_IC_Address': random.randint(0, 9),
-                    'Communication_Break_ID': random.randint(-1, 9)
+                    'PEI_BMS_Status': bms_states[random.randint(0, 4)],
+                    'PEI_SPI_Error_Flags': random.randint(0, 65535),
+                    'PEI_Max_Faulting_IC_Address': random.randint(0, 9),
+                    'PEI_Communication_Break_ID': random.randint(-1, 9)
                 }
-            case 'PEI_Diagnostic_BMS_Data':
+            case 'Diagnostic_BMS_Data':
                 data = {
-                    'HI_Temp': random.randint(0, 255),
-                    'SOC': random.randint(0, 100),
-                    'Pack_Voltage': random.randint(-32768, 32767)
+                    'PEI_HI_Temp': random.randint(0, 255),
+                    'PEI_SOC': random.randint(0, 100),
+                    'PEI_Pack_Voltage': random.randint(-32768, 32767)
                 }
-            case 'Dashboard_Random_Shit':
+            case 'Random_Shit':
                 data = {
-                    'Front_Strain_Gauge': random.randint(0, 65535),
-                    'Front_Wheel_Speed': random.randint(0, 65535),
-                    'TC_Torque_Request': round(random.uniform(0, 6553.5), 1)
+                    'Dashboard_Front_Strain_Gauge': random.randint(0, 65535),
+                    'Dashboard_Front_Wheel_Speed': random.randint(0, 65535),
+                    'Dashboard_TC_Torque_Request': round(random.uniform(0, 6553.5), 1)
                 }
-            case 'Dashboard_Knobs':
+            case 'Inputs':
                 data = {
-                    'Knob1': random.randint(0, 4095),
-                    'Knob2': random.randint(0, 4095),
+                    'Dashboard_Knob1': random.randint(0, 100),
+                    'Dashboard_Knob2': random.randint(0, 100),
+                    'Dashboard_OVERTAKE': random.randint(0, 1),
+                    'Dashboard_MARKER': random.randint(0, 1),
+                    'Dashboard_TC': random.randint(0, 1),
+                    'Dashboard_DISPLAY_MODE': random.randint(0, 1)
                 }
-            case 'PEI_Status':
+            case 'Status':
                 data = {
-                    'Current_ADC': random.randint(0, 65535),
-                    'Current_Reference': random.randint(0, 65535),
-                    'IMD_OK': random.randint(0, 1),
-                    'BMS_OK': random.randint(0, 1),
-                    'SHUTDOWN_FINAL': random.randint(0, 1),
-                    'AIR_NEG': random.randint(0, 1),
-                    'AIR_POS': random.randint(0, 1),
-                    'PRECHARGE': random.randint(0, 1),
+                    'PEI_Current_ADC': random.randint(0, 65535),
+                    # 'Current_Reference': random.randint(-2048, 2047),
+                    'PEI_Current_Reference': random.randint(0, 2047),
+                    'PEI_IMD_OK': random.randint(0, 1),
+                    'PEI_BMS_OK': random.randint(0, 1),
+                    'PEI_SHUTDOWN_FINAL': random.randint(0, 1),
+                    'PEI_AIR_NEG': random.randint(0, 1),
+                    'PEI_AIR_POS': random.randint(0, 1),
+                    'PEI_PRECHARGE': random.randint(0, 1),
                 }
     elif source_db == 'cm200':
         match msg_name:
@@ -146,9 +154,9 @@ while True:
                 data = {
                     'INV_Commanded_Torque': round(random.uniform(-3276.8, 3276.7), 1),
                     'INV_Torque_Feedback': round(random.uniform(-3276.8, 3276.7), 1),
-                    'INV_Power_On_Timer': random.randint(0, 1.28848e07)
+                    'INV_Power_On_Timer': random.randint(0, 12884800)
                 }
-            
+
     encoded = message.encode(data)
     msg = can.Message(arbitration_id=message.frame_id, data=encoded, is_extended_id=False)
     bus.send(msg)

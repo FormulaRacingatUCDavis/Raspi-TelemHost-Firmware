@@ -7,7 +7,7 @@ Item {
 
     Timer {
         id: closetimer
-        interval: 5000
+        interval: 2000
         running: Data.whichPopupVisible != -1 ? true
             : false
         onTriggered: {
@@ -62,7 +62,7 @@ Item {
                     id: torqueval
                     color: "black"
                     font.pixelSize: torquepopup.width * 0.1
-                    text: (Data.torquelimit == -1) ? "" + Data.torquelimit + "%"
+                    text: (Data.torquelimit == -1) ? "" + Data.torquelimit + "%" : ""
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -127,7 +127,7 @@ Item {
                 Text {
                     id: launchcontrolval
                     color: "black"
-                    font.pixelSize: torque2popup.width * 0.1
+                    font.pixelSize: launchcontrolval.width * 0.1
                     text: (Data.launchcontrol == -1) ? "" : Data.launchcontrol + "%"
 
                     anchors.horizontalCenter: parent.horizontalCenter

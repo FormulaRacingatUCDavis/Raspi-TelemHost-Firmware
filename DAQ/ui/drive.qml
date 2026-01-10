@@ -21,6 +21,26 @@ Rectangle {
     property real fullfontsize: mainwindow.width * 0.1
     property real smallerfontsize: mainwindow.width * 0.08
     property real titlefontsize: mainwindow.width * 0.04
+
+    Rectangle {
+        id: ovtbox
+        color: (Data.overtake == 1) ? "white" : "black"
+        anchors.top: parent.top
+        anchors.right: parent.right
+        width: parent.width * 0.1
+        height: parent.height * 0.1
+
+        Text {
+            id: ovttext
+            text: "OVT" 
+            font.pixelSize: ovtbox.width * 0.5
+            font.family: mainwindow.typeface
+            color: "black"
+            anchors.fill: parent
+            horizontalAlignment: Text.AlignHCenter 
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
     
     GridLayout {
         id: grid
@@ -165,7 +185,7 @@ Rectangle {
 
             Text {
                 id: glvvvalue
-                text: (Data.glvv == -1) ? "" : "" + Data.glvv
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv.toFixed(2)
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 color: "black" 

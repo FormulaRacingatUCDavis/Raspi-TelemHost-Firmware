@@ -1,115 +1,212 @@
-#include "observer.h"
+// #include "observer.h"
+
+// #include "iostream"
 
 
-namespace frucd::daq
-{   
-    
-    // need to finish these two
-    void DashboardObserver::feHandler(
-        const dbcppp::IMessage& msg, 
-        const dbcppp::INetwork& spec, 
-        const struct can_frame& frame)
-    {
-        std::unordered_map<std::string, std::pair<const dbcppp::ISignal*, double>> sig_map;
-        for (const dbcppp::ISignal& sig : msg.Signals())
-        {
-            double phys = sig.RawToPhys(sig.Decode(frame.data));
-            sig_map[sig.Name()] = std::make_pair(&sig, phys);
-        }
+// namespace frucd::daq
+// {   
+//     // void DashboardObserver::Handler(uint32_t id, struct can_frame frame) {
+//     //     switch (id) {
+//     //         case 0x501: // 1281 Dashboard_Inputs
 
-        switch (msg.Id()) {
-            case 0x501:
-                Variables::setdashboardpage(sig_map["DISPLAY_MODE"].second);
-                Variables::settorquelimit(sig_map["KNOB1"].second);
-                Variables::setlaunchcontrol(sig_map["KNOB2"].second);
-                break;
+//     //             struct fe12_inputs_t input_msg;
+//     //             fe12_inputs_unpack(&input_msg, frame.data, frame.can_dlc);
+//     //             Variables::setdashboardpage(input_msg.dashboard_display_mode);
+//     //             Variables::settorquelimit(input_msg.dashboard_knob1);
+//     //             Variables::setlaunchcontrol(input_msg.dashboard_knob2);
+//     //             break;
 
-            case 0x766:
-                if (auto state = GetStringEncoding(*(sig_map["STATE"].first), static_cast<int64_t>(sig_map["STATE"].second));
-                    state.has_value())
-                {
-                    Variables::setvehiclestate(state.value(), sig_map["State"].second);
-                }
-                break;
+//     //         case 0x766: // 1894 Dashboard_Vehicle_State
+//     //             struct fe12_vehicle_state_t state_msg;
+//     //             fe12_vehicle_state_unpack(&state_msg, frame.data, frame.can_dlc);
+//     //             Variables::setvehiclestate(state_msg.dashboard_state, false);
+//     //             break;
 
-            case 0x380:
-                if (auto state = GetStringEncoding(*(sig_map["BMS_STATUS"].first), static_cast<int64_t>(sig_map["BMS_STATUS"].second));
-                    state.has_value() && sig_map["BMS_STATUS"].second > 2)
-                {
-                    Variables::setvehiclestate(state.value(), sig_map["BMS_STATUS"].second);
-                }
-                break;
+//     //         // case 0x380: // 896 PEI_BMS_STATUS
+//     //         //     Variables::setvehiclestate(sig_map["BMS_Status"].second, true);
+//     //         //     break;
             
-            case 0x381:
-                Variables::setsoc(sig_map["SOC"].second);
-                Variables::setpacktemp(sig_map["HI_TEMP"].second);
-                break;
+//     //         // case 0x381: // 897 PEI_Diagnostic_BMS_Data
+//     //         //     Variables::setsoc(sig_map["SOC"].second);
+//     //         //     Variables::setpacktemp(sig_map["HI_Temp"].second);
+//     //         //     break;
 
-            case 0x387:
-                if (sig_map["PRECHARGE"].second == 0) {
-                    Variables::setshutdowncircuit("PRECHARGE");
-                } else if (sig_map["AIR_NEG"].second == 0) {
-                    Variables::setshutdowncircuit("AIR NEG");
-                } else if (sig_map["AIR_POS"].second == 0) {
-                    Variables::setshutdowncircuit("AIR POS");
-                } else if (sig_map["BMS_OK"].second == 0) {
-                    Variables::setshutdowncircuit("BMS OK");
-                } else if (sig_map["IMD_OK"].second == 0) {
-                    Variables::setshutdowncircuit("IMD OK");
-                } else if (sig_map["SHUTDOWN_FINAL"].second == 0) {
-                    Variables::setshutdowncircuit("SHUTDOWN FINAL");
-                } else {
-                    Variables::setshutdowncircuit("NO SHUTDOWN");
-                } 
-                break;
-        }
-    }
+//     //         // case 0x387: // 903 PEI_Status
+//     //         //     if (sig_map["PRECHARGE"].second == 0) {
+//     //         //         Variables::setshutdowncircuit("PRECHARGE");
+//     //         //     } else if (sig_map["AIR_NEG"].second == 0) {
+//     //         //         Variables::setshutdowncircuit("AIR NEG");
+//     //         //     } else if (sig_map["AIR_POS"].second == 0) {
+//     //         //         Variables::setshutdowncircuit("AIR POS");
+//     //         //     } else if (sig_map["BMS_OK"].second == 0) {
+//     //         //         Variables::setshutdowncircuit("BMS OK");
+//     //         //     } else if (sig_map["IMD_OK"].second == 0) {
+//     //         //         Variables::setshutdowncircuit("IMD OK");
+//     //         //     } else if (sig_map["SHUTDOWN_FINAL"].second == 0) {
+//     //         //         Variables::setshutdowncircuit("SHUTDOWN FINAL");
+//     //         //     } else {
+//     //         //         Variables::setshutdowncircuit("NO SHUTDOWN");
+//     //         //     } 
+//     //         //     break;
 
-    void DashboardObserver::mcHandler(
-        const dbcppp::IMessage& msg, 
-        const dbcppp::INetwork& spec, 
-        const struct can_frame& frame)
-    {
-        std::unordered_map<std::string, double> sig_map;
-        for (const dbcppp::ISignal& sig : msg.Signals())
-        {
-            double phys = sig.RawToPhys(sig.Decode(frame.data));
-            sig_map[sig.Name()] = phys;
-        }
-
-        switch (msg.Id()) {
-            case 0x0A0:
-                Variables::setmctemp(sig_map["INV_Module_A_Temp"], 
-                                     sig_map["INV_Module_B_Temp"],
-                                     sig_map["INV_Module_C_Temp"]);
-                break;
+//     //         // case 0x0A0: // 160 M160_Temperature_Set_1:
+//     //         //     Variables::setmctemp(sig_map["INV_Module_A_Temp"], 
+//     //         //                          sig_map["INV_Module_B_Temp"],
+//     //         //                          sig_map["INV_Module_C_Temp"]);
+//     //         //     break;
             
-            case 0x0A2:
-                Variables::setmotortemp(sig_map["INV_Motor_Temp"]);
-                break;
+//     //         // case 0x0A2: // 162 M162_Temperature_Set_3
+//     //         //     Variables::setmotortemp(sig_map["INV_Motor_Temp"]);
+//     //         //     break;
             
-            case 0x0A9:
-                Variables::setglvv(sig_map["INV_Ref_Voltage_12_0"]);
-                break;
+//     //         // case 0x0A9: // 169 M169_Internal_Voltages
+//     //         //     Variables::setglvv(sig_map["INV_Ref_Voltage_12_0"]);
+//     //         //     break;
+            
+//     //         // //
+//     //         // case 0x0AB: // 171 M171_Fault_Codes
+//     //         //     if ((sig_map["INV_Post_Fault_Lo"] != 0.0) || (sig_map["INV_Post_Fault_Hi"] != 0.0))
+//     //         //     {
+//     //         //         // make sure this gets right value]
+//     //         //         uint32_t faultid = (uint32_t) sig_map["INV_Post_Fault_Lo"] 
+//     //         //                             | ((uint32_t) sig_map["INV_Post_Fault_Hi"] << 16);
+//     //         //         Variables::setmcfault(faultid, true);
+//     //         //     } else if ((sig_map["INV_Run_Fault_Lo"] != 0.0) || (sig_map["INV_Run_Fault_Hi"] != 0.0)) {
+//     //         //         // make sure this gets right value
+//     //         //         uint32_t faultid = (uint32_t) sig_map["INV_Run_Fault_Lo"] 
+//     //         //                             | ((uint32_t) sig_map["INV_Run_Fault_Hi"] << 16);
+//     //         //         Variables::setmcfault(faultid, false);
+//     //         //     }
+//     //         //     break;
 
-            case 0x0AB:
-                if ((sig_map["INV_Post_Fault_Lo"] != 0.0) && (sig_map["INV_Post_Fault_Hi"] != 0.0))
-                {
-                    // make sure this gets right value
-                    uint32_t faultid = (uint32_t) sig_map["INV_Post_Fault_Lo"] 
-                                        | ((uint32_t) sig_map["INV_Post_Fault_Hi"] << 16);
-                    Variables::setmcfault(faultid, true);
-                } else if ((sig_map["INV_Run_Fault_Lo"] != 0.0) && (sig_map["INV_Run_Fault_Hi"] != 0.0)) {
-                    // make sure this gets right value
-                    uint32_t faultid = (uint32_t) sig_map["INV_Run_Fault_Lo"] 
-                                        | ((uint32_t) sig_map["INV_Run_Fault_Hi"] << 16);
-                    Variables::setmcfault(faultid, false);
-                }
-                break;
+//     //         // case 0x0A5: // 165 M165_Motor_Position_Info
+//     //         //     Variables::setmph(std::abs(sig_map["INV_Motor_Speed"]) * 0.016349); // = rpm * (60 * pi * Tire Diameter) / (Final Drive Ratio * 63360)
+//     //         //     break; 
+//     //     }
+//     // }
+//     // need to finish these two
+//     void DashboardObserver::feHandler(
+//         const dbcppp::IMessage& msg, 
+//         const dbcppp::INetwork& spec, 
+//         const struct can_frame& frame)
+//     {
+//         std::unordered_map<std::string, std::pair<const dbcppp::ISignal*, double>> sig_map;
+//         for (const dbcppp::ISignal& sig : msg.Signals())
+//         {
+//             double phys = sig.RawToPhys(sig.Decode(frame.data));
+//             sig_map[sig.Name()] = std::make_pair(&sig, phys);
+//         }
 
-            case 0x0A5:
-                Variables::setmph(std::abs(sig_map["INV_MOTOR_SPEED"]) * 0.016349); // = rpm * (60 * pi * Tire Diameter) / (Final Drive Ratio * 63360)
-                break; 
-        }
-    }
-}
+//         switch (msg.Id()) {
+//             case 0x501: // 1281 Dashboard_Inputs
+//                 Variables::setdashboardpage(sig_map["DISPLAY_MODE"].second);
+
+//                 std::cout << "knob1: " << sig_map["KNOB1"].second <<  " knob2: " << sig_map["KNOB2"].second << "\n" << std::endl;
+//                 // if (sig_map["KNOB1"].second != 0.0) {
+//                 //     Variables::settorquelimit(sig_map["KNOB1"].second);
+//                 // } else if (sig_map["KNOB2"].second != 0.0) {
+//                 //     Variables::setlaunchcontrol(sig_map["KNOB2"].second);
+//                 // }
+
+//                 struct fe12_inputs_t msg;
+//                 fe12_inputs_unpack(&msg, frame.data, frame.can_dlc);
+//                 Variables::settorquelimit(msg.dashboard_knob1);
+//                 Variables::setlaunchcontrol(msg.dashboard_knob2);
+//                 break;
+
+//             // case 0x766:
+//             //     if (auto state = GetStringEncoding(*(sig_map["State"].first), static_cast<int64_t>(sig_map["State"].second));
+//             //         state.has_value())
+//             //     {
+//             //         Variables::setvehiclestate(state.value(), sig_map["State"].second);
+//             //     }
+//             //     break;
+//             case 0x766: // 1894 Dashboard_Vehicle_State
+//                 Variables::setvehiclestate(sig_map["State"].second, false);
+//                 break;
+
+//             // case 0x380:
+//             //     if (auto state = GetStringEncoding(*(sig_map["BMS_Status"].first), static_cast<int64_t>(sig_map["BMS_Status"].second));
+//             //         state.has_value() && sig_map["BMS_Status"].second > 2)
+//             //     {
+//             //         Variables::setvehiclestate(state.value(), sig_map["BMS_Status"].second);
+//             //     }
+//             //     break;
+//             case 0x380: // 896 PEI_BMS_STATUS
+//                 Variables::setvehiclestate(sig_map["BMS_Status"].second, true);
+//                 break;
+            
+//             case 0x381: // 897 PEI_Diagnostic_BMS_Data
+//                 Variables::setsoc(sig_map["SOC"].second);
+//                 Variables::setpacktemp(sig_map["HI_Temp"].second);
+//                 break;
+
+//             case 0x387: // 903 PEI_Status
+//                 if (sig_map["PRECHARGE"].second == 0) {
+//                     Variables::setshutdowncircuit("PRECHARGE");
+//                 } else if (sig_map["AIR_NEG"].second == 0) {
+//                     Variables::setshutdowncircuit("AIR NEG");
+//                 } else if (sig_map["AIR_POS"].second == 0) {
+//                     Variables::setshutdowncircuit("AIR POS");
+//                 } else if (sig_map["BMS_OK"].second == 0) {
+//                     Variables::setshutdowncircuit("BMS OK");
+//                 } else if (sig_map["IMD_OK"].second == 0) {
+//                     Variables::setshutdowncircuit("IMD OK");
+//                 } else if (sig_map["SHUTDOWN_FINAL"].second == 0) {
+//                     Variables::setshutdowncircuit("SHUTDOWN FINAL");
+//                 } else {
+//                     Variables::setshutdowncircuit("NO SHUTDOWN");
+//                 } 
+//                 break;
+//         }
+//     }
+
+//     void DashboardObserver::mcHandler(
+//         const dbcppp::IMessage& msg, 
+//         const dbcppp::INetwork& spec, 
+//         const struct can_frame& frame)
+//     {
+//         std::unordered_map<std::string, double> sig_map;
+//         for (const dbcppp::ISignal& sig : msg.Signals())
+//         {
+//             double phys = sig.RawToPhys(sig.Decode(frame.data));
+//             sig_map[sig.Name()] = phys;
+//         }
+
+//         switch (msg.Id()) {
+//             case 0x0A0: // 160 M160_Temperature_Set_1:
+//                 Variables::setmctemp(sig_map["INV_Module_A_Temp"], 
+//                                      sig_map["INV_Module_B_Temp"],
+//                                      sig_map["INV_Module_C_Temp"]);
+//                 break;
+            
+//             case 0x0A2: // 162 M162_Temperature_Set_3
+//                 Variables::setmotortemp(sig_map["INV_Motor_Temp"]);
+//                 break;
+            
+//             case 0x0A9: // 169 M169_Internal_Voltages
+//                 Variables::setglvv(sig_map["INV_Ref_Voltage_12_0"]);
+//                 break;
+            
+//             //
+//             case 0x0AB: // 171 M171_Fault_Codes
+//                 if ((sig_map["INV_Post_Fault_Lo"] != 0.0) || (sig_map["INV_Post_Fault_Hi"] != 0.0))
+//                 {
+//                     // make sure this gets right value]
+//                     uint32_t faultid = (uint32_t) sig_map["INV_Post_Fault_Lo"] 
+//                                         | ((uint32_t) sig_map["INV_Post_Fault_Hi"] << 16);
+//                     Variables::setmcfault(faultid, true);
+//                 } else if ((sig_map["INV_Run_Fault_Lo"] != 0.0) || (sig_map["INV_Run_Fault_Hi"] != 0.0)) {
+//                     // make sure this gets right value
+//                     uint32_t faultid = (uint32_t) sig_map["INV_Run_Fault_Lo"] 
+//                                         | ((uint32_t) sig_map["INV_Run_Fault_Hi"] << 16);
+//                     Variables::setmcfault(faultid, false);
+//                 }
+//                 break;
+
+//             case 0x0A5: // 165 M165_Motor_Position_Info
+//                 Variables::setmph(std::abs(sig_map["INV_Motor_Speed"]) * 0.016349); // = rpm * (60 * pi * Tire Diameter) / (Final Drive Ratio * 63360)
+//                 break; 
+//         }
+//     }
+// }

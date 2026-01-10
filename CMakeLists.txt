@@ -26,6 +26,8 @@ set(DAQ_SOURCES
     DAQ/Src/config.cpp
     DAQ/Src/observer.cpp
     DAQ/Src/variables.cpp
+    DAQ/Src/fe12.c
+    DAQ/Src/gen5_inv.c
 
     DAQ/Inc/variables.h
     DAQ/Inc/logthread.h

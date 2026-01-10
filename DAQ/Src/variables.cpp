@@ -33,9 +33,11 @@ namespace frucd::daq
 
     int Variables::m_motortemp = -1;
 
-    int Variables::m_torquelimit = -1;
+    int Variables::m_overtake = 1;
 
-    int Variables::m_launchcontrol = -1;
+    int Variables::m_torquelimit = 0;
+
+    int Variables::m_launchcontrol = 0;
 
     int Variables::m_whichPopupVisible = -1;
 
@@ -111,6 +113,10 @@ namespace frucd::daq
         return m_motortemp;
     }
 
+    int Variables::overtake() {
+        return m_overtake;
+    }
+
     int Variables::torquelimit() {
         return m_torquelimit;
     }
@@ -136,23 +142,102 @@ namespace frucd::daq
         }
     }
 
-    void Variables::setvehiclestate(std::string state, int faultid) {
-        QString qstate = QString::fromStdString(state);
-        if (m_vehiclestate != qstate) {
-            m_vehiclestate = qstate;
+    // void Variables::setvehiclestate(std::string state, int faultid) {
+    //     // QString qstate = QString::fromStdString(state);
+    //     QString qstate = QString::number(faultid);
+    //     if (m_vehiclestate != qstate) {
+    //         m_vehiclestate = qstate;
             
-            if (faultid > 5) {
-                if (faultid == 134 || faultid == 136) {
-                    m_vehiclestate_color = yellow;
-                } else {
-                    m_vehiclestate_color = red;
-                }
-            } else {
+    //         if (faultid > 5) {
+    //             if (faultid == 134 || faultid == 136) {
+    //                 m_vehiclestate_color = yellow;
+    //             } else {
+    //                 m_vehiclestate_color = red;
+    //             }
+    //         } else {
+    //             m_vehiclestate_color = green;
+    //         }
+    //         emit Variables::instance()->vehiclestate_colorChanged();
+    //         emit Variables::instance()->vehiclestateChanged();
+    //     }
+    // }
+
+    void Variables::setvehiclestate(int state, bool bms) {
+        if (bms == false) {
+            if (state == 0) {
+                m_vehiclestate = "LV";
                 m_vehiclestate_color = green;
+            } else if (state == 1) {
+                m_vehiclestate = "Precharge";
+                m_vehiclestate_color = green;
+            } else if (state == 2) {
+                m_vehiclestate = "HV";
+                m_vehiclestate_color = green;
+            } else if (state == 3) {
+                m_vehiclestate = "Drive";
+                m_vehiclestate_color = green;
+            } else if (state == 5) {
+                m_vehiclestate = "Startup";
+                m_vehiclestate_color = green;
+            } else if (state == 129) {
+                m_vehiclestate = "Drive request from LV";
+                m_vehiclestate_color = red;
+            } else if (state == 130) {
+                m_vehiclestate = "Precharge timeout";
+                m_vehiclestate_color = red;
+            } else if (state == 131) {
+                m_vehiclestate = "Brake not pressed";
+                m_vehiclestate_color = red;
+            } else if (state == 132) {
+                m_vehiclestate = "HV disabled while driving";
+                m_vehiclestate_color = red;
+            } else if (state == 133) {
+                m_vehiclestate = "Sensor discrepency";
+                m_vehiclestate_color = red;
+            } else if (state == 134) {
+                m_vehiclestate = "BSPD tripped";
+                m_vehiclestate_color = yellow;
+            } else if (state == 135) {
+                m_vehiclestate = "Shutdown circut open";
+                m_vehiclestate_color = red;
+            } else if (state == 136) {
+                m_vehiclestate = "Uncalibrated";
+                m_vehiclestate_color = yellow;
+            } else if (state == 137) {
+                m_vehiclestate = "Hard BSPD";
+                m_vehiclestate_color = red;
+            } else if (state == 138) {
+                m_vehiclestate = "MC fault";
+                m_vehiclestate_color = red;
             }
-            emit Variables::instance()->vehiclestate_colorChanged();
-            emit Variables::instance()->vehiclestateChanged();
         }
+        if (bms == true) {
+            if (state == 2) {
+                m_vehiclestate = "Pack temp over";
+                m_vehiclestate_color = red;
+            } else if (state == 4) {
+                m_vehiclestate = "Pack temp under";
+                m_vehiclestate_color = red;
+            } else if (state == 8) {
+                m_vehiclestate = "Cell volt over";
+                m_vehiclestate_color = red;
+            } else if (state == 16) {
+                m_vehiclestate = "Cell volt under";
+                m_vehiclestate_color = red;
+            } else if (state == 32) {
+                m_vehiclestate = "Open wire - offboard disconnection  between cell and BMS IC";
+                m_vehiclestate_color = red;
+            } else if (state == 64) {
+                m_vehiclestate = "Mismatch";
+                m_vehiclestate_color = red;
+            } else if (state == 128) {
+                m_vehiclestate = "SPI fault";
+                m_vehiclestate_color = red;
+            }
+        }
+
+        emit Variables::instance()->vehiclestateChanged();
+        emit Variables::instance()->vehiclestate_colorChanged();
     }
 
     void Variables::setsoc(int charge) {
@@ -167,27 +252,29 @@ namespace frucd::daq
         if (m_mctemp != max_temp) {
             m_mctemp = max_temp;
             if (m_mctemp < 45) {
-                m_mctemp_color = "green";
+                m_mctemp_color = green;
             } else if (m_mctemp < 50) {
-                m_mctemp_color = "yellow";
+                m_mctemp_color = yellow;
             } else {
-                m_mctemp_color = "red";
+                m_mctemp_color = red;
             }
             emit Variables::instance()->mctempChanged();
+            emit Variables::instance()->mctemp_colorChanged();
         }
     }
 
     void Variables::setglvv(double volt) {
-        if (m_glvv != (volt * 100) / 100) {
-            m_glvv = (volt * 100) / 100;
+        if (m_glvv != volt) {
+            m_glvv = volt;
             if (m_glvv > 10) {
-                m_glvv_color = "green";
+                m_glvv_color = green;
             } else if (m_glvv > 9) {
-                m_glvv_color = "yellow";
+                m_glvv_color = yellow;
             } else {
-                m_glvv_color = "red";
+                m_glvv_color = red;
             }
             emit Variables::instance()->glvvChanged();
+            emit Variables::instance()->glvv_colorChanged();
         }
     }
 
@@ -356,6 +443,13 @@ namespace frucd::daq
         }
     }
 
+    void Variables::setovertake(int status) {
+        if (m_overtake != status) {
+            m_overtake = status;
+            emit Variables::instance()->overtakeChanged();
+        }
+    }
+
     void Variables::settorquelimit(int limit) {
         if (m_torquelimit != limit) {
             m_torquelimit = limit;
@@ -375,17 +469,20 @@ namespace frucd::daq
     void Variables::showEventPopUp(int which) {
         if (m_whichPopupVisible != which) {
             m_whichPopupVisible = which;
+            std::cout << m_whichPopupVisible << "\n" << std::endl;
             emit Variables::instance()->whichPopupVisibleChanged();
         }
     }
     void Variables::hidePopup() {
         if (m_whichPopupVisible != -1) {
             m_whichPopupVisible = -1;
+            std::cout << m_whichPopupVisible << "\n" << std::endl;
             emit Variables::instance()->whichPopupVisibleChanged();
         }
     }
 
     void Variables::setdashboardpage(int page) {
+        std::cout << page << std::endl;
         QString qpage = "drive.qml";
         if (page == 1) {
             qpage = "debug.qml";

@@ -5,6 +5,7 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 
 namespace frucd::daq
@@ -38,6 +39,8 @@ namespace frucd::daq
         Q_PROPERTY(int packtemp READ packtemp NOTIFY packtempChanged)
 
         Q_PROPERTY(int motortemp READ motortemp NOTIFY motortempChanged)
+
+        Q_PROPERTY(int overtake READ overtake NOTIFY overtakeChanged)
 
         Q_PROPERTY(int torquelimit READ torquelimit NOTIFY torquelimitChanged)
 
@@ -74,6 +77,8 @@ namespace frucd::daq
         
         static int motortemp();
 
+        static int overtake();
+
         static int torquelimit();
 
         static int launchcontrol();
@@ -86,7 +91,8 @@ namespace frucd::daq
         // setter functions
         static void setmph(int speed);
 
-        static void setvehiclestate(std::string state, int faultid);
+        // static void setvehiclestate(std::string state, int faultid);
+        static void setvehiclestate(int state, bool bms);
 
         static void setsoc(int charge);
 
@@ -101,6 +107,8 @@ namespace frucd::daq
         static void setpacktemp(int temp);
 
         static void setmotortemp(int temp);
+
+        static void setovertake(int status);
 
         static void settorquelimit(int limit);
 
@@ -133,6 +141,8 @@ namespace frucd::daq
         void packtempChanged();
 
         void motortempChanged();
+
+        void overtakeChanged();
     
         void torquelimitChanged();
 
@@ -171,6 +181,8 @@ namespace frucd::daq
         static int m_packtemp;
 
         static int m_motortemp;
+
+        static int m_overtake;
 
         static int m_torquelimit;
 

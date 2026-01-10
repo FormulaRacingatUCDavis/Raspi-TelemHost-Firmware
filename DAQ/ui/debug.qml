@@ -267,7 +267,7 @@ Rectangle {
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: (Data.glvv == -1) ? "" : "" + Data.glvv
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv.toFixed(2)
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
             }
