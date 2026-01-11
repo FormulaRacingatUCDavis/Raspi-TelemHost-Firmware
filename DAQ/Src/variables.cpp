@@ -33,13 +33,16 @@ namespace frucd::daq
 
     int Variables::m_motortemp = -1;
 
-    int Variables::m_overtake = 1;
+    int Variables::m_overtake = 0;
 
     int Variables::m_torquelimit = 0;
 
     int Variables::m_launchcontrol = 0;
 
     int Variables::m_whichPopupVisible = -1;
+    QString Variables::prev_vehicle_state = "";
+    int Variables::prev_knob1_val = m_torquelimit;
+    int Variables::prev_knob2_val = m_launchcontrol;
 
     QString Variables::m_dashboardpage = "drive.qml"; 
 
@@ -182,57 +185,72 @@ namespace frucd::daq
             } else if (state == 129) {
                 m_vehiclestate = "Drive request from LV";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 130) {
                 m_vehiclestate = "Precharge timeout";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 131) {
                 m_vehiclestate = "Brake not pressed";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 132) {
                 m_vehiclestate = "HV disabled while driving";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 133) {
                 m_vehiclestate = "Sensor discrepency";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 134) {
                 m_vehiclestate = "BSPD tripped";
                 m_vehiclestate_color = yellow;
             } else if (state == 135) {
                 m_vehiclestate = "Shutdown circut open";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 136) {
                 m_vehiclestate = "Uncalibrated";
                 m_vehiclestate_color = yellow;
             } else if (state == 137) {
                 m_vehiclestate = "Hard BSPD";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 138) {
                 m_vehiclestate = "MC fault";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             }
         }
         if (bms == true) {
             if (state == 2) {
                 m_vehiclestate = "Pack temp over";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 4) {
                 m_vehiclestate = "Pack temp under";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 8) {
                 m_vehiclestate = "Cell volt over";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 16) {
                 m_vehiclestate = "Cell volt under";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 32) {
                 m_vehiclestate = "Open wire - offboard disconnection  between cell and BMS IC";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 64) {
                 m_vehiclestate = "Mismatch";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             } else if (state == 128) {
                 m_vehiclestate = "SPI fault";
                 m_vehiclestate_color = red;
+                showEventPopUp(0);
             }
         }
 
@@ -468,9 +486,21 @@ namespace frucd::daq
 
     void Variables::showEventPopUp(int which) {
         if (m_whichPopupVisible != which) {
-            m_whichPopupVisible = which;
-            std::cout << m_whichPopupVisible << "\n" << std::endl;
-            emit Variables::instance()->whichPopupVisibleChanged();
+            if (which == 0 && prev_vehicle_state != vehiclestate()) {
+                prev_vehicle_state = vehiclestate();
+                m_whichPopupVisible = which;
+                emit Variables::instance()->whichPopupVisibleChanged();
+            }
+            if (which == 1 && prev_knob1_val != torquelimit()) {
+                prev_knob1_val = torquelimit();
+                m_whichPopupVisible = which;
+                emit Variables::instance()->whichPopupVisibleChanged();
+            }
+            if (which == 2 && prev_knob2_val != launchcontrol()) {
+                prev_knob2_val = launchcontrol();
+                m_whichPopupVisible = which;
+                emit Variables::instance()->whichPopupVisibleChanged();
+            }
         }
     }
     void Variables::hidePopup() {

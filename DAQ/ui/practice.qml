@@ -224,7 +224,7 @@ Rectangle {
                 text: (Data.glvv == -1) ? "" : "" + Data.glvv
                 font.pixelSize: grid.smallerfontsize
                 font.family: grid.typeface
-                color: "white" 
+                color: "black" 
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter 
                 verticalAlignment: Text.AlignVCenter

@@ -7,7 +7,7 @@ Item {
 
     Timer {
         id: closetimer
-        interval: 2000
+        interval: 5000
         running: Data.whichPopupVisible != -1 ? true
             : false
         onTriggered: {
@@ -28,6 +28,7 @@ Item {
             color: "black"
             font.pixelSize: faultpopup.width * 0.1
             text: Data.vehiclestate
+            onTextChanged: closetimer.restart()
 
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
@@ -62,7 +63,8 @@ Item {
                     id: torqueval
                     color: "black"
                     font.pixelSize: torquepopup.width * 0.1
-                    text: (Data.torquelimit == -1) ? "" + Data.torquelimit + "%" : ""
+                    text: (Data.torquelimit == -1) ? "" : "" + Data.torquelimit + "%"
+                    onTextChanged: closetimer.restart()
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -86,7 +88,7 @@ Item {
                         color: "black"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * (Data.torquelimit / 100.0)
+                        Layout.preferredHeight: parent.height * (1 - (Data.torquelimit / 100.0))
                         Layout.minimumHeight: 0
                     }
 
@@ -94,7 +96,7 @@ Item {
                         color: "white"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * (1 - (Data.torquelimit / 100.0))
+                        Layout.preferredHeight: parent.height * (Data.torquelimit / 100.0)
                         Layout.minimumHeight: 0
                     }
                 }
@@ -103,7 +105,7 @@ Item {
     }
 
     Rectangle {
-        id: launchcontrol
+        id: launchcontrolpopup
         visible: Data.whichPopupVisible == 2 ? true
                 : false
         anchors.fill: parent
@@ -127,8 +129,9 @@ Item {
                 Text {
                     id: launchcontrolval
                     color: "black"
-                    font.pixelSize: launchcontrolval.width * 0.1
+                    font.pixelSize: launchcontrolpopup.width * 0.1
                     text: (Data.launchcontrol == -1) ? "" : Data.launchcontrol + "%"
+                    onTextChanged: closetimer.restart()
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -152,7 +155,7 @@ Item {
                         color: "black"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * (Data.launchcontrol / 100.0)
+                        Layout.preferredHeight: parent.height * (1- (Data.launchcontrol / 100.0))
                         Layout.minimumHeight: 0
                     }
 
@@ -160,7 +163,7 @@ Item {
                         color: "white"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.preferredHeight: parent.height * (1 - (Data.launchcontrol / 100.0))
+                        Layout.preferredHeight: parent.height * (Data.launchcontrol / 100.0)
                         Layout.minimumHeight: 0
                     }
                 }

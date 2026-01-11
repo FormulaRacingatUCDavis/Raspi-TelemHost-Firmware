@@ -193,6 +193,9 @@ namespace frucd::daq
         // 0 state
         // 1 knob1
         // 2 knob2
+        static QString prev_vehicle_state;
+        static int prev_knob1_val;
+        static int prev_knob2_val;
 
         static QString m_dashboardpage;
 

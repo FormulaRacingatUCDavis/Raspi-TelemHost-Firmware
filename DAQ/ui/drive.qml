@@ -185,7 +185,7 @@ Rectangle {
 
             Text {
                 id: glvvvalue
-                text: (Data.glvv == -1) ? "" : "" + Data.glvv.toFixed(2)
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 color: "black" 

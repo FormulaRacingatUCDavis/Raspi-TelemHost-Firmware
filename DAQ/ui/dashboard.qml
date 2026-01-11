@@ -32,7 +32,7 @@ Window {
         id: pageLoader
         anchors.fill: parent
         source: mainpage.pages[mainpage.currPage] 
-        //source: Data.dashboardpage
+        // source: Data.dashboardpage
     } 
 
     Loader {

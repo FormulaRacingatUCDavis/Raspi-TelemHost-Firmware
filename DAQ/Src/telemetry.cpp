@@ -161,13 +161,10 @@ namespace frucd::daq
         struct can_frame frame;
         int nbytes = read(mCanSock, &frame, sizeof(struct can_frame));
         if (nbytes == sizeof(struct can_frame)) {
-            // The 'frame' struct is now automatically filled with 
-            // the data from the incoming CAN message.
-            printf("Received ID: 0x%X\n", frame.can_id);
+            // printf("Received ID: 0x%X\n", frame.can_id);
          }
         
         uint32_t id = (frame.can_id & CAN_EFF_FLAG) ? (frame.can_id & CAN_EFF_MASK) : (frame.can_id & CAN_SFF_MASK);
-        std::cout << id << std::endl;
 
         switch (id) {
             case 0x501: // 1281 Inputs
@@ -182,6 +179,7 @@ namespace frucd::daq
                 Variables::settorquelimit(
                     fe12_inputs_dashboard_knob1_decode(input_msg.dashboard_knob1)
                 );
+                std::cout << fe12_inputs_dashboard_knob1_decode(input_msg.dashboard_knob1) << std::endl; 
                 Variables::setlaunchcontrol(
                     fe12_inputs_dashboard_knob2_decode(input_msg.dashboard_knob2)
                 );
