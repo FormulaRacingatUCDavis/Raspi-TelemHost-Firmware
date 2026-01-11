@@ -31,8 +31,8 @@ Window {
     Loader {
         id: pageLoader
         anchors.fill: parent
-        source: mainpage.pages[mainpage.currPage] 
-        // source: Data.dashboardpage
+        // source: mainpage.pages[mainpage.currPage] 
+        source: Data.dashboardpage
     } 
 
     Loader {

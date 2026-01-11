@@ -91,7 +91,6 @@ namespace frucd::daq
         // setter functions
         static void setmph(int speed);
 
-        // static void setvehiclestate(std::string state, int faultid);
         static void setvehiclestate(int state, bool bms);
 
         static void setsoc(int charge);

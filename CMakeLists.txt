@@ -24,7 +24,6 @@ set(DAQ_SOURCES
     DAQ/Src/main.cpp
     DAQ/Src/telemetry.cpp
     DAQ/Src/config.cpp
-    DAQ/Src/observer.cpp
     DAQ/Src/variables.cpp
     DAQ/Src/fe12.c
     DAQ/Src/gen5_inv.c

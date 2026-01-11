@@ -145,26 +145,6 @@ namespace frucd::daq
         }
     }
 
-    // void Variables::setvehiclestate(std::string state, int faultid) {
-    //     // QString qstate = QString::fromStdString(state);
-    //     QString qstate = QString::number(faultid);
-    //     if (m_vehiclestate != qstate) {
-    //         m_vehiclestate = qstate;
-            
-    //         if (faultid > 5) {
-    //             if (faultid == 134 || faultid == 136) {
-    //                 m_vehiclestate_color = yellow;
-    //             } else {
-    //                 m_vehiclestate_color = red;
-    //             }
-    //         } else {
-    //             m_vehiclestate_color = green;
-    //         }
-    //         emit Variables::instance()->vehiclestate_colorChanged();
-    //         emit Variables::instance()->vehiclestateChanged();
-    //     }
-    // }
-
     void Variables::setvehiclestate(int state, bool bms) {
         if (bms == false) {
             if (state == 0) {
@@ -512,7 +492,6 @@ namespace frucd::daq
     }
 
     void Variables::setdashboardpage(int page) {
-        std::cout << page << std::endl;
         QString qpage = "drive.qml";
         if (page == 1) {
             qpage = "debug.qml";

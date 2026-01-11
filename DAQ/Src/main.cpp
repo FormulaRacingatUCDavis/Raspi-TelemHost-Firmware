@@ -2,7 +2,6 @@
 #include "config.h"
 #include "variables.h"
 #include "logthread.h"
-#include "observer.h"
 #include <iostream>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -35,7 +34,6 @@ int main(int argc, char *argv[])
         auto cfg = frucd::daq::load_config("DAQ/config.json");
         frucd::daq::TelemetryManager telem(cfg);
 
-        // frucd::daq::DashboardObserver dashboard(telem); 
         
 
         try
@@ -48,8 +46,6 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        // auto csvPath = telem.init_csv();
-        // std::cout << "Logging to " << csvPath << std::endl;
 
         // move logging to another thread
         QThread* thread = new QThread;
