@@ -7,8 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 
-
-namespace frucd::daq
+namespace dashboard
 {
     class Variables : public QObject {
         Q_OBJECT

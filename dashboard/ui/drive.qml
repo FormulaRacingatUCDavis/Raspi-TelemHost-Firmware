@@ -165,7 +165,7 @@ Rectangle {
 
             Text {
                 id: vehiclestatetext
-                text: "STATE:"
+                text: "STATE"
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainwindow.typeface
                 color: "yellow" 

@@ -9,12 +9,5 @@
 | [Panda PAU0D AC1200 USB Wi-Fi Adapter](https://www.amazon.com/Panda-Wireless%C2%AE-Wireless-Adapter-Antennas/dp/B0B2QD6RPX) | Dual-band Wi-Fi adapter for wireless telemetry |
 | [x2 RP-SMA 22 dBi Wi-Fi Antennas](https://www.amazon.com/Kaunosta-Universal-Omni-Directional-Extension-Wireless/dp/B08LPPML46) | High-gain antennas for extended Wi-Fi range |
 
-## Install dependencies
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
 ## Dashboard Example
 ![DashboardScreenshot](assets/example.png)

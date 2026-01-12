@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource prefix="/Dashboard_gui">
+    <file>ui/dashboard.qml</file>
+    <file>ui/drive.qml</file>
+    <file>ui/practice.qml</file>
+    <file>ui/debug.qml</file>
+    <file>ui/flashes.qml</file>
+</qresource>
+</RCC>

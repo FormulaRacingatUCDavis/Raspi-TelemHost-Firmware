@@ -1,44 +1,35 @@
-#include "telemetry.h"
-#include "config.h"
-#include "variables.h"
-#include "fe12.h"
-#include "gen5_inv.h"
-
-#include <chrono>
-#include <sstream>
 #include <iostream>
-#include <iomanip>
-#include <string>
-#include <string_view>
-#include <numeric>
-#include <filesystem>
-#include <fstream>
-#include <dbcppp/Network.h>
-#include <dbcppp/Message.h>
-#include <typeinfo>
-
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
+#include <unistd.h>
 
-extern "C" {
-    #include "ADS1263.h"
-    #include "DEV_Config.h"
-}
+#include "daq.h"
+#include "variables.h"
+#include "fe12.h"
+#include "gen5_inv.h"
 
-namespace frucd::daq
+namespace dashboard
 {
-    static constexpr std::string_view gFields = "ID,D0,D1,D2,D3,D4,D5,D6,D7,Timestamp";
-    static std::string get_formatted_time();
-
-    TelemetryManager::TelemetryManager(const Config& cfg)
-        : mConfig(cfg)
+    CANManager::CANManager()
     {
+        struct sockaddr_can addr;
+        struct ifreq ifr;
+
+        mCanSock = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+
+        strncpy(ifr.ifr_name, "vcan0", IFNAMSIZ - 1);
+        ioctl(mCanSock, SIOCGIFINDEX, &ifr);
+
+        addr.can_family = AF_CAN;
+        addr.can_ifindex = ifr.ifr_ifindex;
+
+        bind(mCanSock, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr));
     }
 
-    TelemetryManager::~TelemetryManager()
+    CANManager::~CANManager()
     {
         if (mCanSock >= 0)
         {
@@ -47,59 +38,10 @@ namespace frucd::daq
         }
     }
 
-    void TelemetryManager::init_can()
+    void CANManager::decode_can()
     {
-        std::ifstream feDbc(mConfig.feDbcFile); // Fe12.dbc
-        std::ifstream mcDbc(mConfig.mcDbcFile); // 20240129 Gen5 CAN CB.dbc
-        if (!feDbc.is_open() || !mcDbc.is_open())
-            throw std::runtime_error("Failed to open DBC files from config.json");
-
-        mCanSock = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-        if (mCanSock == -1)
-            throw std::runtime_error("Failed to open CAN socket!");
-
-        struct sockaddr_can addr{};
-        struct ifreq ifr{};
-        strncpy(ifr.ifr_name, mConfig.canNode.c_str(), IFNAMSIZ - 1);
-        ifr.ifr_name[IFNAMSIZ - 1] = '\0';
-
-        if (ioctl(mCanSock, SIOCGIFINDEX, &ifr) < 0)
-        {
-            int savedErr = errno;
-            close(mCanSock);
-            mCanSock = -1;
-            throw std::runtime_error("Failed to get CAN interface index for " + mConfig.canNode + ": " + strerror(savedErr));
-        }
-
-        timeval tv{};
-        tv.tv_sec = 1;
-        tv.tv_usec = 0;
-        setsockopt(mCanSock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
-
-        addr.can_family = AF_CAN;
-        addr.can_ifindex = ifr.ifr_ifindex;
-
-        if (bind(mCanSock, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) < 0)
-        {
-            int savedErr = errno;
-            close(mCanSock);
-            mCanSock = -1;
-            throw std::runtime_error("Failed to bind to CAN interface " + mConfig.canNode + ": " + strerror(savedErr));
-        }
-
-        mCanInitialized = true;
-        std::cout << "Initialized CAN on " << mConfig.canNode << " (ifindex " << ifr.ifr_ifindex << ")" << std::endl;
-    }
-
-    void TelemetryManager::log_can()
-    {
-        // fills the frame i think
         struct can_frame frame;
         int nbytes = read(mCanSock, &frame, sizeof(struct can_frame));
-        if (nbytes == sizeof(struct can_frame)) {
-            // printf("Received ID: 0x%X\n", frame.can_id);
-         }
-        
         uint32_t id = (frame.can_id & CAN_EFF_FLAG) ? (frame.can_id & CAN_EFF_MASK) : (frame.can_id & CAN_SFF_MASK);
 
         switch (id) {
@@ -166,8 +108,6 @@ namespace frucd::daq
                     Variables::setshutdowncircuit("NO SHUTDOWN");
                 } 
                 break;
-
-
             case 0x0A0: // 160 M160_Temperature_Set_1:
                 struct gen5_inv_m160_temperature_set_1_t temp1_msg;
                 gen5_inv_m160_temperature_set_1_unpack(&temp1_msg, frame.data, frame.can_dlc);
@@ -177,7 +117,6 @@ namespace frucd::daq
                     gen5_inv_m160_temperature_set_1_inv_module_c_temp_decode(temp1_msg.inv_module_c_temp)
                 );
                 break;
-            
             case 0x0A2: // 162 M162_Temperature_Set_3
                 struct gen5_inv_m162_temperature_set_3_t temp3_msg;
                 gen5_inv_m162_temperature_set_3_unpack(&temp3_msg, frame.data, frame.can_dlc);
@@ -185,7 +124,6 @@ namespace frucd::daq
                     gen5_inv_m162_temperature_set_3_inv_motor_temp_decode(temp3_msg.inv_motor_temp)
                 );
                 break;
-            
             case 0x0A9: // 169 M169_Internal_Voltages
                 struct gen5_inv_m169_internal_voltages_t volt_msg;
                 gen5_inv_m169_internal_voltages_unpack(&volt_msg, frame.data, frame.can_dlc);
@@ -193,8 +131,6 @@ namespace frucd::daq
                     gen5_inv_m169_internal_voltages_inv_ref_voltage_12_0_decode(volt_msg.inv_ref_voltage_12_0)
                 );
                 break;
-            
-            //
             case 0x0AB: { // 171 M171_Fault_Codes
                 struct gen5_inv_m171_fault_codes_t fault_msg;
                 gen5_inv_m171_fault_codes_unpack(&fault_msg, frame.data, frame.can_dlc);
@@ -202,7 +138,6 @@ namespace frucd::daq
                 uint32_t post_fault_hi = gen5_inv_m171_fault_codes_inv_post_fault_hi_decode(fault_msg.inv_post_fault_hi);
                 uint32_t run_fault_lo = gen5_inv_m171_fault_codes_inv_run_fault_lo_decode(fault_msg.inv_run_fault_lo);
                 uint32_t run_fault_hi = gen5_inv_m171_fault_codes_inv_run_fault_hi_decode(fault_msg.inv_run_fault_hi);
-
                 if ((post_fault_lo != 0.0) || (post_fault_hi != 0.0))
                 {
                     // make sure this gets right value]
@@ -215,7 +150,6 @@ namespace frucd::daq
                 }
                 break;
             }
-
             case 0x0A5: // 165 M165_Motor_Position_Info
                 struct gen5_inv_m165_motor_position_info_t motor_pos_msg;
                 gen5_inv_m165_motor_position_info_unpack(&motor_pos_msg, frame.data, frame.can_dlc);

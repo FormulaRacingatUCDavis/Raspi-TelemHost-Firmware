@@ -4,7 +4,7 @@ import time
 
 bus = can.interface.Bus(channel='vcan0', interface='socketcan')
 
-with open('Test/example.csv', 'r', newline='') as raw_can:
+with open('test/example.csv', 'r', newline='') as raw_can:
     reader = csv.reader(raw_can)
     for row in reader:
         try:

@@ -1,8 +1,7 @@
+#include <algorithm>
 #include "variables.h"
 
-#include <algorithm>
-
-namespace frucd::daq
+namespace dashboard
 {
     // singleton stuff
     Variables* Variables::s_instance = nullptr;
@@ -25,9 +24,9 @@ namespace frucd::daq
     double Variables::m_glvv = -1;
     QString Variables::m_glvv_color = "white";
 
-    QString Variables:: m_shutdowncircuit = NULL;
+    QString Variables:: m_shutdowncircuit = "";
 
-    QString Variables::m_mcfault = NULL;
+    QString Variables::m_mcfault = "";
 
     int Variables::m_packtemp = -1;
 
@@ -285,7 +284,7 @@ namespace frucd::daq
     }
 
     void Variables::setmcfault(uint32_t fault, bool post) {
-        QString qfault = NULL;
+        QString qfault = "";
 
         if (post) {
             if (fault == (uint32_t) pow(2, 0)) {
