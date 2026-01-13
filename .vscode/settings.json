@@ -1,3 +1,4 @@
 {
-    "python-envs.pythonProjects": []
+    "python-envs.pythonProjects": [],
+    "cmake.sourceDirectory": "/home/frucd/Projects/Raspi-TelemHost-Firmware/dashboard"
 }

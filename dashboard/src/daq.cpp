@@ -57,7 +57,6 @@ namespace dashboard
                 Variables::settorquelimit(
                     fe12_inputs_dashboard_knob1_decode(input_msg.dashboard_knob1)
                 );
-                std::cout << fe12_inputs_dashboard_knob1_decode(input_msg.dashboard_knob1) << std::endl; 
                 Variables::setlaunchcontrol(
                     fe12_inputs_dashboard_knob2_decode(input_msg.dashboard_knob2)
                 );
@@ -108,6 +107,7 @@ namespace dashboard
                     Variables::setshutdowncircuit("NO SHUTDOWN");
                 } 
                 break;
+                
             case 0x0A0: // 160 M160_Temperature_Set_1:
                 struct gen5_inv_m160_temperature_set_1_t temp1_msg;
                 gen5_inv_m160_temperature_set_1_unpack(&temp1_msg, frame.data, frame.can_dlc);

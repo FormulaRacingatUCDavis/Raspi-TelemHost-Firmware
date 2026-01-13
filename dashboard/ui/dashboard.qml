@@ -25,8 +25,8 @@ Window {
 
     property string green: "#00FF00"
     property string yellow: "#FFFF00"
-    property string red: "#FF4500"
-    property string blue: "#0000FF"
+    property string red: "#ff5b1f"
+    property string blue: "#6fb4ff"
 
     Loader {
         id: pageLoader

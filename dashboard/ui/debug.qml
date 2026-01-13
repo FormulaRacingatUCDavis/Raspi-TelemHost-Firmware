@@ -53,6 +53,7 @@ Rectangle {
                 text: (Data.soc == -1) ? "" : Data.soc + "%"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
             
             Text {
@@ -66,6 +67,7 @@ Rectangle {
                 text: "Pack SOC"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
         }
         
@@ -84,6 +86,7 @@ Rectangle {
                 text: (Data.packtemp == -1) ? "" : Data.packtemp + "C"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -97,6 +100,7 @@ Rectangle {
                 text: "Pack Temperature"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
         }
 
@@ -113,8 +117,9 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.shutdowncircuit
-                font.pixelSize: grid.valuefontsize
+                font.pixelSize: (Data.shutdowncircuit.length < 11) ? grid.valuefontsize : grid.valuefontsize * 0.7
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -128,6 +133,7 @@ Rectangle {
                 text: "Shutdown Circuit"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             } 
         }
 
@@ -146,6 +152,7 @@ Rectangle {
                 text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -159,6 +166,7 @@ Rectangle {
                 text: "MC Temperature"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             } 
         }
 
@@ -177,6 +185,7 @@ Rectangle {
                 text: (Data.motortemp == -1) ? "" : Data.motortemp + "C"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -190,6 +199,7 @@ Rectangle {
                 text: "Motor Temperature"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             } 
         }
 
@@ -206,8 +216,9 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.mcfault
-                font.pixelSize: grid.valuefontsize
+                font.pixelSize: grid.valuefontsize * 0.45
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -221,6 +232,7 @@ Rectangle {
                 text: "MC State"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
         }
 
@@ -237,8 +249,10 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.vehiclestate
-                font.pixelSize: grid.valuefontsize
+                font.pixelSize: (Data.vehiclestate.length < 10) ? grid.valuefontsize
+                    : grid.valuefontsize * 0.8
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -252,6 +266,7 @@ Rectangle {
                 text: "Vehicle State"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             } 
         }
 
@@ -270,6 +285,7 @@ Rectangle {
                 text: (Data.glvv == -1) ? "" : "" + Data.glvv
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -283,6 +299,7 @@ Rectangle {
                 text: "GLV Voltage"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             } 
         }
 
@@ -301,6 +318,7 @@ Rectangle {
                 text: "temp"
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
+                font.bold: true
             }
 
             Text {
@@ -314,6 +332,7 @@ Rectangle {
                 text: "(free slot)"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
             } 
         }
     }

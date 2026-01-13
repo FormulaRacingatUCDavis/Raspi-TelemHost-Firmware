@@ -21,12 +21,13 @@ Item {
                 : false
         anchors.fill: parent
 
-        color: mainpage.red
+        color: (Data.vehiclestate == "UNCALIBRTD" || Data.vehiclestate == "BDSP TRIPD") ? mainpage.yellow : mainpage.red
 
         Text {
             id: faulttext
             color: "black"
-            font.pixelSize: faultpopup.width * 0.1
+            font.pixelSize: (Data.vehiclestate.length > 9) ? faultpopup.width * 0.1 : faultpopup.width * 0.15
+            font.bold: true
             text: Data.vehiclestate
             onTextChanged: closetimer.restart()
 
@@ -62,7 +63,8 @@ Item {
                 Text {
                     id: torqueval
                     color: "black"
-                    font.pixelSize: torquepopup.width * 0.1
+                    font.pixelSize: torquepopup.width * 0.15
+                    font.bold: true
                     text: (Data.torquelimit == -1) ? "" : "" + Data.torquelimit + "%"
                     onTextChanged: closetimer.restart()
 
@@ -129,7 +131,8 @@ Item {
                 Text {
                     id: launchcontrolval
                     color: "black"
-                    font.pixelSize: launchcontrolpopup.width * 0.1
+                    font.pixelSize: launchcontrolpopup.width * 0.15
+                    font.bold: true
                     text: (Data.launchcontrol == -1) ? "" : Data.launchcontrol + "%"
                     onTextChanged: closetimer.restart()
 

@@ -8,12 +8,12 @@ namespace dashboard
 
     const QString Variables::green = "#00FF00";
     const QString Variables::yellow = "#FFFF00";
-    const QString Variables::red = "#FF4500";
+    const QString Variables::red = "#ff5b1f";
 
     // delcaration of instance variablesm (need defualt values)
     int Variables::m_mph = -1;
 
-    QString Variables::m_vehiclestate = "Startup";
+    QString Variables::m_vehiclestate = "STARTUP";
     QString Variables::m_vehiclestate_color = green;
 
     int Variables::m_soc = -1;
@@ -150,84 +150,86 @@ namespace dashboard
                 m_vehiclestate = "LV";
                 m_vehiclestate_color = green;
             } else if (state == 1) {
-                m_vehiclestate = "Precharge";
+                m_vehiclestate = "PRECHARGE";
                 m_vehiclestate_color = green;
             } else if (state == 2) {
                 m_vehiclestate = "HV";
                 m_vehiclestate_color = green;
             } else if (state == 3) {
-                m_vehiclestate = "Drive";
+                m_vehiclestate = "DRIVE";
                 m_vehiclestate_color = green;
             } else if (state == 5) {
-                m_vehiclestate = "Startup";
+                m_vehiclestate = "STARTUP";
                 m_vehiclestate_color = green;
             } else if (state == 129) {
-                m_vehiclestate = "Drive request from LV";
+                m_vehiclestate = "DRV FRM LV";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 130) {
-                m_vehiclestate = "Precharge timeout";
+                m_vehiclestate = "PRE TM OUT";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 131) {
-                m_vehiclestate = "Brake not pressed";
+                m_vehiclestate = "BR NOT PRS";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 132) {
-                m_vehiclestate = "HV disabled while driving";
+                m_vehiclestate = "HV OFF DRV";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 133) {
-                m_vehiclestate = "Sensor discrepency";
+                m_vehiclestate = "SNSR DSCRP";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 134) {
-                m_vehiclestate = "BSPD tripped";
+                m_vehiclestate = "BSPD TRIPD";
                 m_vehiclestate_color = yellow;
+                showEventPopUp(0);
             } else if (state == 135) {
-                m_vehiclestate = "Shutdown circut open";
+                m_vehiclestate = "SHTDWN OPN";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 136) {
-                m_vehiclestate = "Uncalibrated";
+                m_vehiclestate = "UNCALIBRTD";
                 m_vehiclestate_color = yellow;
+                showEventPopUp(0);
             } else if (state == 137) {
-                m_vehiclestate = "Hard BSPD";
+                m_vehiclestate = "HARD BSPD";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 138) {
-                m_vehiclestate = "MC fault";
+                m_vehiclestate = "MC FAULT";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             }
         }
         if (bms == true) {
             if (state == 2) {
-                m_vehiclestate = "Pack temp over";
+                m_vehiclestate = "BMS TEMP OVER";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 4) {
-                m_vehiclestate = "Pack temp under";
+                m_vehiclestate = "BMS TEMP UNDER";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 8) {
-                m_vehiclestate = "Cell volt over";
+                m_vehiclestate = "OVERVOLT";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 16) {
-                m_vehiclestate = "Cell volt under";
+                m_vehiclestate = "UNDERVOLT";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 32) {
-                m_vehiclestate = "Open wire - offboard disconnection  between cell and BMS IC";
+                m_vehiclestate = "OPEN WIRE";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 64) {
-                m_vehiclestate = "Mismatch";
+                m_vehiclestate = "MISMATCH";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             } else if (state == 128) {
-                m_vehiclestate = "SPI fault";
+                m_vehiclestate = "SPI FAULT";
                 m_vehiclestate_color = red;
                 showEventPopUp(0);
             }
@@ -485,7 +487,6 @@ namespace dashboard
     void Variables::hidePopup() {
         if (m_whichPopupVisible != -1) {
             m_whichPopupVisible = -1;
-            std::cout << m_whichPopupVisible << "\n" << std::endl;
             emit Variables::instance()->whichPopupVisibleChanged();
         }
     }
