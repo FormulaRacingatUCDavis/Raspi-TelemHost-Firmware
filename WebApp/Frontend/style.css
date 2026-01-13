@@ -1,0 +1,67 @@
+body {
+  font-family: Monospace;
+  padding: 20px;
+  background-color: #002855;
+  color: black;
+}
+
+button {
+  font-size: 18px;
+  padding: 10px 20px;
+  margin-right: 10px;
+}
+
+.top_options_bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background-color: white;
+  border-bottom: 1px solid #333;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.option_button {
+  padding: 8px 14px;
+  font-size: 14px;
+  background-color: transparent;
+  color: black;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option_button:hover {
+  background-color: gray;
+  border-color: white;
+}
+
+.option_button {
+  padding: 8px 14px;
+  font-size: 14px;
+  background-color: transparent;
+  color: black;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option_button:hover {
+  background-color: gray;
+  border-color: white;
+}
+
+.graph_panel {
+  background-color: white;
+  color: black;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 8px;
+  max-width: 1500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Telemetry Web App</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    
+
+    <div class="top_options_bar">
+      <h1>Telemetry Web App</h1>
+      <button class="option_button">View Camera</button>
+      <button class="option_button">Start Recording</button>
+      <div class="dropdown_button">
+        <button class="option_button">Export CSV ▾</button>
+        <div class="dropdown_menu">
+          <button>Placeholder</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="graph_panel">
+      <div class="stream_controls">
+        <label>CAN ID:</label>
+        <input id="canIdInput" type="text" placeholder="0xA0 or 160" />
+
+        <label>Signal:</label>
+        <input id="signalInput" type="text" placeholder="SignalName" />
+
+        <button onclick="changeStream()">Change Stream</button>
+      </div>
+      <div class="logging_controls">
+        <button onclick="startLogging()">Start Logging</button>
+        <button onclick="stopLogging()">Stop Logging</button>
+      </div>
+      <div class="graph_options_menu">
+        <table>
+          <caption>Graph Options</caption>
+          <tr>
+            <td>INV</td>
+            <td>PEI</td>
+            <td>VCU</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" name="MC Temp A" value="mc_temp_a_enable" />MC Temp A </td>
+            <td><input type="checkbox" name="HI Temp" value="hi_temp_enable" />HI Temp </td>
+            <td><input type="checkbox" name="Torque" value="torque_enable" />Torque </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" name="MC Temp B" value="mc_temp_b_enable" />MC Temp B </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" name="MC Temp C" value="mc_temp_c_enable" />MC Temp C </td>
+          </tr>
+        </table>
+      </div>
+      <div class="chart-display">
+        <canvas id="rateChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+
+    
+
+    <script src="libs/chart.js"></script>
+
+    <script src="app.js"></script>
+  </body>
+</html>
