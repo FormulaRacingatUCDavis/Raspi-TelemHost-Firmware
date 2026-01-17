@@ -2,10 +2,11 @@ import random
 import os
 import can
 import cantools
+import time
 
 
 # Test CAN messages 0 to N
-N = 11
+N = 8
 # Or test one CAN message if N = None
 MSG_IND = 7
 
@@ -161,3 +162,4 @@ while True:
     encoded = message.encode(data)
     msg = can.Message(arbitration_id=message.frame_id, data=encoded, is_extended_id=False)
     bus.send(msg)
+    time.sleep(0.001)

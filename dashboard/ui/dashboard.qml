@@ -10,7 +10,13 @@ Window {
     width: 800 
     height: 480
     // need to implement when to be full screen
-    // visibility: Window.FullScreen
+    visibility: Window.FullScreen
+    Shortcut {
+        sequences: ["Escape"]
+        onActivated: {
+            Qt.quit();
+        }
+    }
     
     color: "black"
 
