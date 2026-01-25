@@ -12,13 +12,21 @@ client.on('connect', () => {
   client.subscribe('can/C0');
 });
 
+const MAX_POINTS = 1000;
+
 client.on('message', (topic, message) => {
-  if (topic == 'can/C0') {
+  if (topic === 'can/C0') {
     const data = JSON.parse(message.toString());
-    console.log("Time:", data.timestamp, "Speed:", data.dashboard_torque);
 
     if (scatterChart) {
-      scatterChart.data.datasets[0].data.push({ x: data.timestamp, y: data.dashboard_torque });
+      const dataset = scatterChart.data.datasets[0].data;
+      
+      dataset.push({ x: data.timestamp, y: data.dashboard_torque });
+
+      if (dataset.length > MAX_POINTS) {
+        dataset.splice(0, dataset.length - MAX_POINTS);
+      }
+
       scatterChart.update('none');
     }
   }
@@ -29,22 +37,25 @@ client.on('message', (topic, message) => {
     datasets: [{
       label: 'No Data Selected',
       data: [],
-      backgroundColor: 'rgb(0, 0, 0)'
+      backgroundColor: 'rgb(135, 139, 219)'
     }],
   };
 
   scatterChart = new Chart(
     document.getElementById('scatterChart'),
     {
-    type: 'scatter',
+    type: 'line',
     data: data,
     options: {
-      animation: false,
+      parsing: false,
+      normalized: true,
       scales: {
         x: {
+          ticks: {
+            sampleSize: 10
+          },
           type: 'time',
           time: {
-            tooltipFormat: 'HH:mm:ss',
             unit: 'second'
           },
           title: {
@@ -61,6 +72,11 @@ client.on('message', (topic, message) => {
             font: { size: 16 }
           }
         }
+      },
+      decimation: {
+        enabled: true,
+        algorithm: 'min-max',
+        samples: 1000
       }
     }
   });

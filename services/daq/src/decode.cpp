@@ -13,12 +13,9 @@ namespace telem
 
         j["id"] = id;
 
-        std::time_t t = std::chrono::system_clock::to_time_t(cap.timestamp);
-        std::tm tm = *std::localtime(&t);
-        std::stringstream ss;
-        ss << std::put_time(&tm, "%Y-%m-%dT%H:%M:%S");
-        j["timestamp"] = ss.str();
-
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(cap.timestamp.time_since_epoch()).count();
+        j["timestamp"] = ms;
+        
         switch (id)
         {
             case 0x766:
