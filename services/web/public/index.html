@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Telemetry Dashboard</title>
+  </head>
+  <body>
+
+    <header class="container">
+      
+      <section>
+        <nav>
+          <ul>
+            <li><strong>FORMULA RACING AT UC DAVIS</strong></li>
+          </ul>
+          <ul>
+            <li><a href="#" class="secondary">View Camera</a></li>
+            <li><a href="#" class="secondary">Install Data Grapher</a></li>
+            <li><button class="outline">Start Recording</button></li>
+          </ul>
+        </nav>
+      </section>
+
+      <details class="dropdown">
+        <summary>
+          Export CSV...
+        </summary>
+        <ul>
+          <li>
+            <label>
+              <input type="checkbox" name="solid" />
+              20251010_193149.csv
+            </label>
+          </li>
+        </ul>
+      </details>
+
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Source</th>
+            <th scope="col">State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">VCU</th>
+            <td>Startup</td>
+          </tr>
+          <tr>
+            <th scope="row">PEI</th>
+            <td>No Error</td>
+          </tr>
+          <tr>
+            <th scope="row">MC</th>
+            <td>Module A Over-temperature Fault</td>
+          </tr>
+        </tbody>
+        <tfoot>
+        </tfoot>
+      </table>
+
+    </header>
+
+    <main class="container">
+
+      <article data-theme="light">
+        <details class="dropdown">
+          <summary>Select Data...</summary>
+          <ul>
+            <li>
+              <label>
+                <input type="radio" name="phase" value="speed" />
+                Motor Speed
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="radio" name="phase" value="current" />
+                Current
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="radio" name="phase" value="soc" />
+                State of Charge
+              </label>
+            </li>
+          </ul>
+        </details>
+
+        <canvas id="motor_speed"></canvas>
+      </article>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
