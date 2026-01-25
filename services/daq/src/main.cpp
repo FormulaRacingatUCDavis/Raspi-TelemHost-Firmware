@@ -41,7 +41,7 @@ int main()
         mosquitto_connect(mosq, "localhost", 1883, 60);
 
         mosquitto_message_callback_set(mosq, on_message);
-        mosquitto_subscribe(mosq, nullptr, "vehicle/logger/status", 1);
+        mosquitto_subscribe(mosq, nullptr, "logger/status", 1);
         mosquitto_loop_start(mosq);
 
         std::filesystem::path log_dir;
@@ -57,7 +57,7 @@ int main()
         
         std::string payload = "paused";
         bool was_logging = false;
-        mosquitto_publish(mosq, nullptr, "vehicle/logger/status", payload.size(), payload.c_str(), 0, true);
+        mosquitto_publish(mosq, nullptr, "logger/status", payload.size(), payload.c_str(), 0, true);
 
         std::vector<std::thread> threads;
         auto q = telem::queue_can({pcan, tcan}, threads, &logging_enabled);
@@ -69,8 +69,14 @@ int main()
 
             if (active && !was_logging)
             {
-                start = std::chrono::system_clock::now();
-                log_file = log_dir / (telem::format_timestamp(start) + ".csv");
+                auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                std::tm tm = *std::localtime(&t);
+
+                std::ostringstream ss;
+                ss << std::put_time(&tm, "%Y%m%d_%H%M%S");
+
+                log_file = log_dir / (ss.str() + ".csv");
+
                 log.close();
                 log.open(log_file, std::ios::out | std::ios::app);
 
@@ -141,7 +147,7 @@ int main()
                     uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
 
                     char topic[64];
-                    snprintf(topic, sizeof(topic), "vehicle/can/%X", id);
+                    snprintf(topic, sizeof(topic), "can/%X", id);
 
                     std::string payload = j.dump();
                     mosquitto_publish(mosq, nullptr, topic, payload.size(), payload.c_str(), 0, false);
@@ -167,7 +173,7 @@ void on_message(struct mosquitto* mosq, void* userdata, const struct mosquitto_m
     std::string topic(msg->topic);
     std::string payload(static_cast<char*>(msg->payload), msg->payloadlen);
 
-    if (topic == "vehicle/logger/status")
+    if (topic == "logger/status")
     {
         if (payload == "running")
             logging_enabled.store(true);

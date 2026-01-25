@@ -29,3 +29,4 @@ with open('test/example.csv', 'r', newline='') as raw_can:
         )
 
         bus.send(msg)
+        time.sleep(0.001)
