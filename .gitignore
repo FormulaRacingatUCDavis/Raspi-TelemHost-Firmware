@@ -1,6 +1,9 @@
 .venv
-*/__pycache__
+__pycache__
 testlogs
 logs
 build
 CMakeUserPresets.json
+node_modules
+dist
+.parcel-cache
