@@ -63,6 +63,27 @@ namespace telem
 
                 break;
             }
+            case 0xA5: // line 1727 in cm200dbc, motor speed
+            {
+                struct cm200_db_m165_motor_position_info_t msg;
+                cm200_db_m165_motor_position_info_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                j["inv_motor_angle_electrical"] = cm200_db_m165_motor_position_info_inv_motor_angle_electrical_decode(msg.inv_motor_angle_electrical);
+                j["inv_motor_speed"] = cm200_db_m165_motor_position_info_inv_motor_speed_decode(msg.inv_motor_speed);
+                j["inv_electrical_output_frequency"] = cm200_db_m165_motor_position_info_inv_electrical_output_frequency_decode(msg.inv_electrical_output_frequency);
+                j["inv_delta_resolver_filtered"] = cm200_db_m165_motor_position_info_inv_delta_resolver_filtered_decode(msg.inv_delta_resolver_filtered);
+
+                break;
+            }
+            case 0x387: // line 1458 in fe12dbc, current
+            {
+                struct fe12_db_current_t msg;
+                fe12_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                j["pei_current"] = fe12_db_current_pei_current_decode(msg.pei_current);
+
+                break;
+            }
         }
 
         return j;
