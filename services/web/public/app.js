@@ -12,7 +12,8 @@ client.on("connect", () => {
   client.subscribe("can/A0");
   client.subscribe("can/C0"); // torque request
   client.subscribe("can/A5"); // motor speed
-  client.subscribe("can/387"); // current
+  client.subscribe("can/388"); // current
+  client.subscribe("can/381"); // state of charge
 });
 
 /* Graph live data */
@@ -65,7 +66,7 @@ client.on("message", (topic, message) => {
 
       lineChart.update("none");
     }
-  } else if (topic === "can/387") {
+  } else if (topic === "can/388") {
     // current
     const msg = JSON.parse(message.toString());
 
@@ -73,6 +74,21 @@ client.on("message", (topic, message) => {
       const dataset = lineChart.data.datasets[0].data;
 
       dataset.push({ x: msg.timestamp, y: msg.pei_current });
+
+      if (dataset.length > MAX_POINTS) {
+        dataset.splice(0, dataset.length - MAX_POINTS);
+      }
+
+      lineChart.update("none");
+    }
+  } else if (topic === "can/381") {
+    // state of charge
+    const msg = JSON.parse(message.toString());
+
+    if (lineChart) {
+      const dataset = lineChart.data.datasets[0].data;
+
+      dataset.push({ x: msg.timestamp, y: msg.pei_soc });
 
       if (dataset.length > MAX_POINTS) {
         dataset.splice(0, dataset.length - MAX_POINTS);
