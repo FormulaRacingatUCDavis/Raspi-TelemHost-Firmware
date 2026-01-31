@@ -75,12 +75,23 @@ namespace telem
 
                 break;
             }
-            case 0x387: // line 1458 in fe12dbc, current
+            case 0x388: // line 1458 in fe12dbc, current
             {
                 struct fe12_db_current_t msg;
                 fe12_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                 j["pei_current"] = fe12_db_current_pei_current_decode(msg.pei_current);
+
+                break;
+            }
+            case 0x381: // line 1098 in fe12dbc, state of charge
+            {
+                struct fe12_db_diagnostic_bms_data_t msg;
+                fe12_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                j["pei_hi_temp"] = fe12_db_diagnostic_bms_data_pei_hi_temp_decode(msg.pei_hi_temp);
+                j["pei_soc"] = fe12_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
+                j["pei_pack_voltage"] = fe12_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
 
                 break;
             }
