@@ -23,6 +23,17 @@ let barChart;
 
 const MAX_POINTS = 1000;
 
+// store graph data for different options
+const storedData = {
+  torque: [],
+  speed: [],
+  current: [],
+  soc: [],
+};
+
+// for current graph select
+let currentGraphSelect = "torque";
+
 client.on("message", (topic, message) => {
   if (topic === "can/A0") {
     const msg = JSON.parse(message.toString());
@@ -40,60 +51,52 @@ client.on("message", (topic, message) => {
     //torque request
     const msg = JSON.parse(message.toString());
 
-    if (lineChart) {
-      const dataset = lineChart.data.datasets[0].data;
+    storedData.torque.push({ x: msg.timestamp, y: msg.dashboard_torque });
+    if (storedData.torque.length > MAX_POINTS) {
+      storedData.torque.splice(0, storedData.torque.length - MAX_POINTS);
+    }
 
-      dataset.push({ x: msg.timestamp, y: msg.dashboard_torque });
-
-      if (dataset.length > MAX_POINTS) {
-        dataset.splice(0, dataset.length - MAX_POINTS);
-      }
-
+    if (lineChart && currentGraphSelect === "torque") {
+      lineChart.data.datasets[0].data = storedData.torque;
       lineChart.update("none");
     }
   } else if (topic === "can/A5") {
     // motor speed
     const msg = JSON.parse(message.toString());
 
-    if (lineChart) {
-      const dataset = lineChart.data.datasets[0].data;
+    storedData.speed.push({ x: msg.timestamp, y: msg.inv_motor_speed });
+    if (storedData.speed.length > MAX_POINTS) {
+      storedData.speed.splice(0, storedData.speed.length - MAX_POINTS);
+    }
 
-      dataset.push({ x: msg.timestamp, y: msg.inv_motor_speed });
-
-      if (dataset.length > MAX_POINTS) {
-        dataset.splice(0, dataset.length - MAX_POINTS);
-      }
-
+    if (lineChart && currentGraphSelect === "speed") {
+      lineChart.data.datasets[0].data = storedData.speed;
       lineChart.update("none");
     }
   } else if (topic === "can/388") {
     // current
     const msg = JSON.parse(message.toString());
 
-    if (lineChart) {
-      const dataset = lineChart.data.datasets[0].data;
+    storedData.current.push({ x: msg.timestamp, y: msg.pei_current });
+    if (storedData.current.length > MAX_POINTS) {
+      storedData.current.splice(0, storedData.current.length - MAX_POINTS);
+    }
 
-      dataset.push({ x: msg.timestamp, y: msg.pei_current });
-
-      if (dataset.length > MAX_POINTS) {
-        dataset.splice(0, dataset.length - MAX_POINTS);
-      }
-
+    if (lineChart && currentGraphSelect === "current") {
+      lineChart.data.datasets[0].data = storedData.current;
       lineChart.update("none");
     }
   } else if (topic === "can/381") {
     // state of charge
     const msg = JSON.parse(message.toString());
 
-    if (lineChart) {
-      const dataset = lineChart.data.datasets[0].data;
+    storedData.soc.push({ x: msg.timestamp, y: msg.pei_soc });
+    if (storedData.soc.length > MAX_POINTS) {
+      storedData.soc.splice(0, storedData.soc.length - MAX_POINTS);
+    }
 
-      dataset.push({ x: msg.timestamp, y: msg.pei_soc });
-
-      if (dataset.length > MAX_POINTS) {
-        dataset.splice(0, dataset.length - MAX_POINTS);
-      }
-
+    if (lineChart && currentGraphSelect === "soc") {
+      lineChart.data.datasets[0].data = storedData.soc;
       lineChart.update("none");
     }
   }
@@ -103,7 +106,7 @@ client.on("message", (topic, message) => {
   const lineData = {
     datasets: [
       {
-        label: "No Data Selected",
+        label: "Torque Request",
         data: [],
         backgroundColor: "rgb(135, 139, 219)",
       },
@@ -182,5 +185,38 @@ client.on("message", (topic, message) => {
         },
       },
     },
+  });
+
+  // dropdown menu options select
+  const radioButtonSelect = document.querySelectorAll('input[name="phase"]');
+  radioButtonSelect.forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      currentGraphSelect = e.target.value;
+
+      switch (currentGraphSelect) {
+        case "torque":
+          lineChart.data.datasets[0].label = "Torque Request";
+          lineChart.data.datasets[0].data = storedData.torque;
+          lineChart.options.scales.y.title.text = "Nm";
+          break;
+        case "speed":
+          lineChart.data.datasets[0].label = "Motor Speed";
+          lineChart.data.datasets[0].data = storedData.speed;
+          lineChart.options.scales.y.title.text = "RPM";
+          break;
+        case "current":
+          lineChart.data.datasets[0].label = "Current";
+          lineChart.data.datasets[0].data = storedData.current;
+          lineChart.options.scales.y.title.text = "Amps";
+          break;
+        case "soc":
+          lineChart.data.datasets[0].label = "State of Charge";
+          lineChart.data.datasets[0].data = storedData.soc;
+          lineChart.options.scales.y.title.text = "%";
+          break;
+      }
+
+      lineChart.update();
+    });
   });
 })();
