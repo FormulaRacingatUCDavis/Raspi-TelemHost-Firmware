@@ -8,10 +8,10 @@ app.add_static_files('/static', 'static')
 
 
 def online_check(ip):
-    ping_out = subprocess.run(f"ping -c 1 -W 2 {ip}", shell=True, text=True)
-    print(ping_out)
-
-    return True
+    ping_out = subprocess.run(f"ping -c 1 -W 2 {ip}", shell=True, capture_output=True, text=True).stdout
+    if "1 received" in ping_out:
+        return True
+    return False
 
 
 def frucd_repeat_background():
@@ -40,8 +40,7 @@ def connected_devices():
 
     async def update_device_table():
         for device in device_table.rows:
-            is_online = await online_check(device["address"])
-            print(is_online)
+            is_online = await run.io_bound(online_check, device["address"])
             if is_online:
                 device["status"] = "Connected"
             else:
