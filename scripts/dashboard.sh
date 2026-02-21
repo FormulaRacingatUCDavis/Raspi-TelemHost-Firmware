@@ -25,11 +25,10 @@ sudo ifconfig can1 txqueuelen 65536
 
 # Run dashboard if display available, else fallback
 cd /home/frucd/projects/Raspi-TelemHost-Firmware/
-source .venv/bin/activate
 
 if [ -S /tmp/.X11-unix/X0 ]; then
     echo "Starting dashboard"
-    python3 Dashboard/main.py
+    ./dashboard/build/RaspiTelemHost
 else
     echo "No display found"
 fi
