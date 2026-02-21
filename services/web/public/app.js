@@ -5,7 +5,7 @@ import mqtt from 'mqtt';
 
 /* Connect to MQTT broker from web browser using WebSockets */
 
-const client = mqtt.connect('ws://192.168.137.249:9001');
+const client = mqtt.connect('ws://192.168.137.100:8080');
 
 client.on('connect', () => {
   console.log('Connected to MQTT broker.');
