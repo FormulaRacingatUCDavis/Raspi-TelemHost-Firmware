@@ -1,7 +1,8 @@
 {
-    "interfaces":
+    "can":
     {
         "pcan": "vcan0",
-        "tcan": "vcan1"
+        "tcan": "vcan1",
+        "logsPath": "testlogs"
     }
 }

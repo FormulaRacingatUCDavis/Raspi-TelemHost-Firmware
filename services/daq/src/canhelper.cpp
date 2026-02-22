@@ -1,11 +1,62 @@
-#include <sstream>
-#include <iomanip>
-#include <chrono>
-#include <ctime>
-#include "decode.h"
+#include "canhelper.h"
+
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <linux/can/raw.h>
+#include <iostream>
+#include <thread>
+#include <ios>
 
 namespace telem
 {
+    CANHelper::CANHelper(const char* interface) : s(socket(PF_CAN, SOCK_RAW, CAN_RAW))
+    {
+        strcpy(ifr.ifr_name, interface);
+        if (ioctl(s, SIOCGIFINDEX, &ifr) < 0)
+        {
+            perror("ioctl SIOCGIFINDEX");
+            exit(1);
+        }
+
+        addr.can_family = AF_CAN;
+        addr.can_ifindex = ifr.ifr_ifindex;
+
+        if (bind(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+            perror("bind");
+            exit(1);
+        }
+    }
+
+    CANHelper::~CANHelper()
+    {
+        close(s);
+    }
+
+    bool CANHelper::read_frame(telem::Capture& cap)
+    {
+        int nbytes = read(s, &cap.frame, sizeof(struct can_frame));
+        cap.timestamp = std::chrono::system_clock::now();
+        return nbytes == sizeof(struct can_frame);
+    }
+
+    void CANHelper::queue_frame(moodycamel::ConcurrentQueue<telem::Capture> &q)
+    {
+        telem::Capture frame;
+
+        while (true)
+        {
+            if (read_frame(frame))
+            {
+                q.enqueue(frame);
+            }
+        }
+    }
+
     nlohmann::json decode_to_json(const telem::Capture& cap)
     {
         uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
@@ -63,7 +114,7 @@ namespace telem
 
                 break;
             }
-            case 0xA5: // line 1727 in cm200dbc, motor speed
+            case 0xA5:
             {
                 struct cm200_db_m165_motor_position_info_t msg;
                 cm200_db_m165_motor_position_info_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
@@ -75,7 +126,7 @@ namespace telem
 
                 break;
             }
-            case 0x388: // line 1458 in fe12dbc, current
+            case 0x388:
             {
                 struct fe12_db_current_t msg;
                 fe12_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
@@ -84,7 +135,7 @@ namespace telem
 
                 break;
             }
-            case 0x381: // line 1098 in fe12dbc, state of charge
+            case 0x381:
             {
                 struct fe12_db_diagnostic_bms_data_t msg;
                 fe12_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);

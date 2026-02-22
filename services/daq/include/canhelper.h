@@ -1,9 +1,13 @@
 #pragma once
 
+#include <cstdint>
+#include <thread>
+#include <moodycamel/concurrentqueue.h>
+#include <linux/can.h>
+#include <net/if.h>
+#include <chrono>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
-
-#include "ingestion.h"
 
 extern "C" {
     #include "fe12_db.h"
@@ -12,7 +16,13 @@ extern "C" {
 
 namespace telem
 {
-    inline const std::unordered_map<uint8_t, std::string> VEHICLE_STATE = {
+    struct Capture {
+        struct can_frame frame;
+        std::chrono::system_clock::time_point timestamp;
+    };
+
+    inline const std::unordered_map<uint8_t, std::string> VEHICLE_STATE =
+    {
         {0x0, "LV"},
         {0x1, "PRECHARGE"},
         {0x2, "HV ENABLED"},
@@ -28,6 +38,21 @@ namespace telem
         {0x88, "UNCALIBRTD"},
         {0x89, "HARD BSPD"},
         {0x8A, "MC FAULT"},
+    };
+
+    class CANHelper
+    {
+    public:
+        explicit CANHelper(const char* interface);
+        ~CANHelper();
+        void queue_frame(moodycamel::ConcurrentQueue<telem::Capture> &q);
+
+    private:
+        int s;
+        struct ifreq ifr;
+        struct sockaddr_can addr;
+        int nbytes;
+        bool read_frame(telem::Capture& cap);
     };
 
     std::string format_timestamp(std::chrono::system_clock::time_point timestamp);
