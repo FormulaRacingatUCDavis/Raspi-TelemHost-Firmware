@@ -1,0 +1,50 @@
+{
+    "can":
+    {
+        "pcan": "vcan0",
+        "tcan": "vcan1",
+        "logsPath": "testlogs"
+    },
+    "mqtt":
+    {
+        "ws": "ws://192.168.137.100:8080",
+        "data":
+        {
+            "dashboard_torque":
+            {
+                "topic": "can/C0",
+                "label": "Torque [Nm]"
+            },
+            "inv_motor_speed":
+            {
+                "topic": "can/A5",
+                "label": "Motor Speed [RPM]"
+            },
+            "pei_current":
+            {
+                "topic": "can/388",
+                "label": "Current [A]"
+            },
+            "pei_soc":
+            {
+                "topic": "can/381",
+                "label": "State of Charge [%]"
+            },
+            "inv_module_a_temp":
+            {
+                "topic": "can/A0",
+                "label": "Module A [C]"
+            },
+            "inv_module_b_temp":
+            {
+                "topic": "can/A0",
+                "label": "Module B [C]"
+            },
+            "inv_module_c_temp":
+            {
+                "topic": "can/A0",
+                "label": "Module C [C]"
+            }
+        }
+    }
+}

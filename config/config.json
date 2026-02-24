@@ -1,7 +1,0 @@
-{
-    "interfaces":
-    {
-        "pcan": "vcan0",
-        "tcan": "vcan1"
-    }
-}

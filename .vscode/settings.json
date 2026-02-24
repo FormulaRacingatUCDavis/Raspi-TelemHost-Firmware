@@ -1,4 +1,7 @@
 {
     "python-envs.pythonProjects": [],
-    "cmake.sourceDirectory": "/home/frucd/Projects/Raspi-TelemHost-Firmware/dashboard"
+    "cmake.sourceDirectory": "/home/frucd/Projects/Raspi-TelemHost-Firmware/dashboard",
+    "python.analysis.extraPaths": [
+        "./services/web/public"
+    ]
 }

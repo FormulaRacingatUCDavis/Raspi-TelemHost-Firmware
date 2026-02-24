@@ -2,14 +2,12 @@ import QtQuick
 import QtQuick.Layouts
 import VariablesData
 
-
 Rectangle {
     id: mainwindow
     visible: true
     anchors.fill: parent
     color: "black"
 
-    // for debugging
     MouseArea {
         anchors.fill: parent
         onClicked: {
@@ -19,39 +17,36 @@ Rectangle {
 
     GridLayout {
         id: grid
-
-        x: mainwindow.width/30
+        x: mainwindow.width / 30
         y: mainwindow.height * (3/40)
         width: mainwindow.width * (14/15)
         height: mainwindow.height * (43/48)
-
         columns: 4
         rows: 2
-        columnSpacing: mainwindow.width/48
+        columnSpacing: mainwindow.width / 48
         rowSpacing: grid.y
-        
-        uniformCellHeights: true
 
         property string typeface: "Helvetica"
         property real fullfontsize: mainwindow.width * 0.075
         property real smallerfontsize: mainwindow.width * 0.06
-        property real titlefontsize: mainwindow.width/34
+        property real titlefontsize: mainwindow.width / 34
 
         Rectangle {
             id: speedbox
             color: mainpage.blue
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredWidth: 1
+            Layout.preferredWidth: grid.width / 4
+            Layout.preferredHeight: grid.height / 2
 
             Text {
                 id: speedvalue
                 text: (Data.mph == -1) ? "" : "" + Data.mph
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
-                color: "black" 
+                color: "black"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -60,44 +55,45 @@ Rectangle {
                 text: "MPH"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
-                color: "yellow" 
+                color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
-                y: grid.y * 0
+                y: 0
             }
         }
 
         Rectangle {
             id: accel
-            color: "light blue"
+            color: "lightblue"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredWidth: 1
+            Layout.preferredWidth: grid.width / 4
+            Layout.preferredHeight: grid.height / 2
 
             Text {
                 id: accelvalue
                 text: "temp"
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
-                color: "black" 
+                color: "black"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
 
             Text {
                 id: acceltext
-                text: "Acccleration"
+                text: "Acceleration"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
-                color: "yellow" 
+                color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
-                y: grid.y * 0
+                y: 0
             }
         }
 
@@ -106,8 +102,9 @@ Rectangle {
             Layout.columnSpan: 2
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
             spacing: grid.rowSpacing * 0.75
-            Layout.preferredWidth: 2
 
             Rectangle {
                 id: chargebox
@@ -116,14 +113,14 @@ Rectangle {
                 Layout.fillHeight: true
 
                 Text {
-                id: chargevalue
-                text: (Data.soc == -1) ? "" : Data.soc + "%"
-                font.pixelSize: grid.smallerfontsize
-                font.family: grid.typeface
-                color: "black" 
-                anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
-                verticalAlignment: Text.AlignVCenter
+                    id: chargevalue
+                    text: (Data.soc == -1) ? "" : Data.soc + "%"
+                    font.pixelSize: grid.smallerfontsize
+                    font.family: grid.typeface
+                    color: "black"
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
 
                 Text {
@@ -131,12 +128,12 @@ Rectangle {
                     text: "State of Charge"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
-                    color: "yellow" 
+                    color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    horizontalAlignment: Text.AlignHCenter 
+                    horizontalAlignment: Text.AlignHCenter
                     anchors.bottom: parent.top
-                    y: grid.y * 0
+                    y: 0
                 }
             }
 
@@ -147,28 +144,28 @@ Rectangle {
                 Layout.fillHeight: true
 
                 Text {
-                id: mctempvalue
-                text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
-                font.pixelSize: grid.smallerfontsize
-                font.family: grid.typeface
-                color: "black" 
-                anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
-                verticalAlignment: Text.AlignVCenter
-            }
+                    id: mctempvalue
+                    text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
+                    font.pixelSize: grid.smallerfontsize
+                    font.family: grid.typeface
+                    color: "black"
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
 
-            Text {
-                id: mctemptext
-                text: "MC Temperature"
-                font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
-                color: "yellow" 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
-                anchors.bottom: parent.top
-                y: grid.y * 0
-            }
+                Text {
+                    id: mctemptext
+                    text: "MC Temperature"
+                    font.pixelSize: grid.titlefontsize
+                    font.family: grid.typeface
+                    color: "yellow"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.bottom: parent.top
+                    y: 0
+                }
             }
         }
 
@@ -178,16 +175,17 @@ Rectangle {
             Layout.columnSpan: 2
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredWidth: 1
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
 
             Text {
                 id: vehiclestatevalue
                 text: Data.vehiclestate
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
-                color: "black" 
+                color: "black"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -196,12 +194,12 @@ Rectangle {
                 text: "Vehicle State"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
-                color: "yellow" 
+                color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
-                y: grid.y * 0
+                y: 0
             }
         }
 
@@ -210,8 +208,9 @@ Rectangle {
             Layout.columnSpan: 2
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
             spacing: grid.rowSpacing * 0.75
-            Layout.preferredWidth: 2
 
             Rectangle {
                 id: glvvbox
@@ -220,14 +219,14 @@ Rectangle {
                 Layout.fillHeight: true
 
                 Text {
-                id: glvvvalue
-                text: (Data.glvv == -1) ? "" : "" + Data.glvv
-                font.pixelSize: grid.smallerfontsize
-                font.family: grid.typeface
-                color: "black" 
-                anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
-                verticalAlignment: Text.AlignVCenter
+                    id: glvvvalue
+                    text: (Data.glvv == -1) ? "" : "" + Data.glvv
+                    font.pixelSize: grid.smallerfontsize
+                    font.family: grid.typeface
+                    color: "black"
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
 
                 Text {
@@ -235,12 +234,12 @@ Rectangle {
                     text: "GLV Voltage"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
-                    color: "yellow" 
+                    color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    horizontalAlignment: Text.AlignHCenter 
+                    horizontalAlignment: Text.AlignHCenter
                     anchors.bottom: parent.top
-                    y: grid.y * 0
+                    y: 0
                 }
             }
 
@@ -251,14 +250,14 @@ Rectangle {
                 Layout.fillHeight: true
 
                 Text {
-                id: laptimevalue
-                text: "temp"
-                font.pixelSize: grid.smallerfontsize
-                font.family: grid.typeface
-                color: "black" 
-                anchors.fill:parent
-                horizontalAlignment: Text.AlignHCenter 
-                verticalAlignment: Text.AlignVCenter
+                    id: laptimevalue
+                    text: "temp"
+                    font.pixelSize: grid.smallerfontsize
+                    font.family: grid.typeface
+                    color: "black"
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
 
                 Text {
@@ -266,14 +265,14 @@ Rectangle {
                     text: "Lap Time"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
-                    color: "yellow" 
+                    color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    horizontalAlignment: Text.AlignHCenter 
+                    horizontalAlignment: Text.AlignHCenter
                     anchors.bottom: parent.top
-                    y: grid.y * 0
+                    y: 0
                 }
             }
         }
-    } 
-} 
+    }
+}

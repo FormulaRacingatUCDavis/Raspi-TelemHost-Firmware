@@ -2,14 +2,12 @@ import QtQuick
 import QtQuick.Layouts
 import VariablesData
 
-
 Rectangle {
     id: mainwindow
     visible: true
     anchors.fill: parent
-    color: "black" 
+    color: "black"
 
-    // for debugging
     MouseArea {
         anchors.fill: parent
         onClicked: {
@@ -18,32 +16,28 @@ Rectangle {
     }
 
     GridLayout {
-        id: grid 
-
-        x: mainwindow.width/30
+        id: grid
+        x: mainwindow.width / 30
         y: mainwindow.height * (3/40)
         width: mainwindow.width * (14/15)
         height: mainwindow.height * (43/48)
-        
         columns: 3
         rows: 3
-        columnSpacing: mainwindow.width/38
+        columnSpacing: mainwindow.width / 38
         rowSpacing: grid.y
 
-        uniformCellHeights: true
-        uniformCellWidths: true
-
-        property real titlefontsize: mainwindow.width/32
+        property real titlefontsize: mainwindow.width / 32
         property real valuefontsize: mainwindow.width * 0.04
         property string typeface: "Helvetica"
 
-        
         Rectangle {
             id: packsocbox
             color: mainpage.red
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: packsocvalue
                 color: "black"
@@ -55,13 +49,13 @@ Rectangle {
                 font.family: grid.typeface
                 font.bold: true
             }
-            
+
             Text {
                 id: packsoctext
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: packsocbox.top
                 y: grid.y
                 text: "Pack SOC"
@@ -70,13 +64,15 @@ Rectangle {
                 font.bold: true
             }
         }
-        
+
         Rectangle {
             id: packtempbox
             color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: packtempvalue
                 color: "black"
@@ -94,7 +90,7 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "Pack Temperature"
@@ -109,7 +105,9 @@ Rectangle {
             color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: shutdowncircuitvalue
                 color: "black"
@@ -127,14 +125,14 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "Shutdown Circuit"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
-            } 
+            }
         }
 
         Rectangle {
@@ -142,7 +140,9 @@ Rectangle {
             color: Data.mctemp_color
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: mctempvalue
                 color: "black"
@@ -160,14 +160,14 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "MC Temperature"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
-            } 
+            }
         }
 
         Rectangle {
@@ -175,7 +175,9 @@ Rectangle {
             color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: motortempvalue
                 color: "black"
@@ -193,14 +195,14 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "Motor Temperature"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
-            } 
+            }
         }
 
         Rectangle {
@@ -208,7 +210,9 @@ Rectangle {
             color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: mcstatevalue
                 color: "black"
@@ -226,7 +230,7 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "MC State"
@@ -241,7 +245,9 @@ Rectangle {
             color: Data.vehiclestate_color
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: vehiclestatevalue
                 color: "black"
@@ -249,8 +255,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.vehiclestate
-                font.pixelSize: (Data.vehiclestate.length < 10) ? grid.valuefontsize
-                    : grid.valuefontsize * 0.8
+                font.pixelSize: (Data.vehiclestate.length < 10) ? grid.valuefontsize : grid.valuefontsize * 0.8
                 font.family: grid.typeface
                 font.bold: true
             }
@@ -260,14 +265,14 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "Vehicle State"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
-            } 
+            }
         }
 
         Rectangle {
@@ -275,7 +280,9 @@ Rectangle {
             color: Data.glvv_color
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: glvvvalue
                 color: "black"
@@ -293,14 +300,14 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "GLV Voltage"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
-            } 
+            }
         }
 
         Rectangle {
@@ -308,7 +315,9 @@ Rectangle {
             color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+            Layout.preferredWidth: grid.width / 3
+            Layout.preferredHeight: grid.height / 3
+
             Text {
                 id: freeboxvalue
                 color: "black"
@@ -326,14 +335,14 @@ Rectangle {
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
                 text: "(free slot)"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
-            } 
+            }
         }
     }
-} 
+}

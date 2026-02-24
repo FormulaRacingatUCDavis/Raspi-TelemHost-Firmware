@@ -1,99 +1,213 @@
 #include <mosquitto.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/wait.h>
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <thread>
 #include <chrono>
 #include <nlohmann/json.hpp>
 #include <atomic>
+#include <filesystem>
+#include <sstream>
+#include <iomanip>
+#include "daqhelper.h"
 
-#include "ingestion.h"
-#include "decode.h"
+void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message);
 
-std::atomic<bool> logging_enabled{false};
-
-void on_message(struct mosquitto* mosq, void* userdata, const struct mosquitto_message* msg);
+std::atomic<bool> log_en{false};
 
 int main()
 {
     nlohmann::json cfg;
-    std::ifstream cfg_file("config/config.json");
-    if (!cfg_file.is_open()) {
-        std::cerr << "Failed to open config.json\n";
-        return 1;
-    }
+    std::ifstream cfg_file("resources/config.json");
     cfg_file >> cfg;
+    std::string PCAN_IFACE = cfg["can"]["pcan"];
+    std::string TCAN_IFACE = cfg["can"]["tcan"];
+    std::filesystem::path LOGS_DIR = cfg["can"]["logsPath"];
     cfg_file.close();
 
-    std::string pcan = cfg["interfaces"]["pcan"];
-    std::string tcan = cfg["interfaces"]["tcan"];
+    mosquitto_lib_init();
+    struct mosquitto* mosq = mosquitto_new("can-publisher", true, nullptr);
+    mosquitto_connect(mosq, "localhost", 1883, 60);
+    mosquitto_message_callback_set(mosq, on_message);
+    mosquitto_subscribe(mosq, nullptr, "logger/control", 0);
+    mosquitto_loop_start(mosq);
 
-    pid_t pid = fork();
-    if (pid == 0)
+    moodycamel::ConcurrentQueue<telem::Capture> q(8192);
+    telem::DAQHelper pcan(PCAN_IFACE.c_str());
+    telem::DAQHelper tcan(TCAN_IFACE.c_str());
+    std::thread pcan_thread(&telem::DAQHelper::queue_frame, &pcan, std::ref(q));
+    std::thread tcan_thread(&telem::DAQHelper::queue_frame, &tcan, std::ref(q));
+
+    std::filesystem::create_directories(LOGS_DIR);
+    std::ofstream log;
+    auto start = std::chrono::system_clock::now();
+    std::string filename;
+    std::string log_status = "off";
+    uint8_t log_count = 0;
+    mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
+
+    telem::Capture cap;
+    while (true)
     {
-        /* Child process: Log to CSV and listen to MQTT for logging control */
-
-        mosquitto_lib_init();
-        struct mosquitto* mosq = mosquitto_new("can-logger", true, nullptr);
-        mosquitto_connect(mosq, "localhost", 1883, 60);
-
-        mosquitto_message_callback_set(mosq, on_message);
-        mosquitto_subscribe(mosq, nullptr, "vehicle/logger/status", 1);
-        mosquitto_loop_start(mosq);
-
-        std::filesystem::path log_dir;
-        if (pcan.rfind("vcan", 0) == 0 || tcan.rfind("vcan", 0) == 0)
-            log_dir = "testlogs";
-        else
-            log_dir = "logs";
-        std::filesystem::create_directories(log_dir);
-
-        std::ofstream log;
-        std::filesystem::path log_file;
-        auto start = std::chrono::system_clock::now();
-        
-        std::string payload = "paused";
-        bool was_logging = false;
-        mosquitto_publish(mosq, nullptr, "vehicle/logger/status", payload.size(), payload.c_str(), 0, true);
-
-        std::vector<std::thread> threads;
-        auto q = telem::queue_can({pcan, tcan}, threads, &logging_enabled);
-
-        telem::Capture cap;
-        while (true)
+        if (log_status == "off" && log_en.load())
         {
-            bool active = logging_enabled.load();
+            start = std::chrono::system_clock::now();
+            auto t = std::chrono::system_clock::to_time_t(start);
+            std::ostringstream datetime;
+            datetime << std::put_time(std::localtime(&t), "%Y%m%d_%H%M%S");
+            filename = datetime.str() + ".csv";
 
-            if (active && !was_logging)
+            log.open(LOGS_DIR / (datetime.str() + ".csv"));
+            log_status = "on";
+            mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
+            std::cout << "[LOGGER] Started new log: " << filename << "\n";
+        }
+        else if (log_status == "on" && !log_en.load())
+        {
+            log.flush();
+            log.close();
+            log_status = "off";
+            mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
+            std::cout << "[LOGGER] Closed log: " << filename << "\n";
+        }
+
+        if (q.try_dequeue(cap))
+        {
+            uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
+            nlohmann::json j;
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(cap.timestamp.time_since_epoch()).count();
+
+            switch (id)
             {
-                start = std::chrono::system_clock::now();
-                log_file = log_dir / (telem::format_timestamp(start) + ".csv");
-                log.close();
-                log.open(log_file, std::ios::out | std::ios::app);
+                case 0x766:
+                {
+                    struct fe12_db_vehicle_state_t msg;
+                    fe12_db_vehicle_state_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
-                while (q.try_dequeue(cap)) {}
+                    j["id"] = id;
+                    j["dashboard_hv_requested"]   = fe12_db_vehicle_state_dashboard_hv_requested_decode(msg.dashboard_hv_requested);
+                    j["dashboard_throttle1_level"] = fe12_db_vehicle_state_dashboard_throttle1_level_decode(msg.dashboard_throttle1_level);
+                    j["dashboard_throttle2_level"] = fe12_db_vehicle_state_dashboard_throttle2_level_decode(msg.dashboard_throttle2_level);
+                    j["dashboard_brake_level"]    = fe12_db_vehicle_state_dashboard_brake_level_decode(msg.dashboard_brake_level);
+                    j["dashboard_vcu_ticks"]      = fe12_db_vehicle_state_dashboard_vcu_ticks_decode(msg.dashboard_vcu_ticks);
+                    uint8_t vcu_state_code = fe12_db_vehicle_state_dashboard_state_decode(msg.dashboard_state);
+                    j["dashboard_state"] = (telem::VEHICLE_STATE.find(vcu_state_code) != telem::VEHICLE_STATE.end()) ? telem::VEHICLE_STATE.at(vcu_state_code) : "YO WTF?";
+                    j["timestamp"] = ms;
 
-                std::cout << "[LOGGER] Started new log: " << log_file << "\n";
+                    break;
+                }
+                case 0xC0:
+                {
+                    struct fe12_db_torque_request_t msg;
+                    fe12_db_torque_request_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["dashboard_torque"] = fe12_db_torque_request_dashboard_torque_decode(msg.dashboard_torque);
+                    j["dashboard_speed"] = fe12_db_torque_request_dashboard_speed_decode(msg.dashboard_speed);
+                    j["dashboard_direction"] = fe12_db_torque_request_dashboard_direction_decode(msg.dashboard_direction);
+                    j["dashboard_inverter_enable"] = fe12_db_torque_request_dashboard_inverter_enable_decode(msg.dashboard_inverter_enable);
+                    j["dashboard_discharge_enable"] = fe12_db_torque_request_dashboard_discharge_enable_decode(msg.dashboard_discharge_enable);
+                    j["dashboard_speed_mode_enable"] = fe12_db_torque_request_dashboard_speed_mode_enable_decode(msg.dashboard_speed_mode_enable);
+                    j["dashboard_torque_limit"] = fe12_db_torque_request_dashboard_torque_limit_decode(msg.dashboard_torque_limit);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0xA0:
+                {
+                    struct cm200_db_m160_temperature_set_1_t msg;
+                    cm200_db_m160_temperature_set_1_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"];
+                    j["inv_module_a_temp"] = cm200_db_m160_temperature_set_1_inv_module_a_temp_decode(msg.inv_module_a_temp);
+                    j["inv_module_b_temp"] = cm200_db_m160_temperature_set_1_inv_module_b_temp_decode(msg.inv_module_b_temp);
+                    j["inv_module_c_temp"] = cm200_db_m160_temperature_set_1_inv_module_c_temp_decode(msg.inv_module_c_temp);
+                    j["inv_gate_driver_board_temp"] = cm200_db_m160_temperature_set_1_inv_gate_driver_board_temp_decode(msg.inv_gate_driver_board_temp);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0xA5:
+                {
+                    struct cm200_db_m165_motor_position_info_t msg;
+                    cm200_db_m165_motor_position_info_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["inv_motor_angle_electrical"] = cm200_db_m165_motor_position_info_inv_motor_angle_electrical_decode(msg.inv_motor_angle_electrical);
+                    j["inv_motor_speed"] = cm200_db_m165_motor_position_info_inv_motor_speed_decode(msg.inv_motor_speed);
+                    j["inv_electrical_output_frequency"] = cm200_db_m165_motor_position_info_inv_electrical_output_frequency_decode(msg.inv_electrical_output_frequency);
+                    j["inv_delta_resolver_filtered"] = cm200_db_m165_motor_position_info_inv_delta_resolver_filtered_decode(msg.inv_delta_resolver_filtered);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x388:
+                {
+                    struct fe12_db_current_t msg;
+                    fe12_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"];
+                    j["pei_current"] = fe12_db_current_pei_current_decode(msg.pei_current);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x380:
+                {
+                    struct fe12_db_bms_status_t msg;
+                    fe12_db_bms_status_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    uint8_t bms_state_code = fe12_db_bms_status_pei_bms_status_decode(msg.pei_bms_status);
+                    j["pei_bms_status"] = (telem::BMS_STATE.find(bms_state_code) != telem::BMS_STATE.end()) ? telem::BMS_STATE.at(bms_state_code) : "YO WTF?";
+                    j["pei_spi_error_flags"] = fe12_db_bms_status_pei_spi_error_flags_decode(msg.pei_spi_error_flags);
+                    j["pei_max_faulting_ic_address"] = fe12_db_bms_status_pei_max_faulting_ic_address_decode(msg.pei_max_faulting_ic_address);
+                    j["pei_communication_break_id"] = fe12_db_bms_status_pei_communication_break_id_decode(msg.pei_communication_break_id);
+                    j["timestamp"] = ms;
+                    
+                    break;
+                }
+                case 0x381:
+                {
+                    struct fe12_db_diagnostic_bms_data_t msg;
+                    fe12_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["pei_hi_temp"] = fe12_db_diagnostic_bms_data_pei_hi_temp_decode(msg.pei_hi_temp);
+                    j["pei_soc"] = fe12_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
+                    j["pei_pack_voltage"] = fe12_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
+                    j["timestamp"] = ms;
+                    
+                    break;
+                }
+                case 0xAB:
+                {
+                    struct cm200_db_m171_fault_codes_t msg;
+                    cm200_db_m171_fault_codes_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    uint32_t post_fault_code = (static_cast<uint32_t>(msg.inv_post_fault_hi) << 16) | static_cast<uint32_t>(msg.inv_post_fault_lo);
+                    uint32_t run_fault_code = (static_cast<uint32_t>(msg.inv_run_fault_hi) << 16) | static_cast<uint32_t>(msg.inv_run_fault_lo);
+
+                    j["id"] = id;
+                    j["inv_post_fault"] = (telem::MC_STATE.find(post_fault_code) != telem::MC_STATE.end()) ? telem::MC_STATE.at(post_fault_code) : "YO WTF?";
+                    j["inv_run_fault"] = (telem::MC_STATE.find(run_fault_code) != telem::MC_STATE.end()) ? telem::MC_STATE.at(run_fault_code) : "YO WTF?";
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+            }
+            
+            if (!j.empty())
+            {
+                char topic[64];
+                snprintf(topic, sizeof(topic), "can/%X", id);
+
+                std::string payload = j.dump();
+                mosquitto_publish(mosq, nullptr, topic, payload.size(), payload.c_str(), 0, false);
             }
 
-            was_logging = active;
-
-            if (!active)
+            if (log_status == "on")
             {
-                while (q.try_dequeue(cap)) {}
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                continue;
-            }
-
-            if (q.try_dequeue(cap))
-            {
-                uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK)
-                                                                : (cap.frame.can_id & CAN_SFF_MASK);
                 auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(cap.timestamp - start).count();
-
                 log << std::hex << std::uppercase
                     << id << ","
                     << static_cast<int>(cap.frame.data[0]) << ","
@@ -106,72 +220,31 @@ int main()
                     << static_cast<int>(cap.frame.data[7]) << ","
                     << std::dec << elapsed
                     << "\n";
-                log.flush();
-            }
-            else
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                log_count++;
+                if (log_count == 50)
+                    log.flush();
             }
         }
-
-        _exit(0);
-    }
-    else if (pid > 0)
-    {
-        /* Publish CAN bus data to MQTT broker */
-
-        std::cout << "Forked CAN logger process, pid = " << pid << std::endl;
-
-        mosquitto_lib_init();
-        struct mosquitto* mosq = mosquitto_new("can-publisher", true, nullptr);
-        mosquitto_connect(mosq, "localhost", 1883, 60);
-        mosquitto_loop_start(mosq);
-
-        std::vector<std::thread> threads;
-        auto q = telem::queue_can({pcan, tcan}, threads, nullptr);
-
-        telem::Capture cap;
-        while (true)
+        else
         {
-            if (q.try_dequeue(cap))
-            {
-                auto j = telem::decode_to_json(cap);
-                if (!j.empty())
-                {
-                    uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
-
-                    char topic[64];
-                    snprintf(topic, sizeof(topic), "vehicle/can/%X", id);
-
-                    std::string payload = j.dump();
-                    mosquitto_publish(mosq, nullptr, topic, payload.size(), payload.c_str(), 0, false);
-                }
-            }
-            else
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
         }
-
-        _exit(0);
     }
 
     return 0;
 }
 
-void on_message(struct mosquitto* mosq, void* userdata, const struct mosquitto_message* msg)
+void on_message(struct mosquitto* mosq, void* userdata, const struct mosquitto_message* message)
 {
-    if (!msg || !msg->payload)
-        return;
+    std::string topic(message->topic);
+    std::string payload(static_cast<char*>(message->payload), message->payloadlen);
 
-    std::string topic(msg->topic);
-    std::string payload(static_cast<char*>(msg->payload), msg->payloadlen);
-
-    if (topic == "vehicle/logger/status")
+    if (topic == "logger/control")
     {
-        if (payload == "running")
-            logging_enabled.store(true);
-        else if (payload == "paused")
-            logging_enabled.store(false);
+        if (payload == "on")
+            log_en = true;
+        else if (payload == "off")
+            log_en = false;
     }
 }

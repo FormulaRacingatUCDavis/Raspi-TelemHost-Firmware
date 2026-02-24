@@ -33,3 +33,4 @@ typing-inspection==0.4.1
 typing_extensions==4.12.2
 uvicorn==0.36.0
 wrapt==1.17.2
+nicegui

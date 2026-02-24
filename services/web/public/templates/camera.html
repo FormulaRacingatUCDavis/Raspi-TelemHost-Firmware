@@ -1,0 +1,78 @@
+{% extends "index.html" %}
+
+{% block logCanData %}
+  <li><button id="logCanData" value="false" class="outline" style="white-space: nowrap; width: fit-content;">Log Can Data</button></li>
+{% endblock logCanData %}
+
+{% block recordStream %}
+    <li><button class="outline" style="white-space: nowrap; width: fit-content;">Record Camera Stream</button></li>
+{% endblock recordStream %}
+
+{% block cameraFeed %}
+<article data-theme="light">
+    <div class="grid">
+        <img id="frame" src="images/photo_error.jpg" width="100%" height="100%" alt="Camera Stream" style="pointer-events: none">
+    </div>
+</article>  
+</div>
+    <div class="container-fluid" style="text-align: center;">
+        <h3 id="statusTextArea" class"center-header"></h3>
+    </div>
+</div>
+{% endblock cameraFeed %}
+
+{% block scripts %}
+<script>
+    // Camera Stream
+    let image = document.getElementById("frame");
+    let textArea = document.getElementById("statusTextArea");
+    if (!image) {
+        textArea.textContent = "Waiting to gather image"
+        console.error("ERROR: Image not found!");
+    } else {
+        textArea.textContent = "Image found"
+        console.log("Image element found");
+    }
+
+    const ws = new WebSocket('ws://127.0.0.1:8000/ws');
+    // Websocket Error Handling
+    ws.onopen = () => {
+        console.log("WebSocket connected");
+        textArea.textContent = "Websocket connected"
+    };
+
+    // Loading image
+    ws.onmessage = function(event) {
+        console.log('Received data:', event.data.byteLength, 'bytes');
+        if (typeof event.data === 'string') 
+            document.getElementById("textArea").innerHTML = event.data;
+        else
+            image.src = URL.createObjectURL(event.data);
+    };
+    image.onload = function(){
+        console.log("Image loaded successfully!");
+        textArea.textContent = "Image loaded successfully"
+        URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
+    } 
+
+    image.onerror = function() {
+        textArea.textContent = "Image could not be loaded"
+        console.error("Image failed to load!");
+    };
+
+    // Websocket Error Handling
+    ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        console.error("Cant connect to ws://localhost:8000/ws");
+    };
+
+    ws.onclose = function() {
+        console.log('WebSocket disconnected');
+        textArea.textContent = "Websocket disconnected"
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+    };
+
+</script>
+{% endblock scripts %}

@@ -1,48 +1,232 @@
-import '@picocss/pico'
-import Chart from 'chart.js/auto';
+import "@picocss/pico";
+import Chart from "chart.js/auto";
+import "chartjs-adapter-moment";
+import mqtt from "mqtt";
 
-(async function() {
-  const data = {
-    datasets: [{
-      label: 'Motor Speed',
-      data: [
-        {x: 0, y: 10 },
-        {x: 10, y: 5},
-        {x: 0.5, y: 5.5}
-      ],
-      backgroundColor: 'rgb(0, 0, 0)'
-    }],
+(async function () {
+  const response = await fetch("/config/config.json");
+  const config = await response.json();
+  console.log("Loaded config:", config);
+  let graphOptions = config.mqtt.data;
+
+  const list = document.getElementById("phase-options");
+  Object.entries(graphOptions).forEach(([key, value]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <label>
+        <input type="radio" name="phase" value="${key}" />
+        ${value.label}
+      </label>
+    `;
+    list.appendChild(li);
+  });
+
+  const client = mqtt.connect(config.mqtt.ws);
+  client.on("connect", () => {
+    console.log("Connected to MQTT broker.");
+    client.subscribe("can/A0");
+    client.subscribe("can/766");
+    client.subscribe("can/380");
+    client.subscribe("can/AB");
+  });
+
+  let barChart;
+  let lineChart;
+  let selectedField = "";
+  let selectedTopic = "";
+  const MAX_POINTS = 1000;
+
+  const vcuState = document.getElementById("vcu-state");
+  const peiState = document.getElementById("pei-state");
+  const mcState = document.getElementById("mc-state");
+
+  client.on("message", (topic, message) => {
+      const msg = JSON.parse(message.toString());
+
+      if (topic === "can/A0" && barChart) {
+          const dataset = barChart.data.datasets[0].data;
+          dataset[0] = msg.inv_module_a_temp;
+          dataset[1] = msg.inv_module_b_temp;
+          dataset[2] = msg.inv_module_c_temp;
+          barChart.update();
+      }
+
+      if (topic === "can/766" && vcuState) {
+          vcuState.textContent = msg.dashboard_state;
+      }
+
+      if (topic === "can/380" && peiState) {
+          peiState.textContent = msg.pei_bms_status;
+      }
+
+      if (topic === "can/AB" && mcState) {
+        if (msg.inv_run_fault !== "Normal")
+          mcState.textContent = msg.inv_run_fault;
+        else
+          mcState.textContent = msg.inv_post_fault;
+      }
+
+      if (topic === selectedTopic && lineChart) {
+          const dataset = lineChart.data.datasets[0].data;
+          dataset.push({ x: msg.timestamp, y: msg[selectedField] });
+
+          if (dataset.length > MAX_POINTS) {
+              dataset.splice(0, dataset.length - MAX_POINTS);
+          }
+
+          lineChart.update('none');
+      }
+  });
+
+  const lineData = {
+    datasets: [
+      {
+        label: "No Data Selected",
+        data: [],
+        backgroundColor: "rgb(135, 139, 219)",
+      },
+    ],
   };
 
-  new Chart(
-    document.getElementById('motor_speed'),
-    {
-    type: 'scatter',
+  lineChart = new Chart(document.getElementById("lineChart"), {
+    type: "line",
+    data: lineData,
+    options: {
+      parsing: false,
+      normalized: true,
+      scales: {
+        x: {
+          ticks: {
+            sampleSize: 10,
+            maxTicksLimit: 10
+          },
+          type: "time",
+          time: {
+            unit: "second",
+          },
+          title: {
+            display: true,
+            text: "Time",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "No Data Selected",
+          },
+        },
+      }
+    },
+  });
+
+  const labels = ["Module A", "Module B", "Module C"];
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Inverter Module Temperatures",
+        data: [null, null, null],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(255, 205, 86, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  barChart = new Chart(document.getElementById("barChart"), {
+    type: "bar",
     data: data,
     options: {
       scales: {
-        x: {
-          type: 'linear',
-          position: 'bottom',
-          title: {
-            display: true,
-            text: 'Time [s]',
-            font: {
-              size: 16
-            }
-          }
-        },
         y: {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Motor Speed [RPM]',
-            font: {
-              size: 16
-            }
-          }
-        }
-      }
-    }
+            text: "Temperature [C]",
+          },
+        },
+      },
+    },
   });
+
+  const graphSelect = document.querySelectorAll('input[name="phase"]');
+  graphSelect.forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      if (selectedField !== e.target.value) {
+        client.unsubscribe(selectedTopic);
+        selectedField = e.target.value;
+        selectedTopic = graphOptions[selectedField].topic;
+        client.subscribe(selectedTopic);
+
+        lineChart.data.datasets[0].label = graphOptions[selectedField].label;
+        lineChart.data.datasets[0].data.length = 0;
+        lineChart.options.scales.y.title.text = graphOptions[selectedField].label;
+        lineChart.update('none');
+      }
+    });
+  });
+
+  async function downloadFile() {
+    const checkedFileRadio = document.querySelectorAll('input[name="file"]:checked');
+
+    if (checkedFileRadio.length === 0) {
+      console.error("Please selected a valid file.")
+      return;
+    }
+
+    // REMOVE: debugging
+    console.log(checkedFileRadio)
+    
+    const file_id = Array.from(checkedFileRadio).map(input => input.value);
+
+    // REMOVE: debugging
+    console.log(file_id)
+
+    // else return an error from api (maybe a quick modal from html? -- too complex)
+    try {
+      file_id.forEach(async (id) => {
+        // download each file selected given id
+        window.location.href = `http://127.0.0.1:8000/api/download/${id}`;
+      });
+    } catch (error) {
+      console.error("Error:", response.status, await response.text());
+    }
+  }
+  document.getElementById('fileDownload').addEventListener('click', downloadFile);
+
+  async function updateLogCanButton() {
+    const response = await fetch("/config/config.json");
+    const config = await response.json();
+    console.log("Loaded config:", config);
+  
+    const client = mqtt.connect(config.mqtt.ws);
+    client.on("connect", () => {
+      console.log("Connected to MQTT broker.");
+      client.subscribe("logger/control");
+    });
+  
+    const button = document.getElementById('logCanData');
+    if (button.value == "false") {
+      button.value = "true";
+      button.textContent = "Stop Logging";
+      button.className = "secondary";
+      client.publish("logger/control", "on");
+      console.log("publish");
+    } else {
+      button.value = "false";
+      button.textContent = "Log Can Data";
+      button.className = "outline";
+      client.publish("logger/control", "off");
+      console.log("no publish");
+    }
+  }
+  document.getElementById('logCanData').addEventListener('click', updateLogCanButton);
 })();

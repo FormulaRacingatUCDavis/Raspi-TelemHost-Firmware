@@ -36,7 +36,6 @@ target_include_directories(RaspiTelemHost PUBLIC
 
 target_link_libraries(RaspiTelemHost PRIVATE
     m
-    nlohmann_json::nlohmann_json
     Qt6::Core
     Qt6::Gui
     Qt6::Quick

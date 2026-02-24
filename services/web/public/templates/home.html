@@ -1,0 +1,123 @@
+{% extends "index.html" %}
+
+{% block fileoptions %}
+    {% for f_post in file_posts %}
+    <li>
+    <label>
+        <input type="checkbox" name="file" value="{{f_post.id}}"/>
+        {{f_post.file_name}}
+    </label>
+    </li>
+    {% endfor %}
+{% endblock fileoptions %}
+
+{% block logCanData %}
+  <li><button id="logCanData" value="false" class="outline" style="white-space: nowrap; width: fit-content;">Log Can Data</button></li>
+{% endblock logCanData %}
+
+{% block recordStream %}
+    <li><button class="outline" style="white-space: nowrap; width: fit-content;">Record Camera Stream</button></li>
+{% endblock recordStream %}
+
+
+{% block dropdown %}
+<details id="detailsDropDown" class="dropdown">
+    <summary>
+        Export CSV...
+    </summary>
+    <!-- Dynammically making download options -->
+    <ul>
+        {% for f_post in file_posts %}
+        <li>
+            <label>
+            <input type="checkbox" name="file" value="{{f_post.id}}"/>
+                {{f_post.file_name}}
+            </label>
+        </li>
+        {% endfor %}
+        <li>
+        <li><a href="#" id="fileDownload">Download</a></li>
+        </li>
+    </ul>
+</details>
+{% endblock dropdown %}
+
+{% block graph %}
+<article data-theme="light">
+    <div class="grid">
+      <div>
+        <table class="striped">
+          <thead>
+            <tr>
+              <th scope="col">Source</th>
+              <th scope="col">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">VCU</th>
+              <td id="vcu-state">No Data</td>
+            </tr>
+            <tr>
+              <th scope="row">PEI</th>
+              <td id="pei-state">No Data</td>
+            </tr>
+            <tr>
+              <th scope="row">MC</th>
+              <td id="mc-state">No Data</td>
+            </tr>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </div>
+      <div>
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+  </article>
+
+  <article data-theme="light">
+    <details class="dropdown">
+      <summary>Select Data...</summary>
+      <ul id="phase-options">
+    </details>
+    <canvas id="lineChart"></canvas>
+  </article>
+{% endblock graph %}
+
+{% block scripts %}
+    <script> 
+      const details = document.getElementById("detailsDropDown");
+      let windowAlreadyOpened = false;
+
+      async function updateDropdown() {
+        await fetch("/api/update_dropdown");
+        window.location.reload();
+        return;
+      }
+
+      window.onload = () => {
+        if (sessionStorage.getItem("dropdownStatus") === "open") {
+          windowAlreadyOpened = true;
+          details.open = true;
+        } else {
+          details.open = false;
+        }
+      }
+
+      details.addEventListener('toggle', () => {
+        if (details.open) {
+          sessionStorage.setItem("dropdownStatus", "open");
+          if (!windowAlreadyOpened) {
+            updateDropdown();
+          }
+          windowAlreadyOpened = false;
+        } else {
+          sessionStorage.removeItem("dropdownStatus");
+        }
+      });
+
+    </script>
+    <script type="module" src="{{ url_for('static', path='app.js') }}"></script>
+{% endblock scripts %}

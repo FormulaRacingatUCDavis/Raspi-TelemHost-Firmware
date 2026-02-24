@@ -7,3 +7,5 @@ CMakeUserPresets.json
 node_modules
 dist
 .parcel-cache
+services/web/static
+services/public/templogs
