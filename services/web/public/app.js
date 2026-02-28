@@ -3,110 +3,104 @@ import Chart from "chart.js/auto";
 import "chartjs-adapter-moment";
 import mqtt from "mqtt";
 
-/* Connect to MQTT broker from web browser using WebSockets */
-
-const client = mqtt.connect('ws://192.168.137.100:8080');
-
-client.on("connect", () => {
-  console.log("Connected to MQTT broker.");
-  client.subscribe("can/A0");
-  client.subscribe("can/C0"); // torque request
-  client.subscribe("can/A5"); // motor speed
-  client.subscribe("can/388"); // current
-  client.subscribe("can/381"); // state of charge
-});
-
-/* Graph live data */
-
-let lineChart;
-let barChart;
-
-const MAX_POINTS = 1000;
-
-// store graph data for different options
-const storedData = {
-  torque: [],
-  speed: [],
-  current: [],
-  soc: [],
-};
-
-// for current graph select
-let currentGraphSelect = "torque";
-
-client.on("message", (topic, message) => {
-  if (topic === "can/A0") {
-    const msg = JSON.parse(message.toString());
-
-    if (barChart) {
-      const dataset = barChart.data.datasets[0].data;
-
-      dataset[0] = msg.inv_module_a_temp;
-      dataset[1] = msg.inv_module_b_temp;
-      dataset[2] = msg.inv_module_c_temp;
-
-      barChart.update();
-    }
-  } else if (topic === "can/C0") {
-    //torque request
-    const msg = JSON.parse(message.toString());
-
-    storedData.torque.push({ x: msg.timestamp, y: msg.dashboard_torque });
-    if (storedData.torque.length > MAX_POINTS) {
-      storedData.torque.splice(0, storedData.torque.length - MAX_POINTS);
-    }
-
-    if (lineChart && currentGraphSelect === "torque") {
-      lineChart.data.datasets[0].data = storedData.torque;
-      lineChart.update("none");
-    }
-  } else if (topic === "can/A5") {
-    // motor speed
-    const msg = JSON.parse(message.toString());
-
-    storedData.speed.push({ x: msg.timestamp, y: msg.inv_motor_speed });
-    if (storedData.speed.length > MAX_POINTS) {
-      storedData.speed.splice(0, storedData.speed.length - MAX_POINTS);
-    }
-
-    if (lineChart && currentGraphSelect === "speed") {
-      lineChart.data.datasets[0].data = storedData.speed;
-      lineChart.update("none");
-    }
-  } else if (topic === "can/388") {
-    // current
-    const msg = JSON.parse(message.toString());
-
-    storedData.current.push({ x: msg.timestamp, y: msg.pei_current });
-    if (storedData.current.length > MAX_POINTS) {
-      storedData.current.splice(0, storedData.current.length - MAX_POINTS);
-    }
-
-    if (lineChart && currentGraphSelect === "current") {
-      lineChart.data.datasets[0].data = storedData.current;
-      lineChart.update("none");
-    }
-  } else if (topic === "can/381") {
-    // state of charge
-    const msg = JSON.parse(message.toString());
-
-    storedData.soc.push({ x: msg.timestamp, y: msg.pei_soc });
-    if (storedData.soc.length > MAX_POINTS) {
-      storedData.soc.splice(0, storedData.soc.length - MAX_POINTS);
-    }
-
-    if (lineChart && currentGraphSelect === "soc") {
-      lineChart.data.datasets[0].data = storedData.soc;
-      lineChart.update("none");
-    }
-  }
-});
-
 (async function () {
+  const response = await fetch("/config/config.json");
+  const config = await response.json();
+  console.log("Loaded config:", config);
+  let graphOptions = config.mqtt.data;
+
+  const list = document.getElementById("phase-options");
+  Object.entries(graphOptions).forEach(([key, value]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <label>
+        <input type="radio" name="phase" value="${key}" />
+        ${value.label}
+      </label>
+    `;
+    list.appendChild(li);
+  });
+
+  const client = mqtt.connect(config.mqtt.ws);
+  client.on("connect", () => {
+    console.log("Connected to MQTT broker.");
+    client.subscribe("can/A0");
+    client.subscribe("can/766");
+    client.subscribe("can/380");
+    client.subscribe("can/AB");
+    client.subscribe("logger/status");
+  });
+
+  let barChart;
+  let lineChart;
+  let selectedField = "";
+  let selectedTopic = "";
+  const MAX_POINTS = 1000;
+  const logButton = document.getElementById('logCanData');
+
+  const vcuState = document.getElementById("vcu-state");
+  const peiState = document.getElementById("pei-state");
+  const mcState = document.getElementById("mc-state");
+
+  client.on("message", (topic, message) => {
+      if (topic === "can/A0" && barChart) {
+        const msg = JSON.parse(message.toString());
+        const dataset = barChart.data.datasets[0].data;
+        dataset[0] = msg.inv_module_a_temp;
+        dataset[1] = msg.inv_module_b_temp;
+        dataset[2] = msg.inv_module_c_temp;
+        barChart.update();
+      }
+
+      if (topic === "can/766" && vcuState) {
+        const msg = JSON.parse(message.toString());
+        vcuState.textContent = msg.dashboard_state;
+      }
+
+      if (topic === "can/380" && peiState) {
+        const msg = JSON.parse(message.toString());
+        peiState.textContent = msg.pei_bms_status;
+      }
+
+      if (topic === "can/AB" && mcState) {
+        const msg = JSON.parse(message.toString());
+        if (msg.inv_run_fault !== "Normal")
+          mcState.textContent = msg.inv_run_fault;
+        else
+          mcState.textContent = msg.inv_post_fault;
+      }
+
+      if (topic === "logger/status" && logButton) {
+        const status = message.toString();
+        if (status === "on") {
+          logButton.value = "true";
+          logButton.textContent = "Stop Log";
+          logButton.className = "secondary";
+        }
+        else {
+          logButton.value = "false";
+          logButton.textContent = "Log CAN";
+          logButton.className = "outline";
+        }
+      }
+
+      if (topic === selectedTopic && lineChart) {
+        const msg = JSON.parse(message.toString());
+        const dataset = lineChart.data.datasets[0].data;
+        dataset.push({ x: msg.timestamp, y: msg[selectedField] });
+
+        if (dataset.length > MAX_POINTS) {
+            dataset.splice(0, dataset.length - MAX_POINTS);
+        }
+
+        lineChart.update('none');
+      }
+  });
+
   const lineData = {
     datasets: [
       {
-        label: "Torque Request",
+        label: "No Data Selected",
         data: [],
         backgroundColor: "rgb(135, 139, 219)",
       },
@@ -123,6 +117,7 @@ client.on("message", (topic, message) => {
         x: {
           ticks: {
             sampleSize: 10,
+            maxTicksLimit: 10
           },
           type: "time",
           time: {
@@ -134,18 +129,12 @@ client.on("message", (topic, message) => {
           },
         },
         y: {
-          beginAtZero: true,
           title: {
             display: true,
             text: "No Data Selected",
           },
         },
-      },
-      decimation: {
-        enabled: true,
-        algorithm: "min-max",
-        samples: 1000,
-      },
+      }
     },
   });
 
@@ -155,7 +144,7 @@ client.on("message", (topic, message) => {
     datasets: [
       {
         label: "Inverter Module Temperatures",
-        data: [null, null, null],
+        data: [0, 0, 0],
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(255, 159, 64, 0.2)",
@@ -175,6 +164,8 @@ client.on("message", (topic, message) => {
     type: "bar",
     data: data,
     options: {
+      parsing: false,
+      normalized: true,
       scales: {
         y: {
           beginAtZero: true,
@@ -187,36 +178,59 @@ client.on("message", (topic, message) => {
     },
   });
 
-  // dropdown menu options select
-  const radioButtonSelect = document.querySelectorAll('input[name="phase"]');
-  radioButtonSelect.forEach((radio) => {
+  const graphSelect = document.querySelectorAll('input[name="phase"]');
+  graphSelect.forEach((radio) => {
     radio.addEventListener("change", (e) => {
-      currentGraphSelect = e.target.value;
+      if (selectedField !== e.target.value) {
+        client.unsubscribe(selectedTopic);
+        selectedField = e.target.value;
+        selectedTopic = graphOptions[selectedField].topic;
+        client.subscribe(selectedTopic);
 
-      switch (currentGraphSelect) {
-        case "torque":
-          lineChart.data.datasets[0].label = "Torque Request";
-          lineChart.data.datasets[0].data = storedData.torque;
-          lineChart.options.scales.y.title.text = "Nm";
-          break;
-        case "speed":
-          lineChart.data.datasets[0].label = "Motor Speed";
-          lineChart.data.datasets[0].data = storedData.speed;
-          lineChart.options.scales.y.title.text = "RPM";
-          break;
-        case "current":
-          lineChart.data.datasets[0].label = "Current";
-          lineChart.data.datasets[0].data = storedData.current;
-          lineChart.options.scales.y.title.text = "Amps";
-          break;
-        case "soc":
-          lineChart.data.datasets[0].label = "State of Charge";
-          lineChart.data.datasets[0].data = storedData.soc;
-          lineChart.options.scales.y.title.text = "%";
-          break;
+        lineChart.data.datasets[0].label = graphOptions[selectedField].label;
+        lineChart.data.datasets[0].data.length = 0;
+        lineChart.options.scales.y.title.text = graphOptions[selectedField].label;
+        lineChart.update('none');
       }
-
-      lineChart.update();
     });
   });
+
+  async function downloadFile() {
+    const checkedFileRadio = document.querySelectorAll('input[name="file"]:checked');
+
+    if (checkedFileRadio.length === 0) {
+      console.error("Please selected a valid file.")
+      return;
+    }
+
+    // REMOVE: debugging
+    console.log(checkedFileRadio)
+    
+    const file_id = Array.from(checkedFileRadio).map(input => input.value);
+
+    // REMOVE: debugging
+    console.log(file_id)
+
+    // else return an error from api (maybe a quick modal from html? -- too complex)
+    try {
+      file_id.forEach(async (id) => {
+        // download each file selected given id
+        window.location.href = `http://127.0.0.1:8000/api/download/${id}`;
+      });
+    } catch (error) {
+      console.error("Error:", response.status, await response.text());
+    }
+  }
+  document.getElementById('fileDownload').addEventListener('click', downloadFile);
+
+  async function updateLogCanButton() {
+    if (logButton.value == "false") {
+      client.publish("logger/control", "on");
+      console.log("Started logging CAN");
+    } else {
+      client.publish("logger/control", "off");
+      console.log("Stopped logging CAN");
+    }
+  }
+  document.getElementById('logCanData').addEventListener('click', updateLogCanButton);
 })();
