@@ -45,26 +45,22 @@ Rectangle {
     
     GridLayout {
         id: grid
-
-        // x and y moves the grid away from origin 
-        x: mainwindow.width/30
+        x: mainwindow.width / 30
         y: mainwindow.height * (3/32)
         width: mainwindow.width * (14/15)
         height: mainwindow.height * (13/15)
-
         columns: 2
         rows: 2
-        columnSpacing: mainwindow.width/39
+        columnSpacing: mainwindow.width / 39
         rowSpacing: grid.y
-
-        uniformCellWidths: true
-        uniformCellHeights: true
 
         Rectangle {
             id: speedbox
             color: (Data.overtake == 0) ? mainpage.blue : "#ff8c49"
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
 
             Text {
                 id: speedvalue
@@ -72,9 +68,9 @@ Rectangle {
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 font.bold: true
-                color: "black" 
+                color: "black"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -84,10 +80,10 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainwindow.typeface
                 font.bold: true
-                color: "yellow" 
+                color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
             }
@@ -97,6 +93,8 @@ Rectangle {
             id: stack
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
             spacing: grid.rowSpacing * 0.2
 
             Rectangle {
@@ -111,9 +109,9 @@ Rectangle {
                     font.pixelSize: mainwindow.smallerfontsize
                     font.family: mainwindow.typeface
                     font.bold: true
-                    color: "black" 
+                    color: "black"
                     anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter 
+                    horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
 
@@ -123,13 +121,13 @@ Rectangle {
                     font.pixelSize: mainwindow.titlefontsize
                     font.family: mainwindow.typeface
                     font.bold: true
-                    color: "yellow" 
+                    color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    horizontalAlignment: Text.AlignHCenter 
+                    horizontalAlignment: Text.AlignHCenter
                     anchors.bottom: parent.top
                     y: grid.y
-                    }
+                }
             }
 
             Rectangle {
@@ -146,9 +144,9 @@ Rectangle {
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter 
+                    horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                } 
+                }
             }
         }
 
@@ -157,7 +155,9 @@ Rectangle {
             color: Data.vehiclestate_color
             Layout.fillWidth: true
             Layout.fillHeight: true
-        
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
+
             Text {
                 id: vehiclestateavalue
                 text: Data.vehiclestate
@@ -175,9 +175,9 @@ Rectangle {
                 }
                 font.family: mainwindow.typeface
                 font.bold: true
-                color: "black" 
+                color: "black"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -187,7 +187,7 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainwindow.typeface
                 font.bold: true
-                color: "yellow" 
+                color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -201,6 +201,8 @@ Rectangle {
             color: Data.glvv_color
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
 
             Text {
                 id: glvvvalue
@@ -208,9 +210,9 @@ Rectangle {
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 font.bold: true
-                color: "black" 
+                color: "black"
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -220,10 +222,10 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainwindow.typeface
                 font.bold: true
-                color: "yellow" 
+                color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter 
+                horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
             }

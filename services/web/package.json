@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel public/index.html",
-    "build": "parcel build public/index.html"
+    "build": "parcel build public/app.js --dist-dir static --no-source-maps"
   },
   "devDependencies": {
     "parcel": "^2.6.2"
