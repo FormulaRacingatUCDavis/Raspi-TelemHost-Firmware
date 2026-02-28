@@ -30,7 +30,7 @@ def connected_devices():
     rows = [
         {'label': 'Oracle Cloud Server', 'address': "10.66.66.1", "status": "Connected"},
         {'label': 'Ubiquiti Mobile Router', 'address': "10.66.66.3"},
-        {'label': 'Rasp Pi Dash', 'address': "192.168.105.2"},
+        {'label': 'Rasp Pi Dash', 'address': "192.168.105.6"},
         {'label': 'TelemHost', 'address': "192.168.105.3"},
     ]
 
