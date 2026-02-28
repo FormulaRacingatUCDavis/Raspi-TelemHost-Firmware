@@ -28,6 +28,7 @@ import mqtt from "mqtt";
     client.subscribe("can/766");
     client.subscribe("can/380");
     client.subscribe("can/AB");
+    client.subscribe("logger/status");
   });
 
   let barChart;
@@ -35,46 +36,64 @@ import mqtt from "mqtt";
   let selectedField = "";
   let selectedTopic = "";
   const MAX_POINTS = 1000;
+  const logButton = document.getElementById('logCanData');
 
   const vcuState = document.getElementById("vcu-state");
   const peiState = document.getElementById("pei-state");
   const mcState = document.getElementById("mc-state");
 
   client.on("message", (topic, message) => {
-      const msg = JSON.parse(message.toString());
-
       if (topic === "can/A0" && barChart) {
-          const dataset = barChart.data.datasets[0].data;
-          dataset[0] = msg.inv_module_a_temp;
-          dataset[1] = msg.inv_module_b_temp;
-          dataset[2] = msg.inv_module_c_temp;
-          barChart.update();
+        msg = JSON.parse(message.toString());
+        const dataset = barChart.data.datasets[0].data;
+        dataset[0] = msg.inv_module_a_temp;
+        dataset[1] = msg.inv_module_b_temp;
+        dataset[2] = msg.inv_module_c_temp;
+        barChart.update();
       }
 
       if (topic === "can/766" && vcuState) {
-          vcuState.textContent = msg.dashboard_state;
+        msg = JSON.parse(message.toString());
+        vcuState.textContent = msg.dashboard_state;
       }
 
       if (topic === "can/380" && peiState) {
-          peiState.textContent = msg.pei_bms_status;
+        msg = JSON.parse(message.toString());
+        peiState.textContent = msg.pei_bms_status;
       }
 
       if (topic === "can/AB" && mcState) {
+        msg = JSON.parse(message.toString());
         if (msg.inv_run_fault !== "Normal")
           mcState.textContent = msg.inv_run_fault;
         else
           mcState.textContent = msg.inv_post_fault;
       }
 
+      if (topic === "logger/status" && logButton) {
+        const status = message.toString();
+        if (status === "on") {
+          logButton.value = "true";
+          logButton.textContent = "Stop Log";
+          logButton.className = "secondary";
+        }
+        else {
+          logButton.value = "false";
+          logButton.textContent = "Log CAN";
+          logButton.className = "outline";
+        }
+      }
+
       if (topic === selectedTopic && lineChart) {
-          const dataset = lineChart.data.datasets[0].data;
-          dataset.push({ x: msg.timestamp, y: msg[selectedField] });
+        msg = JSON.parse(message.toString());
+        const dataset = lineChart.data.datasets[0].data;
+        dataset.push({ x: msg.timestamp, y: msg[selectedField] });
 
-          if (dataset.length > MAX_POINTS) {
-              dataset.splice(0, dataset.length - MAX_POINTS);
-          }
+        if (dataset.length > MAX_POINTS) {
+            dataset.splice(0, dataset.length - MAX_POINTS);
+        }
 
-          lineChart.update('none');
+        lineChart.update('none');
       }
   });
 
@@ -203,29 +222,12 @@ import mqtt from "mqtt";
   document.getElementById('fileDownload').addEventListener('click', downloadFile);
 
   async function updateLogCanButton() {
-    const response = await fetch("/config/config.json");
-    const config = await response.json();
-    console.log("Loaded config:", config);
-  
-    const client = mqtt.connect(config.mqtt.ws);
-    client.on("connect", () => {
-      console.log("Connected to MQTT broker.");
-      client.subscribe("logger/control");
-    });
-  
-    const button = document.getElementById('logCanData');
-    if (button.value == "false") {
-      button.value = "true";
-      button.textContent = "Stop Logging";
-      button.className = "secondary";
+    if (logButton.value == "false") {
       client.publish("logger/control", "on");
-      console.log("publish");
+      console.log("Started logging CAN");
     } else {
-      button.value = "false";
-      button.textContent = "Log Can Data";
-      button.className = "outline";
       client.publish("logger/control", "off");
-      console.log("no publish");
+      console.log("Stopped logging CAN");
     }
   }
   document.getElementById('logCanData').addEventListener('click', updateLogCanButton);
