@@ -1,0 +1,9 @@
+{% for f_post in file_posts %}
+    <li>
+        <label>
+        <input type="checkbox" name="file" value="{{f_post.id}}"/>
+            {{f_post.file_name}}
+        </label>
+    </li>
+{% endfor %}
+<li><a href="#" id="fileDownload">Download</a></li>

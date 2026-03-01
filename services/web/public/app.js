@@ -195,34 +195,6 @@ import mqtt from "mqtt";
     });
   });
 
-  async function downloadFile() {
-    const checkedFileRadio = document.querySelectorAll('input[name="file"]:checked');
-
-    if (checkedFileRadio.length === 0) {
-      console.error("Please selected a valid file.")
-      return;
-    }
-
-    // REMOVE: debugging
-    console.log(checkedFileRadio)
-    
-    const file_id = Array.from(checkedFileRadio).map(input => input.value);
-
-    // REMOVE: debugging
-    console.log(file_id)
-
-    // else return an error from api (maybe a quick modal from html? -- too complex)
-    try {
-      file_id.forEach(async (id) => {
-        // download each file selected given id
-        window.location.href = `http://127.0.0.1:8000/api/download/${id}`;
-      });
-    } catch (error) {
-      console.error("Error:", response.status, await response.text());
-    }
-  }
-  document.getElementById('fileDownload').addEventListener('click', downloadFile);
-
   async function updateLogCanButton() {
     if (logButton.value == "false") {
       client.publish("logger/control", "on");

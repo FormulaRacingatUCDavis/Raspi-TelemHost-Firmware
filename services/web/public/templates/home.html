@@ -11,33 +11,13 @@
     {% endfor %}
 {% endblock fileoptions %}
 
-{% block logCanData %}
-  <li><button id="logCanData" value="false" class="outline" style="white-space: nowrap; width: fit-content;">Log CAN</button></li>
-{% endblock logCanData %}
-
-{% block recordStream %}
-    <li><button class="outline" style="white-space: nowrap; width: fit-content;">Record Camera</button></li>
-{% endblock recordStream %}
-
-
 {% block dropdown %}
-<details id="detailsDropDown" class="dropdown">
+<details class="dropdown" id="detailsDropDown">
     <summary>
         Export CSV...
     </summary>
-    <!-- Dynammically making download options -->
-    <ul>
-        {% for f_post in file_posts %}
-        <li>
-            <label>
-            <input type="checkbox" name="file" value="{{f_post.id}}"/>
-                {{f_post.file_name}}
-            </label>
-        </li>
-        {% endfor %}
-        <li>
-        <li><a href="#" id="fileDownload">Download</a></li>
-        </li>
+    <ul id="dropDownOptions">
+      <!-- Dynammically making download options -->
     </ul>
 </details>
 {% endblock dropdown %}
@@ -88,36 +68,48 @@
 
 {% block scripts %}
     <script> 
-      const details = document.getElementById("detailsDropDown");
-      let windowAlreadyOpened = false;
+      const details = document.getElementById("detailsDropDown")
+      const dropdown = document.getElementById("dropDownOptions");
 
       async function updateDropdown() {
-        await fetch("/api/update_dropdown");
-        window.location.reload();
-        return;
+        const response = await fetch("/api/update/dropdown-list", {
+          method: "GET"
+        });
+        return response.text();
       }
 
-      window.onload = () => {
-        if (sessionStorage.getItem("dropdownStatus") === "open") {
-          windowAlreadyOpened = true;
-          details.open = true;
-        } else {
-          details.open = false;
+      async function downloadFile() {
+        const checkedFileRadio = document.querySelectorAll('input[name="file"]:checked');
+    
+        if (checkedFileRadio.length === 0) {
+          console.error("Please selected a valid file.")
+          return;
+        }
+    
+        // REMOVE: debugging
+        console.log(checkedFileRadio)
+        
+        const file_id = Array.from(checkedFileRadio).map(input => input.value);
+    
+        // REMOVE: debugging  
+        console.log(file_id)
+    
+        // else return an error from api (maybe a quick modal from html? -- too complex)
+        try {
+          file_id.forEach(async (id) => {
+            // download each file selected given id
+            window.location.href = `http://127.0.0.1:8000/api/download/${id}`;
+          });
+        } catch (error) {
+          console.error("Error:", response.status, await response.text());
         }
       }
 
-      details.addEventListener('toggle', () => {
-        if (details.open) {
-          sessionStorage.setItem("dropdownStatus", "open");
-          if (!windowAlreadyOpened) {
-            updateDropdown();
-          }
-          windowAlreadyOpened = false;
-        } else {
-          sessionStorage.removeItem("dropdownStatus");
-        }
+      details.addEventListener('toggle', async () => {
+        dropdown.innerHTML = await updateDropdown();
+        document.getElementById('fileDownload').addEventListener('click', downloadFile);
       });
-
     </script>
-    <script type="module" src="{{ url_for('static', path='app.js') }}"></script>
+    
 {% endblock scripts %}
+

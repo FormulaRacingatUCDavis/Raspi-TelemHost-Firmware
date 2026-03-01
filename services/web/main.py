@@ -43,8 +43,6 @@ def update_file_post():
     for i in range(len(file_list)):
         create_file(file_list[i])
 
-update_file_post()
-
 @app.get("/", include_in_schema=False)
 async def home(request: Request):
     return templates.TemplateResponse(request, "home.html", {"file_posts": file_posts})
@@ -70,10 +68,10 @@ async def get_stream(websocket: WebSocket):
     except (WebSocketDisconnect, ConnectionClosed):
         print("Client disconnected")    
 
-@app.get("/api/update_dropdown", include_in_schema=False)
-async def update_dropdown():
+@app.get("/api/update/dropdown-list", include_in_schema=False)
+async def update_dropdown_list(request: Request):
     update_file_post()
-    return
+    return templates.TemplateResponse(request, "dropdown-list.html", {"file_posts": file_posts})
 
 @app.get("/api/file_posts", include_in_schema=False)
 def get_file_post():

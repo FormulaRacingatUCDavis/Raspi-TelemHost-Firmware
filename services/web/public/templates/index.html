@@ -19,8 +19,8 @@
           <ul>
             <li><a href="/" class="secondary">Graphs</a></li>
             <li><a href="/camera" class="secondary">Camera</a></li>
-            {% block logCanData %}{% endblock logCanData %}
-            {% block recordStream %}{% endblock recordStream %}
+            <li><button id="logCanData" value="false" class="outline" style="white-space: nowrap; width: fit-content;">Log CAN</button></li>
+            <li><button class="outline" style="white-space: nowrap; width: fit-content;">Record Camera</button></li>
           </ul>
         </nav>
       </section>
@@ -37,7 +37,9 @@
       {% endblock cameraFeed %}
     </main>
 
+    <script type="module" src="{{ url_for('static', path='app.js') }}" defer></script>
     {% block scripts %}
     {% endblock scripts %}
+    
   </body>
 </html>
