@@ -3,7 +3,7 @@
     {
         "pcan": "vcan0",
         "tcan": "vcan1",
-        "logsPath": "testlogs"
+        "rawPath": "/home/frucd/Raspi-TelemHost-Firmware/testlogs/raw"
     },
     "mqtt":
     {

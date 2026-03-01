@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Telemetry Dashboard</title>
+</head>
+
+<body>
+  <header class="container">
+    <nav>
+      <ul>
+        <li>
+            <img src="./images/logo.svg" alt="FRUCD Logo" style="height:55px; width:auto;">
+        </li>
+      </ul>
+      <ul>
+        <li><a href="/" class="secondary nav-link">Graph</a></li>
+        <li><a href="/camera" class="secondary nav-link">Camera</a></li>
+        <li><a class="secondary nav-link">Map</a></li>
+        <li>
+          <details class="dropdown" id="logDropdown">
+            <summary>
+              Export
+            </summary>
+            <ul dir="rtl" id="logOptions"></ul>
+          </details>
+        </li>
+        <li>
+          <button id="logCanData" value="false" class="secondary">
+            Start Log
+          </button>
+        </li>
+        <li>
+          <button class="secondary">Record Camera</button>
+        </li>
+      </ul>
+    </nav>
+    <hr />
+  </header>
+  <main id="main-content" class="container"></main>
+  <script type="module" src="./app.js" defer></script>
+</body>
+
+</html>

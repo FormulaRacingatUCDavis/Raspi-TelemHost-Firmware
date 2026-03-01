@@ -21,7 +21,7 @@ int main()
     cfg_file >> cfg;
     std::string PCAN_IFACE = cfg["can"]["pcan"];
     std::string TCAN_IFACE = cfg["can"]["tcan"];
-    std::filesystem::path LOGS_DIR = cfg["can"]["logsPath"];
+    std::filesystem::path LOGS_DIR = cfg["can"]["rawPath"];
     cfg_file.close();
 
     mosquitto_lib_init();
@@ -45,6 +45,8 @@ int main()
     uint8_t log_count = 0;
     mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
 
+    std::cout << "[DAQ] Initialized MQTT broker and CAN socket threads" << std::endl;
+
     telem::Capture cap;
     while (true)
     {
@@ -54,12 +56,12 @@ int main()
             auto t = std::chrono::system_clock::to_time_t(start);
             std::ostringstream datetime;
             datetime << std::put_time(std::localtime(&t), "%Y%m%d_%H%M%S");
-            filename = datetime.str() + ".csv";
+            filename = "FE13CAN_" + datetime.str() + ".csv";
 
-            log.open(LOGS_DIR / (datetime.str() + ".csv"));
+            log.open(LOGS_DIR / filename);
             log_status = "on";
             mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
-            std::cout << "[LOGGER] Started new log: " << filename << "\n";
+            std::cout << "[DAQ] Started new log: " << filename << std::endl;
         }
         else if (log_status == "on" && !log_en.load())
         {
@@ -67,7 +69,7 @@ int main()
             log.close();
             log_status = "off";
             mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
-            std::cout << "[LOGGER] Closed log: " << filename << "\n";
+            std::cout << "[DAQ] Closed log: " << filename << std::endl;
         }
 
         if (q.try_dequeue(cap))
@@ -117,7 +119,7 @@ int main()
                     struct cm200_db_m160_temperature_set_1_t msg;
                     cm200_db_m160_temperature_set_1_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
-                    j["id"];
+                    j["id"] = id;
                     j["inv_module_a_temp"] = cm200_db_m160_temperature_set_1_inv_module_a_temp_decode(msg.inv_module_a_temp);
                     j["inv_module_b_temp"] = cm200_db_m160_temperature_set_1_inv_module_b_temp_decode(msg.inv_module_b_temp);
                     j["inv_module_c_temp"] = cm200_db_m160_temperature_set_1_inv_module_c_temp_decode(msg.inv_module_c_temp);
@@ -219,7 +221,7 @@ int main()
                     << static_cast<int>(cap.frame.data[6]) << ","
                     << static_cast<int>(cap.frame.data[7]) << ","
                     << std::dec << elapsed
-                    << "\n";
+                    << std::endl;
                 log_count++;
                 if (log_count == 50)
                     log.flush();

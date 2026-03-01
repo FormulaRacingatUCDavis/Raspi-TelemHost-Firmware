@@ -1,96 +1,45 @@
-import cv2
-import asyncio
-import os
-
-from fastapi import FastAPI, Request, status, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from websockets.exceptions import ConnectionClosed
-from starlette.responses import FileResponse
-
-from schemas import FilePostCreate, FilePostResponse
+from pathlib import Path
+from io import BytesIO
+from zipfile import ZipFile
+import os
+import json
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static", html=True), name="static")
-app.mount("/images", StaticFiles(directory="images"), name="images")
-app.mount("/config", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "..", "..", "resources")), name="config")
 
-# RaspPI Camera
-# TODO LINK WITH RASPI, using picamera
-# https://pip-assets.raspberrypi.com/categories/652-raspberry-pi-camera-module-2/documents/RP-008156-DS-2-picamera2-manual.pdf?disposition=inline
-# high level api page
-# camera = cv2.VideoCapture(0) 
+PROJ_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+with open(os.path.join(PROJ_DIR, "resources", "config.json"), "r") as f:
+    config = json.load(f)
 
-templates = Jinja2Templates(directory="public/templates")
+@app.post("/api/canlogs")
+async def download_files(request: Request):
+    data = await request.json()
+    filenames = data.get("filenames")
+    if not filenames or not isinstance(filenames, list):
+        raise HTTPException(status_code=400, detail="Invalid request format")
 
-file_posts: list[dict] = [{}]
+    raw_dir = Path(config["can"]["rawPath"])
+    memory_file = BytesIO()
 
-BASE_DIR = os.path.dirname(__file__)
-FILE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "testlogs"))
+    with ZipFile(memory_file, mode="w") as zf:
+        for filename in filenames:
+            file_path = (raw_dir / filename).resolve(strict=True)
+            if raw_dir not in file_path.parents and file_path != raw_dir:
+                raise HTTPException(status_code=400, detail=f"Invalid filename: {filename}")
+            zf.write(file_path, arcname=file_path.name)
 
-def create_file(file_name):
-    new_id = max(p["id"] for p in file_posts) + 1 if file_posts else 1
-    new_post = {
-        "id": new_id,
-        "file_name": f"{file_name}",
-    }
-    file_posts.append(new_post)
-    return new_post
+    memory_file.seek(0)
+    return StreamingResponse(
+        memory_file,
+        media_type="application/zip",
+        headers={"Content-Disposition": 'attachment; filename="canlogs.zip"'}
+    )
 
-def update_file_post():
-    file_list = os.listdir(f"{FILE_DIR}")
-    file_posts.clear()
-    for i in range(len(file_list)):
-        create_file(file_list[i])
+@app.get("/api/canlog-list")
+async def get_log_list():
+    return [{"file_name": file} for file in os.listdir(config["can"]["rawPath"])]
 
-@app.get("/", include_in_schema=False)
-async def home(request: Request):
-    return templates.TemplateResponse(request, "home.html", {"file_posts": file_posts})
-
-@app.get("/camera", include_in_schema=False)
-async def cameraPage(request: Request):
-    return templates.TemplateResponse(request, "camera.html", {})
-
-@app.websocket("/ws")
-async def get_stream(websocket: WebSocket):
-    await websocket.accept()
-    print("Client connected")
-    try:
-        while True:
-            success, frame = camera.read()
-            if not success:
-                print("Failed to grab frame")
-                break
-            else:
-                ret, buffer = cv2.imencode('.jpg', frame)
-                await websocket.send_bytes(buffer.tobytes()) 
-            await asyncio.sleep(0.03)
-    except (WebSocketDisconnect, ConnectionClosed):
-        print("Client disconnected")    
-
-@app.get("/api/update/dropdown-list", include_in_schema=False)
-async def update_dropdown_list(request: Request):
-    update_file_post()
-    return templates.TemplateResponse(request, "dropdown-list.html", {"file_posts": file_posts})
-
-@app.get("/api/file_posts", include_in_schema=False)
-def get_file_post():
-    return file_posts
-
-@app.get("/api/file_post/{file_post_id}", response_model=FilePostResponse)
-def get_file_post(file_post_id: int):
-    for post in file_posts:
-        if post.get("id") == file_post_id:
-            return post
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File could not be found.")
-
-# TODO: Currently gets logs from relative logs directory in /services/web directory (make it path to daq logs)
-@app.get("/api/download/{file_post_id}")
-def downloadFile(file_post_id: int):
-    for post in file_posts:
-        if post.get("id") == file_post_id:
-            file_name = post["file_name"]
-            file_location = f"{FILE_DIR}{file_name}"
-            return FileResponse(file_location, media_type='application/octet-stream',filename=file_name)
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File could not be found.")
-
+app.mount("/resources", StaticFiles(directory=os.path.join(PROJ_DIR, "resources")), name="resources")
+app.mount("/", StaticFiles(directory="dist", html=True), name="static")
