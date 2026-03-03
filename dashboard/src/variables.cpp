@@ -450,7 +450,7 @@ namespace dashboard
     }
 
     void Variables::settorquelimit(int limit) {
-        if (m_torquelimit != limit) {
+        if (m_torquelimit >= limit+5 || m_torquelimit <= limit-5) {
             m_torquelimit = limit;
             showEventPopUp(1);
             emit Variables::instance()->torquelimitChanged();
@@ -458,7 +458,7 @@ namespace dashboard
     }
 
     void Variables::setlaunchcontrol(int param) {
-        if (m_launchcontrol != param) {
+        if (m_launchcontrol >= param+5 || m_launchcontrol <= param-5) {
             m_launchcontrol = param;
             showEventPopUp(2);
             emit Variables::instance()->launchcontrolChanged();
