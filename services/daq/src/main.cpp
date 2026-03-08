@@ -21,14 +21,20 @@ int main()
     cfg_file >> cfg;
     std::string PCAN_IFACE = cfg["can"]["pcan"];
     std::string TCAN_IFACE = cfg["can"]["tcan"];
-    std::filesystem::path LOGS_DIR = cfg["can"]["rawPath"];
+    std::filesystem::path INTAKE_DIR = cfg["paths"]["data"]["intake"];
+    std::filesystem::path RAW_DIR = cfg["paths"]["data"]["raw"];
     cfg_file.close();
 
     mosquitto_lib_init();
     struct mosquitto* mosq = mosquitto_new("can-publisher", true, nullptr);
-    mosquitto_connect(mosq, "localhost", 1883, 60);
+    int rc = mosquitto_connect(mosq, "localhost", 1883, 60);
+    if (rc != MOSQ_ERR_SUCCESS)
+    {
+        std::cerr << "MQTT connect failed: " << mosquitto_strerror(rc) << std::endl;
+        return 1;
+    }
     mosquitto_message_callback_set(mosq, on_message);
-    mosquitto_subscribe(mosq, nullptr, "logger/control", 0);
+    mosquitto_subscribe(mosq, nullptr, "can/log/control", 0);
     mosquitto_loop_start(mosq);
 
     moodycamel::ConcurrentQueue<telem::Capture> q(8192);
@@ -37,20 +43,21 @@ int main()
     std::thread pcan_thread(&telem::DAQHelper::queue_frame, &pcan, std::ref(q));
     std::thread tcan_thread(&telem::DAQHelper::queue_frame, &tcan, std::ref(q));
 
-    std::filesystem::create_directories(LOGS_DIR);
+    std::filesystem::create_directories(INTAKE_DIR);
+    std::filesystem::create_directories(RAW_DIR);
     std::ofstream log;
     auto start = std::chrono::system_clock::now();
     std::string filename;
-    std::string log_status = "off";
+    std::string log_status = "{\"status\":\"off\"}";
     uint8_t log_count = 0;
-    mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
+    mosquitto_publish(mosq, nullptr, "can/log/status", log_status.length(), log_status.c_str(), 1, true);
 
     std::cout << "[DAQ] Initialized MQTT broker and CAN socket threads" << std::endl;
 
     telem::Capture cap;
     while (true)
     {
-        if (log_status == "off" && log_en.load())
+        if (log_status == "{\"status\":\"off\"}" && log_en.load())
         {
             start = std::chrono::system_clock::now();
             auto t = std::chrono::system_clock::to_time_t(start);
@@ -58,20 +65,23 @@ int main()
             datetime << std::put_time(std::localtime(&t), "%Y%m%d_%H%M%S");
             filename = "FE13CAN_" + datetime.str() + ".csv";
 
-            log.open(LOGS_DIR / filename);
-            log_status = "on";
-            mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
+            log.open(INTAKE_DIR / filename);
+            log_status = "{\"status\":\"on\"}";
+            mosquitto_publish(mosq, nullptr, "can/log/status", log_status.length(), log_status.c_str(), 1, true);
             std::cout << "[DAQ] Started new log: " << filename << std::endl;
         }
-        else if (log_status == "on" && !log_en.load())
+        else if (log_status == "{\"status\":\"on\"}" && !log_en.load())
         {
             log.flush();
             log.close();
-            log_status = "off";
-            mosquitto_publish(mosq, nullptr, "logger/status", log_status.length(), log_status.c_str(), 1, true);
+            log_status = "{\"status\":\"off\"}";
+            mosquitto_publish(mosq, nullptr, "can/log/status", log_status.length(), log_status.c_str(), 1, true);
             std::cout << "[DAQ] Closed log: " << filename << std::endl;
+            std::filesystem::path src = INTAKE_DIR / filename;
+            std::filesystem::path dst = RAW_DIR / filename;
+            if (std::filesystem::exists(dst)) std::filesystem::remove(dst);
+            std::filesystem::rename(src, dst);
         }
-
         if (q.try_dequeue(cap))
         {
             uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
@@ -147,7 +157,7 @@ int main()
                     struct fe12_db_current_t msg;
                     fe12_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
-                    j["id"];
+                    j["id"] = id;
                     j["pei_current"] = fe12_db_current_pei_current_decode(msg.pei_current);
                     j["timestamp"] = ms;
 
@@ -200,14 +210,11 @@ int main()
             
             if (!j.empty())
             {
-                char topic[64];
-                snprintf(topic, sizeof(topic), "can/%X", id);
-
                 std::string payload = j.dump();
-                mosquitto_publish(mosq, nullptr, topic, payload.size(), payload.c_str(), 0, false);
+                mosquitto_publish(mosq, nullptr, "can/frame", payload.size(), payload.c_str(), 0, false);
             }
 
-            if (log_status == "on")
+            if (log_status == "{\"status\":\"on\"}")
             {
                 auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(cap.timestamp - start).count();
                 log << std::hex << std::uppercase
@@ -242,11 +249,11 @@ void on_message(struct mosquitto* mosq, void* userdata, const struct mosquitto_m
     std::string topic(message->topic);
     std::string payload(static_cast<char*>(message->payload), message->payloadlen);
 
-    if (topic == "logger/control")
+    if (topic == "can/log/control")
     {
-        if (payload == "on")
+        if (payload == "{\"status\":\"on\"}")
             log_en = true;
-        else if (payload == "off")
+        else if (payload == "{\"status\":\"off\"}")
             log_en = false;
     }
 }
