@@ -11,7 +11,7 @@
 	let lineCanvas: HTMLCanvasElement;
 	let barCanvas: HTMLCanvasElement;
 
-	const options = [
+	const lineOptions = [
 		{ key: 'dashboard_torque', label: 'Torque [Nm]' },
 		{ key: 'inv_motor_speed', label: 'Motor Speed [RPM]' },
 		{ key: 'pei_soc', label: 'State of Charge [%]' }
@@ -32,7 +32,7 @@
 		labels: ['Module A', 'Module B', 'Module C'],
 		datasets: [
 			{
-				label: 'Inverter Module Temperatures',
+				label: 'Motor Controller Module Temperatures [C]',
 				data: [0, 0, 0],
 				backgroundColor: [
 					'rgba(255, 99, 132, 0.2)',
@@ -92,8 +92,9 @@
 			type: 'bar',
 			data: barData,
 			options: {
+				maintainAspectRatio: false,
 				scales: {
-					y: { beginAtZero: true, title: { display: true, text: 'Temperature [C]' } }
+					y: { beginAtZero: true, title: { display: false } }
 				},
 				plugins: {
 					legend: {
@@ -130,11 +131,9 @@
 	});
 </script>
 
-<h2>Graphs</h2>
-<hr />
-<article data-theme="light">
-	<div class="grid">
-		<div>
+<div class="grid">
+	<article data-theme="light">
+		<small>
 			<table class="striped">
 				<thead>
 					<tr>
@@ -156,13 +155,38 @@
 						<td>{$mqttDataStr.mcState}</td>
 					</tr>
 				</tbody>
+				<thead>
+					<tr>
+						<th scope="col">Metric</th>
+						<th scope="col">Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">Speed [MPH]</th>
+						<td></td>
+					</tr>
+					<tr>
+						<th scope="row">State of Charge [%]</th>
+						<td></td>
+					</tr>
+					<tr>
+						<th scope="row">Motor Controller Temperature [C]</th>
+						<td></td>
+					</tr>
+					<tr>
+						<th scope="row">Ground Level Voltage [V]</th>
+						<td></td>
+					</tr>
+				</tbody>
 			</table>
-		</div>
-		<div>
-			<canvas bind:this={barCanvas}></canvas>
-		</div>
-	</div>
-</article>
+		</small>
+	</article>
+
+	<article data-theme="light">
+		<canvas bind:this={barCanvas}></canvas>
+	</article>
+</div>
 
 <article data-theme="light">
 	<select
@@ -174,8 +198,8 @@
 			lineChart.update();
 		}}
 	>
-		<option selected disabled value=""> Graph... </option>
-		{#each options as signal}
+		<option selected disabled value="">Select</option>
+		{#each lineOptions as signal}
 			<option value={signal.key}>{signal.label}</option>
 		{/each}
 	</select>

@@ -2,3 +2,4 @@ fastapi
 cantools
 uvicorn
 nicegui
+watchfile

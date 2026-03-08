@@ -1,3 +1,1 @@
-<h2>Camera</h2>
-<hr />
 <img id="frame" src="/photo_error.jpg" width="100%" alt="Error monkey"/>

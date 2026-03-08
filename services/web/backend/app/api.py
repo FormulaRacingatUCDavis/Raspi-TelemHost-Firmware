@@ -6,35 +6,54 @@ from pathlib import Path
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 from typing import List
-
-import csv
-import cantools
+import contextlib
+from contextlib import asynccontextmanager
 import os
 import json
+import asyncio
+from watchfiles import awatch, Change
+from .canhelper import CANHelper
 
 class FileRequest(BaseModel):
     filenames: List[str]
 
-app = FastAPI()
-
 RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "resources"))
 with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
     config = json.load(f)
+can_helper = CANHelper(config)
 
-frucd_db = cantools.database.load_file(os.path.join(RESOURCES_DIR, "20240129 Gen5 CAN DB.dbc"))
-mc_db = cantools.database.load_file(os.path.join(RESOURCES_DIR, "FE12.dbc"))
-os.makedirs(config["paths"]["data"]["intake"], exist_ok=True)
-os.makedirs(config["paths"]["data"]["raw"], exist_ok=True)
-os.makedirs(config["paths"]["data"]["processed"], exist_ok=True)
+semaphore = asyncio.Semaphore(1)
+async def watcher():
+    async for changes in awatch(config["paths"]["data"]["process"]):
+        for change, path in changes:
+            if change == Change.added and path.endswith(".csv"):
+                asyncio.create_task(handle_file(path))
 
-@app.post("/api/can/raw-logs/zip")
-async def zip_logs(payload: FileRequest):
-    raw_dir = Path(config["paths"]["data"]["raw"])
+async def handle_file(path: str):
+    async with semaphore:
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, can_helper.generate_parsed, path)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    watcher_task = asyncio.create_task(watcher())
+    try:
+        yield
+    finally:
+        watcher_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await watcher_task
+
+app = FastAPI(lifespan=lifespan)
+
+@app.post("/api/can/logs/zip/{type}")
+def zip_logs(type: str, payload: FileRequest):
+    log_dir = Path(config["paths"]["data"][type])
     memory_file = BytesIO()
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as zf:
         for filename in payload.filenames:
-            file_path = (raw_dir / filename).resolve(strict=True)
-            if raw_dir not in file_path.parents and file_path != raw_dir:
+            file_path = (log_dir / filename).resolve(strict=True)
+            if log_dir not in file_path.parents and file_path != log_dir:
                 raise HTTPException(status_code=400, detail=f"Invalid filename: {filename}")
             zf.write(file_path, arcname=file_path.name)
     memory_file.seek(0)
@@ -45,84 +64,17 @@ async def zip_logs(payload: FileRequest):
         headers={"Content-Disposition": 'attachment; filename="canlogs.zip"'}
     )
 
-@app.post("/api/can/raw-logs/load")
-async def load_logs():
-    for log in os.listdir(config["paths"]["data"]["raw"]):
-        if os.path.exists(os.path.join(config["paths"]["data"]["processed"], log)):
-            return
-        
-        parsed_msgs = []
-        ids = set()
-        signals = set()
-        f_ids = set()
-        f_count = 0
-
-        print(f'[LOG PARSER] Parsing {log}...')
-        with open(os.path.join(config["paths"]["data"]["raw"], log), 'r', newline='') as log_raw:
-            reader = csv.reader(log_raw)
-            for row in reader:
-                id_str = row[0]
-                id = int(id_str, 16)
-                message = None
-                for dbc in [frucd_db, mc_db]:
-                    try:
-                        message = dbc.get_message_by_frame_id(id)
-                        break
-                    except KeyError:
-                        continue
-                if message is None:
-                    print(f'[LOG PARSER] >> Unrecognized ID {id} at timestamp: {row[-1]}')
-                    f_ids.add(id)
-                    f_count += 1
-                    continue
-
-                data_bytes = []
-                for b in row[1:9]:
-                    if b.strip() == "":
-                        data_bytes.append(0)
-                    else:
-                        try:
-                            data_bytes.append(int(b))
-                        except ValueError:
-                            data_bytes.append(0)
-
-                raw_data = bytes(data_bytes)
-                timestamp = float(row[-1]) / 1000.0
-                parsed_data = message.decode(raw_data)
-                
-                parsed_msgs.append((
-                    timestamp,
-                    message.senders[0],
-                    id_str,
-                    message.name,
-                    parsed_data
-                ))
-
-                if id_str not in ids:
-                    ids.add(id_str)
-                    for signal in message.signals:
-                        signals.add(signal.name)
-
-        with open(os.path.join(config["paths"]["data"]["processed"], log), 'w', newline='') as log_parsed:
-            signals_list = sorted(signals)
-            header = ['Timestamp [s]', 'Source', 'ID', 'Message'] + signals_list
-            writer = csv.writer(log_parsed)
-            writer.writerow(header)
-
-            for timestamp, source, id_str, msg_name, decoded in parsed_msgs:
-                row_data = [timestamp, source, id_str, msg_name]
-                for sig in signals_list:
-                    value = decoded.get(sig, "")
-                    row_data.append(value)
-                writer.writerow(row_data)
-
-            print(f'[LOG PARSER] >> Total failed rows: {f_count}')
-        
-    return {"status": "complete"}
-
-@app.get("/api/can/raw-logs/list")
+@app.get("/api/can/logs/list")
 async def get_log_list():
-    return [{"file_name": file} for file in os.listdir(config["paths"]["data"]["raw"])]
+    path = Path(config["paths"]["data"]["raw"])
+    logs = []
+    for file in path.iterdir():
+        if file.is_file():
+            stats = file.stat()
+            logs.append({"file_name": file.name, "creation_date": stats.st_mtime, "file_size": stats.st_size})
+    logs.sort(key=lambda x: x["creation_date"], reverse=True)
+
+    return logs
 
 app.mount("/_app", StaticFiles(directory=config["paths"]["web"]["_app"]), name="app")
 

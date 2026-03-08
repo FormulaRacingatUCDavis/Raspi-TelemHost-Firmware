@@ -9,27 +9,27 @@
 	let selectedFiles = $state([]);
 
 	async function updateDropdown() {
-		const res = await fetch('/api/can/raw-logs/list');
+		const res = await fetch('/api/can/logs/list');
 		const data: Log[] = await res.json();
 		files = data;
 	}
 
-	async function download() {
-        const response = await fetch('/api/can/raw-logs/zip', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ filenames: selectedFiles })
-        });
+	async function download(type: 'raw' | 'parsed') {
+		const response = await fetch(`/api/can/logs/zip/${type}`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ filenames: selectedFiles })
+		});
 
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "canlogs.zip";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+		const blob = await response.blob();
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'canlogs.zip';
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		URL.revokeObjectURL(url);
 
 		console.log(selectedFiles);
 	}
@@ -44,16 +44,16 @@
 		</ul>
 		<ul>
 			<li><a href="/" class="secondary nav-link">Home</a></li>
-			<li><a href="/live/graphs" class="secondary nav-link">Live</a></li>
-			<li><a href="/logs/graphs" class="secondary nav-link">Logs</a></li>
+			<li><a href="/live/readings" class="secondary nav-link">Live</a></li>
+			<li><a href="/logs/readings" class="secondary nav-link">Logs</a></li>
 			<li>
 				<details class="dropdown" ontoggle={updateDropdown}>
 					<summary> Export </summary>
-					<ul id="logOptions" dir="rtl">
+					<ul dir="rtl">
 						{#if files.length > 0}
 							{#each files as file}
 								<li>
-									<label id="logOptions" dir="ltr">
+									<label dir="ltr">
 										<input
 											type="checkbox"
 											name="phase"
@@ -64,8 +64,22 @@
 									</label>
 								</li>
 							{/each}
-							<!-- svelte-ignore a11y_invalid_attribute -->
-							<li><a href="#" onclick={download}>Download Raw</a></li>
+							<li>
+								<input
+									class="secondary"
+									type="button"
+									onclick={() => download('raw')}
+									value="Raw"
+								/>
+							</li>
+							<li>
+								<input
+									class="secondary"
+									type="button"
+									onclick={() => download('parsed')}
+									value="Parsed"
+								/>
+							</li>
 						{:else}
 							<li>No logs available</li>
 						{/if}

@@ -7,14 +7,19 @@
     {
         "web":
         {
-            "build": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build",
-            "_app": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build/_app"
+            "build": "C:\\Raspi-TelemHost-Firmware\\services\\web\\frontend\\build",
+            "_app": "C:\\Raspi-TelemHost-Firmware\\services\\web\\frontend\\build\\_app"
         },
         "data":
         {
-            "intake": "/home/frucd/Raspi-TelemHost-Firmware/canlogs/test/intake",
-            "raw": "/home/frucd/Raspi-TelemHost-Firmware/canlogs/test/raw",
-            "processed": "/home/frucd/Raspi-TelemHost-Firmware/canlogs/test/processed"
+            "intake": "C:\\Raspi-TelemHost-Firmware\\data\\can\\intake",
+            "process": "C:\\Raspi-TelemHost-Firmware\\data\\can\\process",
+            "raw": "C:\\Raspi-TelemHost-Firmware\\data\\can\\raw",
+            "parsed": "C:\\Raspi-TelemHost-Firmware\\data\\can\\parsed"
+        },
+        "dbc": {
+            "fe12": "C:\\Raspi-TelemHost-Firmware\\resources\\FE12.dbc",
+            "mc": "C:\\Raspi-TelemHost-Firmware\\resources\\20240129 Gen5 CAN DB.dbc"
         }
     },
     "can":
