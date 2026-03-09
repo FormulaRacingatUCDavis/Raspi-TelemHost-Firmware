@@ -12,10 +12,16 @@
         },
         "data":
         {
-            "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/can/intake",
-            "process": "/home/frucd/Raspi-TelemHost-Firmware/data/can/process",
-            "raw": "/home/frucd/Raspi-TelemHost-Firmware/data/can/raw",
-            "parsed": "/home/frucd/Raspi-TelemHost-Firmware/data/can/parsed"
+            "can": {
+                "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/can/intake",
+                "process": "/home/frucd/Raspi-TelemHost-Firmware/data/can/process",
+                "raw": "/home/frucd/Raspi-TelemHost-Firmware/data/can/raw",
+                "parsed": "/home/frucd/Raspi-TelemHost-Firmware/data/can/parsed"
+            },
+            "camera": {
+                "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/camera/intake",
+                "ready": "/home/frucd/Raspi-TelemHost-Firmware/data/camera/ready"
+            }
         },
         "dbc": {
             "fe12": "/home/frucd/Raspi-TelemHost-Firmware/resources/FE12.dbc",

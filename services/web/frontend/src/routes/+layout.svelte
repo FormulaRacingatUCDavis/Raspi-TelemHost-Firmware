@@ -9,7 +9,7 @@
 	let selectedFiles = $state([]);
 
 	async function updateDropdown() {
-		const res = await fetch('/api/can/logs/list');
+		const res = await fetch('/api/can/logs/list/raw');
 		const data: Log[] = await res.json();
 		files = data;
 	}

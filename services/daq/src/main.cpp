@@ -21,8 +21,8 @@ int main()
     cfg_file >> cfg;
     std::string PCAN_IFACE = cfg["can"]["pcan"];
     std::string TCAN_IFACE = cfg["can"]["tcan"];
-    std::filesystem::path INTAKE_DIR = cfg["paths"]["data"]["intake"];
-    std::filesystem::path PROCESS_DIR = cfg["paths"]["data"]["process"];
+    std::filesystem::path INTAKE_DIR = cfg["paths"]["data"]["can"]["intake"];
+    std::filesystem::path PROCESS_DIR = cfg["paths"]["data"]["can"]["process"];
     cfg_file.close();
 
     mosquitto_lib_init();

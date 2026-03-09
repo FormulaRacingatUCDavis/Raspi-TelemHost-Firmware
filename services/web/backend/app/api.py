@@ -22,9 +22,14 @@ with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
     config = json.load(f)
 can_helper = CANHelper(config)
 
+os.makedirs(config["paths"]["data"]["can"]["intake"], exist_ok=True)
+os.makedirs(config["paths"]["data"]["can"]["process"], exist_ok=True)
+os.makedirs(config["paths"]["data"]["can"]["raw"], exist_ok=True)
+os.makedirs(config["paths"]["data"]["can"]["parsed"], exist_ok=True)
+
 semaphore = asyncio.Semaphore(1)
 async def watcher():
-    async for changes in awatch(config["paths"]["data"]["process"]):
+    async for changes in awatch(config["paths"]["data"]["can"]["process"]):
         for change, path in changes:
             if change == Change.added and path.endswith(".csv"):
                 asyncio.create_task(handle_file(path))
@@ -48,7 +53,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/api/can/logs/zip/{type}")
 def zip_logs(type: str, payload: FileRequest):
-    log_dir = Path(config["paths"]["data"][type])
+    log_dir = Path(config["paths"]["data"]["can"][type])
     memory_file = BytesIO()
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as zf:
         for filename in payload.filenames:
@@ -64,9 +69,9 @@ def zip_logs(type: str, payload: FileRequest):
         headers={"Content-Disposition": 'attachment; filename="canlogs.zip"'}
     )
 
-@app.get("/api/can/logs/list")
-async def get_log_list():
-    path = Path(config["paths"]["data"]["raw"])
+@app.get("/api/{source}/logs/list/{type}")
+async def get_log_list(source:str, type: str):
+    path = Path(config["paths"]["data"][source][type])
     logs = []
     for file in path.iterdir():
         if file.is_file():

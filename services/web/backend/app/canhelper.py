@@ -13,11 +13,6 @@ class CANHelper:
         self.frucd_db = cantools.database.load_file(config["paths"]["dbc"]["fe12"])
         self.mc_db = cantools.database.load_file(config["paths"]["dbc"]["mc"])
 
-        os.makedirs(config["paths"]["data"]["intake"], exist_ok=True)
-        os.makedirs(config["paths"]["data"]["process"], exist_ok=True)
-        os.makedirs(config["paths"]["data"]["raw"], exist_ok=True)
-        os.makedirs(config["paths"]["data"]["parsed"], exist_ok=True)
-
     def generate_parsed(self, path: str):
         parsed_msgs = []
         ids = set()
@@ -72,7 +67,7 @@ class CANHelper:
                     for signal in message.signals:
                         signals.add(signal.name)
 
-        with open(os.path.join(self.config["paths"]["data"]["parsed"], log), 'w', newline='') as log_parsed:
+        with open(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), 'w', newline='') as log_parsed:
             signals_list = sorted(signals)
             header = ['Timestamp [s]', 'Source', 'ID', 'Message'] + signals_list
             writer = csv.writer(log_parsed)
@@ -87,6 +82,6 @@ class CANHelper:
 
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
-        shutil.move(path, os.path.join(self.config["paths"]["data"]["raw"], log))
+        shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
 
     # TODO: get numerical/string data

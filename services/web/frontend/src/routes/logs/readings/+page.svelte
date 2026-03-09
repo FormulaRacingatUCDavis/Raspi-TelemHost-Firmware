@@ -2,9 +2,8 @@
 	import { onMount } from 'svelte';
 	import Chart from 'chart.js/auto';
 	import 'chartjs-adapter-moment';
+	import LogDisplay from '$lib/components/LogDisplay.svelte';
 
-	type Log = { file_name: string; creation_date: number; file_size: number };
-	let files = $state<Log[]>([]);
 	let selectedLog = $state('');
 	let selectedSignal = $state('');
 	let lineChart: Chart;
@@ -31,26 +30,8 @@
 		]
 	};
 
-    function formatTime(ts: number) {
-    return new Date(ts * 1000).toLocaleString();
-    }
-
-    function formatSize(bytes: number) {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
-    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
-    }
-
-	async function updateDropdown() {
-		const res = await fetch('/api/can/logs/list');
-		const data: Log[] = await res.json();
-		files = data;
-	}
-
     onMount(() => {
         (async () => {
-            await updateDropdown();
-
             lineChart = new Chart(lineCanvas, { 
                 type: 'line', 
                 data: lineData, 
@@ -77,41 +58,7 @@
     });
 </script>
 
-<article>
-	<select bind:value={selectedLog} onfocus={updateDropdown}>
-		<option selected disabled value="">Select</option>
-		{#if files.length > 0}
-			{#each files as file}
-				<option value={file.file_name}>
-					{file.file_name}
-				</option>
-			{/each}
-		{/if}
-	</select>
-	<hr />
-	<small>
-		<div class="overflow-auto" style="max-height: 300px;">
-            <table>
-            <thead>
-                <tr>
-                <th>Filename</th>
-                <th>Date Created</th>
-                <th>Size</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each files as file}
-                <tr>
-                    <th scope="row">{file.file_name}</th>
-                    <td>{formatTime(file.creation_date)}</td>
-                    <td>{formatSize(file.file_size)}</td>
-                </tr>
-                {/each}
-            </tbody>
-            </table>
-		</div>
-	</small>
-</article>
+<LogDisplay source={"can"} log={selectedLog} logPath={"raw"} />
 <article data-theme="light">
 	<label>
 		Time Elapsed: {timeElapsed} seconds
