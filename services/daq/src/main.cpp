@@ -22,7 +22,7 @@ int main()
     std::string PCAN_IFACE = cfg["can"]["pcan"];
     std::string TCAN_IFACE = cfg["can"]["tcan"];
     std::filesystem::path INTAKE_DIR = cfg["paths"]["data"]["intake"];
-    std::filesystem::path RAW_DIR = cfg["paths"]["data"]["raw"];
+    std::filesystem::path PROCESS_DIR = cfg["paths"]["data"]["process"];
     cfg_file.close();
 
     mosquitto_lib_init();
@@ -44,7 +44,7 @@ int main()
     std::thread tcan_thread(&telem::DAQHelper::queue_frame, &tcan, std::ref(q));
 
     std::filesystem::create_directories(INTAKE_DIR);
-    std::filesystem::create_directories(RAW_DIR);
+    std::filesystem::create_directories(PROCESS_DIR);
     std::ofstream log;
     auto start = std::chrono::system_clock::now();
     std::string filename;
@@ -78,7 +78,7 @@ int main()
             mosquitto_publish(mosq, nullptr, "can/log/status", log_status.length(), log_status.c_str(), 1, true);
             std::cout << "[DAQ] Closed log: " << filename << std::endl;
             std::filesystem::path src = INTAKE_DIR / filename;
-            std::filesystem::path dst = RAW_DIR / filename;
+            std::filesystem::path dst = PROCESS_DIR / filename;
             if (std::filesystem::exists(dst)) std::filesystem::remove(dst);
             std::filesystem::rename(src, dst);
         }

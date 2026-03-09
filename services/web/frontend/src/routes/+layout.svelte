@@ -94,11 +94,12 @@
 				/>
 			</li>
 			<li>
-				<LogButton
+				<button class="contrast" disabled>Record Camera</button>
+				<!-- <LogButton
 					control="camera/log/control"
 					status={$mqttDataStr.recStatus}
 					request={$mqttDataStr.recReq}
-				/>
+				/> -->
 			</li>
 		</ul>
 	</nav>

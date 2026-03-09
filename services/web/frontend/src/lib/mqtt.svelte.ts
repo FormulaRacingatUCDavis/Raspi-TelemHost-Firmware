@@ -5,7 +5,7 @@ export const client = writable<MqttClient | null>(null);
 export const mqttDataNum = writable<Record<string, number>>({});
 export const mqttDataStr = writable<Record<string, string>>({});
 
-const mqttClient = mqtt.connect("ws://192.168.137.147:9001");
+const mqttClient = mqtt.connect("ws://192.168.137.172:9001");
 client.set(mqttClient);
 
 mqttClient.on("connect", () => {

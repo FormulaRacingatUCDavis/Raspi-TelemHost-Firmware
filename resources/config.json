@@ -1,25 +1,25 @@
 {
     "servers":
     {
-        "mqttBroker": "ws://192.168.137.147:9001"
+        "mqttBroker": "ws://192.168.137.172:9001"
     },
     "paths":
     {
         "web":
         {
-            "build": "C:\\Raspi-TelemHost-Firmware\\services\\web\\frontend\\build",
-            "_app": "C:\\Raspi-TelemHost-Firmware\\services\\web\\frontend\\build\\_app"
+            "build": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build",
+            "_app": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build/_app"
         },
         "data":
         {
-            "intake": "C:\\Raspi-TelemHost-Firmware\\data\\can\\intake",
-            "process": "C:\\Raspi-TelemHost-Firmware\\data\\can\\process",
-            "raw": "C:\\Raspi-TelemHost-Firmware\\data\\can\\raw",
-            "parsed": "C:\\Raspi-TelemHost-Firmware\\data\\can\\parsed"
+            "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/can/intake",
+            "process": "/home/frucd/Raspi-TelemHost-Firmware/data/can/process",
+            "raw": "/home/frucd/Raspi-TelemHost-Firmware/data/can/raw",
+            "parsed": "/home/frucd/Raspi-TelemHost-Firmware/data/can/parsed"
         },
         "dbc": {
-            "fe12": "C:\\Raspi-TelemHost-Firmware\\resources\\FE12.dbc",
-            "mc": "C:\\Raspi-TelemHost-Firmware\\resources\\20240129 Gen5 CAN DB.dbc"
+            "fe12": "/home/frucd/Raspi-TelemHost-Firmware/resources/FE12.dbc",
+            "mc": "/home/frucd/Raspi-TelemHost-Firmware/resources/20240129 Gen5 CAN DB.dbc"
         }
     },
     "can":
