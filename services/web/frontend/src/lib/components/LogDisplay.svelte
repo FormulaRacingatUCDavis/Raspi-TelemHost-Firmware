@@ -26,7 +26,7 @@
     });
 </script>
 
-<article>
+<article data-theme="light">
 	<select bind:value={log} onfocus={updateDropdown}>
 		<option selected disabled value="">Select</option>
 		{#if files.length > 0}

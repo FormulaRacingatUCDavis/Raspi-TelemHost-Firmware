@@ -1,8 +1,3 @@
-<hgroup>
-	<h2>Telemetry Dashboard</h2>
-	<p>Formula Racing at UC Davis</p>
-</hgroup>
-<hr />
 <p>
 	The Raspberry Pi serves as our central telematics control unit (TCU), managing
 	and distributing vehicle data. It collects safety-critical and non-critical information from the

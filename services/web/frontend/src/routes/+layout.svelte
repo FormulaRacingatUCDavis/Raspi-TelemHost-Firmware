@@ -46,6 +46,7 @@
 			<li><a href="/" class="secondary nav-link">Home</a></li>
 			<li><a href="/live/readings" class="secondary nav-link">Live</a></li>
 			<li><a href="/logs/readings" class="secondary nav-link">Logs</a></li>
+			<li><a href="/send" class="secondary nav-link">Send</a></li>
 			<li>
 				<details class="dropdown" ontoggle={updateDropdown}>
 					<summary> Export </summary>
@@ -103,6 +104,11 @@
 			</li>
 		</ul>
 	</nav>
+	<hr />
+	<hgroup>
+		<h2>Telemetry Dashboard</h2>
+		<p>Formula Racing at UC Davis</p>
+	</hgroup>
 	<hr />
 </header>
 
