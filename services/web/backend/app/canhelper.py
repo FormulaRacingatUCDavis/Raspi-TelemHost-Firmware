@@ -3,6 +3,8 @@ import cantools
 import os
 import csv
 import sqlite3
+import psycopg2
+from psycopg2 import sql
 
 class CANHelper:
     """
@@ -10,8 +12,10 @@ class CANHelper:
     """
     def __init__(self, config):
         self.config = config
-        self.frucd_db = cantools.database.load_file(config["paths"]["dbc"]["fe12"])
-        self.mc_db = cantools.database.load_file(config["paths"]["dbc"]["mc"])
+        self.frucd_db = cantools.db.load_file(config["paths"]["dbc"]["fe12"])
+        self.mc_db = cantools.db.load_file(config["paths"]["dbc"]["mc"])
+        # open connection to data base
+        self.conn = psycopg2.connect(host="localhost", database="test_timescaledb", user="matthew", port="5432")
 
     def generate_parsed(self, path: str):
         parsed_msgs = []
@@ -81,6 +85,55 @@ class CANHelper:
                 writer.writerow(row_data)
 
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
+
+        table_name = "log" + log[:-4]
+        with self.conn.cursor() as cursor:
+            column_definitions = ", ".join([f"{sig} TEXT" for sig in sorted(signals)])
+            query_create_table = ("""
+                CREATE TABLE IF NOT EXISTS {table} (
+                    time TIMESTAMPTZ NOT NULL,
+                    source TEXT,
+                    id INTEGER,
+                    message TEXT,
+                    {signals}
+                    );""").format(table=table_name, signals=column_definitions)
+            # query_create_sensordata_table = "CREATE TABLE IF NOT EXISTS " + log + " (Timestamp TIMESTAMPTZ NOT NULL, Source TEXT, ID INTEGER, Message TEXT".join(sorted(signals))
+            query_create_hypertable = "SELECT create_hypertable('{table}', by_range('time'));".format(table=table_name) 
+            cursor.execute(query_create_table)
+            cursor.execute(query_create_hypertable)
+            self.conn.commit()
+            print("set up table")
+
+        with self.conn.cursor() as cur:
+            compress_setup_query = ("""
+                ALTER TABLE {table} SET (
+                    timescaledb.compress,
+                    timescaledb.compress_segmentby = 'id',
+                    timescaledb.compress_orderby = 'time DESC'
+                )
+            """).format(table=table_name)
+            cur.execute(compress_setup_query)
+            self.conn.commit()
+            print("enable compress")
+
+        try:
+            with self.conn.cursor() as cur:
+                with open(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), 'r') as f:
+                    copy_query = "COPY " + table_name + " FROM STDIN WITH CSV DELIMITER ','"
+                    cur.copy_expert(copy_query, f)
+                self.conn.commit()
+
+                compress_query = ("""
+                    SELECT compress_chunk(i, if_not_compressed => true) 
+                    FROM show_chunks({table}) i;
+                """).format(table=table_name)
+                
+                cur.execute(compress_query)
+                self.conn.commit() 
+                print("copy and compress")
+        except Exception as e:
+            self.conn.rollback()
+            print(f"Error: {e}")
 
         shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
 

@@ -7,25 +7,25 @@
     {
         "web":
         {
-            "build": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build",
-            "_app": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build/_app"
+            "build": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build",
+            "_app": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build/_app"
         },
         "data":
         {
             "can": {
-                "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/can/intake",
-                "process": "/home/frucd/Raspi-TelemHost-Firmware/data/can/process",
-                "raw": "/home/frucd/Raspi-TelemHost-Firmware/data/can/raw",
-                "parsed": "/home/frucd/Raspi-TelemHost-Firmware/data/can/parsed"
+                "intake": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/data/can/intake",
+                "process": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/data/can/process",
+                "raw": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/data/can/raw",
+                "parsed": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/data/can/parsed"
             },
             "camera": {
-                "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/camera/intake",
-                "ready": "/home/frucd/Raspi-TelemHost-Firmware/data/camera/ready"
+                "intake": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/data/camera/intake",
+                "ready": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/data/camera/ready"
             }
         },
         "dbc": {
-            "fe12": "/home/frucd/Raspi-TelemHost-Firmware/resources/FE12.dbc",
-            "mc": "/home/frucd/Raspi-TelemHost-Firmware/resources/20240129 Gen5 CAN DB.dbc"
+            "fe12": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/resources/FE12.dbc",
+            "mc": "/Users/matthew/projects/frucd/Raspi-TelemHost-Firmware/resources/20240129 Gen5 CAN DB.dbc"
         }
     },
     "can":
