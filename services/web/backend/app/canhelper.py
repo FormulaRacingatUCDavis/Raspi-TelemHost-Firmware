@@ -5,6 +5,8 @@ import csv
 import sqlite3
 import psycopg2
 from psycopg2 import sql
+import io
+from datetime import datetime, timedelta
 
 class CANHelper:
     """
@@ -16,6 +18,60 @@ class CANHelper:
         self.mc_db = cantools.db.load_file(config["paths"]["dbc"]["mc"])
         # open connection to data base
         self.conn = psycopg2.connect(host="localhost", database="test_timescaledb", user="matthew", port="5432")
+       
+        self.can_message_list = self.frucd_db.messages + self.mc_db.messages
+        self.can_message_name_to_id_dict = {can_msg.name: can_msg.frame_id for can_msg in self.can_message_list}
+        self.can_message_signals_dict = {can_msg.name: [msg_sig.name for msg_sig in can_msg.signals] for can_msg in self.can_message_list} 
+        for can_msg_name in list(self.can_message_name_to_id_dict):
+            try:
+                print(f"Creating {can_msg_name} table")
+                with self.conn.cursor() as cursor:
+                    column_definitions = ", ".join([f"{msg_sig} TEXT" for msg_sig in self.can_message_signals_dict[can_msg_name]])
+                    query_create_table = ("""
+                        CREATE TABLE IF NOT EXISTS {table} (
+                            Timestamp TIMESTAMPTZ NOT NULL,
+                            Source TEXT,
+                            ID TEXT,
+                            Message TEXT,
+                            {signals}
+                            );""").format(table=can_msg_name, signals=column_definitions)
+                    
+                    query_create_hypertable = "SELECT create_hypertable('{table}', 'timestamp', if_not_exists => TRUE);".format(table=can_msg_name) 
+                    
+                    cursor.execute(query_create_table)
+                    cursor.execute(query_create_hypertable)
+                    self.conn.commit()
+                    print(f"Created {can_msg_name} hypertable")
+            except Exception as e:
+                self.conn.rollback()
+                print(f"Error in creating table: {e}")
+
+    def convert_to_timestamp_and_filter_rows(self, file_path, msg_name):
+        with open(file_path, 'r') as f:
+            msg_id = f"{int(self.can_message_name_to_id_dict[msg_name]):X}"
+            msg_signals = self.can_message_signals_dict[msg_name]
+            selected_columns = [""]
+            file_start_time = datetime.strptime("20251010_193149", "%Y%m%d_%H%M%S")
+            next(f)
+            for line in f:
+                parts = line.strip().split(',')              
+                if not parts: 
+                    continue
+                if parts[2] != msg_id:
+                    continue
+                time = float(parts[0])
+                timestamp = file_start_time + timedelta(milliseconds=time)
+                parts[0] = timestamp.isoformat()
+                yield (','.join(filter(None, parts))).rstrip(',') + '\n'
+
+    class StringIteratorIO(io.TextIOBase):
+        def __init__(self, iter):
+            self.iter = iter
+        def read(self, n=None):
+            try:
+                return next(self.iter)
+            except StopIteration:
+                return ''
 
     def generate_parsed(self, path: str):
         parsed_msgs = []
@@ -86,55 +142,22 @@ class CANHelper:
 
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
-        table_name = "log" + log[:-4]
-        with self.conn.cursor() as cursor:
-            column_definitions = ", ".join([f"{sig} TEXT" for sig in sorted(signals)])
-            query_create_table = ("""
-                CREATE TABLE IF NOT EXISTS {table} (
-                    time TIMESTAMPTZ NOT NULL,
-                    source TEXT,
-                    id INTEGER,
-                    message TEXT,
-                    {signals}
-                    );""").format(table=table_name, signals=column_definitions)
-            # query_create_sensordata_table = "CREATE TABLE IF NOT EXISTS " + log + " (Timestamp TIMESTAMPTZ NOT NULL, Source TEXT, ID INTEGER, Message TEXT".join(sorted(signals))
-            query_create_hypertable = "SELECT create_hypertable('{table}', by_range('time'));".format(table=table_name) 
-            cursor.execute(query_create_table)
-            cursor.execute(query_create_hypertable)
-            self.conn.commit()
-            print("set up table")
+        for can_msg_name in list(self.can_message_name_to_id_dict):
+            print(f"Populating {can_msg_name} table")
+            try:
+                with self.conn.cursor() as cur:
+                    f = self.convert_to_timestamp_and_filter_rows(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), can_msg_name)
+                    copy_query = f"COPY {can_msg_name} FROM STDIN WITH (FORMAT CSV);"
+                    cur.copy_expert(copy_query, self.StringIteratorIO(f))
+                    self.conn.commit()
+                    print(f"Finished populating {can_msg_name} table")
+            except Exception as e:
+                self.conn.rollback()
+                print(f"Error: {e}")
+                print(f"Failed to populate {can_msg_name} table")
+        
+        self.conn.close()
 
-        with self.conn.cursor() as cur:
-            compress_setup_query = ("""
-                ALTER TABLE {table} SET (
-                    timescaledb.compress,
-                    timescaledb.compress_segmentby = 'id',
-                    timescaledb.compress_orderby = 'time DESC'
-                )
-            """).format(table=table_name)
-            cur.execute(compress_setup_query)
-            self.conn.commit()
-            print("enable compress")
-
-        try:
-            with self.conn.cursor() as cur:
-                with open(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), 'r') as f:
-                    copy_query = "COPY " + table_name + " FROM STDIN WITH CSV DELIMITER ','"
-                    cur.copy_expert(copy_query, f)
-                self.conn.commit()
-
-                compress_query = ("""
-                    SELECT compress_chunk(i, if_not_compressed => true) 
-                    FROM show_chunks({table}) i;
-                """).format(table=table_name)
-                
-                cur.execute(compress_query)
-                self.conn.commit() 
-                print("copy and compress")
-        except Exception as e:
-            self.conn.rollback()
-            print(f"Error: {e}")
-
-        shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
+        # shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
 
     # TODO: get numerical/string data
