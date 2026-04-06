@@ -16,12 +16,14 @@ class CANHelper:
         self.config = config
         self.frucd_db = cantools.db.load_file(config["paths"]["dbc"]["fe12"])
         self.mc_db = cantools.db.load_file(config["paths"]["dbc"]["mc"])
+
         # open connection to data base
         self.conn = psycopg2.connect(host="localhost", database="test_timescaledb", user="matthew", port="5432")
-       
+        # use dbc file to get all message names, ids, and signals for use later in table creation and data parsing
         self.can_message_list = self.frucd_db.messages + self.mc_db.messages
         self.can_message_name_to_id_dict = {can_msg.name: can_msg.frame_id for can_msg in self.can_message_list}
         self.can_message_signals_dict = {can_msg.name: [msg_sig.name for msg_sig in can_msg.signals] for can_msg in self.can_message_list} 
+        # creating all the tables in the database, if tables already exists gives error then skips but should be fine
         for can_msg_name in list(self.can_message_name_to_id_dict):
             try:
                 print(f"Creating {can_msg_name} table")
@@ -35,9 +37,7 @@ class CANHelper:
                             Message TEXT,
                             {signals}
                             );""").format(table=can_msg_name, signals=column_definitions)
-                    
                     query_create_hypertable = "SELECT create_hypertable('{table}', 'timestamp', if_not_exists => TRUE);".format(table=can_msg_name) 
-                    
                     cursor.execute(query_create_table)
                     cursor.execute(query_create_hypertable)
                     self.conn.commit()
@@ -46,6 +46,7 @@ class CANHelper:
                 self.conn.rollback()
                 print(f"Error in creating table: {e}")
 
+    # generator function to modify the csv file in real time for the tables to copy the correct information
     def convert_to_timestamp_and_filter_rows(self, file_path, msg_name):
         with open(file_path, 'r') as f:
             msg_id = f"{int(self.can_message_name_to_id_dict[msg_name]):X}"
@@ -63,7 +64,8 @@ class CANHelper:
                 timestamp = file_start_time + timedelta(milliseconds=time)
                 parts[0] = timestamp.isoformat()
                 yield (','.join(filter(None, parts))).rstrip(',') + '\n'
-
+    
+    # class to wrap the generator function as a file-like object so copy can be used
     class StringIteratorIO(io.TextIOBase):
         def __init__(self, iter):
             self.iter = iter
@@ -142,13 +144,14 @@ class CANHelper:
 
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
+        # populates each table 
         for can_msg_name in list(self.can_message_name_to_id_dict):
             print(f"Populating {can_msg_name} table")
             try:
                 with self.conn.cursor() as cur:
-                    f = self.convert_to_timestamp_and_filter_rows(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), can_msg_name)
+                    modified_csv = self.convert_to_timestamp_and_filter_rows(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), can_msg_name)
                     copy_query = f"COPY {can_msg_name} FROM STDIN WITH (FORMAT CSV);"
-                    cur.copy_expert(copy_query, self.StringIteratorIO(f))
+                    cur.copy_expert(copy_query, self.StringIteratorIO(modified_csv))
                     self.conn.commit()
                     print(f"Finished populating {can_msg_name} table")
             except Exception as e:
