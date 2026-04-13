@@ -26,6 +26,7 @@ with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
     config = json.load(f)
 can_helper = CANHelper(config)
 database_pool = None
+processing_files = set()
 
 os.makedirs(config["paths"]["data"]["can"]["intake"], exist_ok=True)
 os.makedirs(config["paths"]["data"]["can"]["process"], exist_ok=True)
@@ -34,10 +35,13 @@ os.makedirs(config["paths"]["data"]["can"]["parsed"], exist_ok=True)
 
 semaphore = asyncio.Semaphore(1)
 async def watcher(app: FastAPI):
+    global processing_files
     async for changes in awatch(config["paths"]["data"]["can"]["process"]):
         for change, path in changes:
             if change == Change.added and path.endswith(".csv"):
-                asyncio.create_task(handle_file(path, app))
+                if path not in processing_files:
+                    processing_files.add(path)
+                    asyncio.create_task(handle_file(path, app))
 
 async def handle_file(path: str, app: FastAPI):
     try:
@@ -47,7 +51,7 @@ async def handle_file(path: str, app: FastAPI):
             async with app.async_pool.connection() as conn:
                 await can_helper.populate_tables(conn, path)
     except Exception as e:
-        print(f"Failed to process {path}: {e}")
+        print(f"Failed to process {path}: {e}")  
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -58,7 +62,6 @@ async def lifespan(app: FastAPI):
     watcher_task = asyncio.create_task(watcher(app))
     async with app.async_pool.connection() as conn:
         await can_helper.create_tables(conn)
-    
     print("Database pool and watcher task started")
     try:
         yield
@@ -68,13 +71,9 @@ async def lifespan(app: FastAPI):
         with contextlib.suppress(asyncio.CancelledError):
             await watcher_task
         await app.async_pool.close()
-        print("Database pool closed.")
+        print("Database pool and watcher closed.")
 
 app = FastAPI(lifespan=lifespan)
-
-async def get_database_connection(request: Request):
-    async with request.app.async_pool.connection() as conn:
-        yield conn
 
 @app.post("/api/can/logs/zip/{type}")
 def zip_logs(type: str, payload: FileRequest):

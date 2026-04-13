@@ -90,7 +90,7 @@ class CANHelper:
 
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
-        # shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
+        shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
         
         # TODO: get numerical/string data
 
