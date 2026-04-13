@@ -130,12 +130,12 @@ class CANHelper:
         
 
     # generator function to modify the csv file in real time for the tables to copy the correct information
-    def convert_to_timestamp_and_filter_rows(self, file_path, msg_name):
+    def convert_to_timestamp_and_filter_rows(self, file_path, msg_name, log):
         with open(file_path, 'r') as f:
             msg_id = f"{int(self.can_message_name_to_id_dict[msg_name]):X}"
             msg_signals = self.can_message_signals_dict[msg_name]
             selected_columns = [""]
-            file_start_time = datetime.strptime("20251010_193149", "%Y%m%d_%H%M%S")
+            file_start_time = datetime.strptime(str(log)[: -4], "%Y%m%d_%H%M%S")
             next(f)
             for line in f:
                 parts = line.strip().split(',')              
@@ -154,7 +154,7 @@ class CANHelper:
         for can_msg_name in list(self.can_message_name_to_id_dict):
             print(f"Populating [{can_msg_name}] table")
             try:
-                modified_csv = self.convert_to_timestamp_and_filter_rows(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), can_msg_name)
+                modified_csv = self.convert_to_timestamp_and_filter_rows(os.path.join(self.config["paths"]["data"]["can"]["parsed"], log), can_msg_name, log)
                 
                 async with conn.cursor() as cur:
                     copy_query = sql.SQL("COPY {table} FROM STDIN WITH (FORMAT CSV);").format(table=sql.Identifier(can_msg_name.lower()))
