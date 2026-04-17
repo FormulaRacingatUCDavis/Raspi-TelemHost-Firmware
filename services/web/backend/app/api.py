@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi import Request
 from pydantic import BaseModel
 from pathlib import Path
 from io import BytesIO
@@ -13,6 +14,9 @@ import json
 import asyncio
 from watchfiles import awatch, Change
 from .canhelper import CANHelper
+from psycopg_pool import AsyncConnectionPool
+
+
 
 class FileRequest(BaseModel):
     filenames: List[str]
@@ -21,6 +25,8 @@ RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
     config = json.load(f)
 can_helper = CANHelper(config)
+database_pool = None
+processing_files = set()
 
 os.makedirs(config["paths"]["data"]["can"]["intake"], exist_ok=True)
 os.makedirs(config["paths"]["data"]["can"]["process"], exist_ok=True)
@@ -28,26 +34,44 @@ os.makedirs(config["paths"]["data"]["can"]["raw"], exist_ok=True)
 os.makedirs(config["paths"]["data"]["can"]["parsed"], exist_ok=True)
 
 semaphore = asyncio.Semaphore(1)
-async def watcher():
+async def watcher(app: FastAPI):
+    global processing_files
     async for changes in awatch(config["paths"]["data"]["can"]["process"]):
         for change, path in changes:
             if change == Change.added and path.endswith(".csv"):
-                asyncio.create_task(handle_file(path))
+                if path not in processing_files:
+                    processing_files.add(path)
+                    asyncio.create_task(handle_file(path, app))
 
-async def handle_file(path: str):
-    async with semaphore:
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, can_helper.generate_parsed, path)
+async def handle_file(path: str, app: FastAPI):
+    try:
+        async with semaphore:
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, can_helper.generate_parsed, path)
+            async with app.async_pool.connection() as conn:
+                await can_helper.populate_tables(conn, path)
+    except Exception as e:
+        print(f"Failed to process {path}: {e}")  
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    watcher_task = asyncio.create_task(watcher())
+    global database_pool
+    app.async_pool = AsyncConnectionPool(conninfo="postgresql://postgres:postgres@localhost:5432/frucd", open=False)
+    await app.async_pool.open()
+    database_pool = app.async_pool
+    watcher_task = asyncio.create_task(watcher(app))
+    async with app.async_pool.connection() as conn:
+        await can_helper.create_tables(conn)
+    print("Database pool and watcher task started")
     try:
         yield
     finally:
+        print("Shutting down...")
         watcher_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await watcher_task
+        await app.async_pool.close()
+        print("Database pool and watcher closed.")
 
 app = FastAPI(lifespan=lifespan)
 

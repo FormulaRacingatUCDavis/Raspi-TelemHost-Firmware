@@ -2,4 +2,5 @@ fastapi
 cantools
 uvicorn
 nicegui
-watchfile
+watchfiles
+psycopg
