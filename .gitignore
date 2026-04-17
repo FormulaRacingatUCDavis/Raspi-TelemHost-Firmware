@@ -4,6 +4,7 @@ __pycache__
 data
 build
 CMakeUserPresets.json
+venv_webapp
 
 node_modules
 

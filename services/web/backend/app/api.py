@@ -56,7 +56,7 @@ async def handle_file(path: str, app: FastAPI):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global database_pool
-    app.async_pool = AsyncConnectionPool(conninfo="postgresql://matthew@localhost:5432/test_timescaledb", open=False)
+    app.async_pool = AsyncConnectionPool(conninfo="postgresql://postgres:postgres@localhost:5432/frucd", open=False)
     await app.async_pool.open()
     database_pool = app.async_pool
     watcher_task = asyncio.create_task(watcher(app))

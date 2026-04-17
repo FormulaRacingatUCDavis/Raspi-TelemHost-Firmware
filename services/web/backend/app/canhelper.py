@@ -135,7 +135,7 @@ class CANHelper:
             msg_id = f"{int(self.can_message_name_to_id_dict[msg_name]):X}"
             msg_signals = self.can_message_signals_dict[msg_name]
             selected_columns = [""]
-            file_start_time = datetime.strptime(str(log)[: -4], "%Y%m%d_%H%M%S")
+            file_start_time = datetime.strptime(str(log)[8: -4], "%Y%m%d_%H%M%S")
             next(f)
             for line in f:
                 parts = line.strip().split(',')              
