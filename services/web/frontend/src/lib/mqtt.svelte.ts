@@ -101,6 +101,21 @@ mqttClient.on("message", (topic, message) => {
                 }));
                 break;
             }
+            case 0x503: {
+                mqttDataNum.update((data) => ({
+                    ...data,
+                    acc_power: msg.acc_power,
+                    timestamp: msg.timestamp,
+                }));
+            }
+            case 0x400: {
+                mqttDataNum.update((data) => ({
+                    ...data,
+                    inlet_water_temp: msg.inlet_water_temp,
+                    outlet_water_temp: msg.outlet_water_temp,
+                    timestamp: msg.timestamp,
+                }));
+            }
         }
     }
 });
