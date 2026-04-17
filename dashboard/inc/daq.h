@@ -1,4 +1,5 @@
 #pragma once
+#include "variables.h"
 
 namespace dashboard
 {
@@ -7,7 +8,7 @@ namespace dashboard
     public:
         CANManager();
         ~CANManager();
-        void decode_can();
+        void decode_can(Variables* variables_instance);
 
     private:
         int mCanSock = -1;

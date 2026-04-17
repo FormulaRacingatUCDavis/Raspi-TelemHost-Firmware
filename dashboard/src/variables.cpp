@@ -3,63 +3,16 @@
 
 namespace dashboard
 {
-    // singleton stuff
-    Variables* Variables::s_instance = nullptr;
-
-    const QString Variables::green = "#00FF00";
-    const QString Variables::yellow = "#FFFF00";
-    const QString Variables::red = "#ff5b1f";
-
-    // delcaration of instance variablesm (need defualt values)
-    int Variables::m_mph = -1;
-
-    QString Variables::m_vehiclestate = "STARTUP";
-    QString Variables::m_vehiclestate_color = green;
-
-    int Variables::m_soc = -1;
-
-    int Variables::m_mctemp = -1;
-    QString Variables::m_mctemp_color = "white";
-
-    double Variables::m_glvv = -1;
-    QString Variables::m_glvv_color = "white";
-
-    QString Variables:: m_shutdowncircuit = "";
-
-    QString Variables::m_mcfault = "";
-
-    int Variables::m_packtemp = -1;
-
-    int Variables::m_motortemp = -1;
-
-    int Variables::m_overtake = 0;
-
-    int Variables::m_torquelimit = 0;
-
-    int Variables::m_launchcontrol = 0;
-
-    int Variables::m_whichPopupVisible = -1;
-    QString Variables::prev_vehicle_state = "";
-    int Variables::prev_knob1_val = m_torquelimit;
-    int Variables::prev_knob2_val = m_launchcontrol;
-
-    QString Variables::m_dashboardpage = "drive.qml"; 
-
-    // singleton stuff
-    Variables* Variables::instance() 
-    {
-        if (s_instance == nullptr) {
-            s_instance = new Variables(nullptr);
-        }
-        return s_instance;
+    Variables* Variables::instance()  {
+            static Variables _instance;
+            return &_instance;
     }
 
-    Variables::Variables(QObject *parent) 
-        : QObject(parent) // Initialize base class
-            // could initialize member variable here
-    {
-        // Implementation body
+    Variables::Variables(QObject *parent) : QObject(parent) // Initialize base class
+    { 
+        // put stuff here if need to start something at class object construction which is when the dashboard starts to run
     }
+    
 
     /* 
     * right now the structure is that we have getter and setter functions
@@ -115,6 +68,10 @@ namespace dashboard
         return m_motortemp;
     }
 
+    double Variables::accum_power() {
+        return m_accum_power;
+    }
+
     int Variables::overtake() {
         return m_overtake;
     }
@@ -134,13 +91,25 @@ namespace dashboard
     QString Variables::dashboardpage() {
         return m_dashboardpage;
     }
+/* LAPTIME TO ADD
+    double Variables::curr_lap_time() {
+        return (double) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::nanoseconds(curr_lap_time_ns)).count();
+    }
 
+    double Variables::best_lap_time() {
+        return (double) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::nanoseconds(best_lap_time_ns)).count();
+    }
+
+    double Variables::prev_lap_time() {
+        return (double) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::nanoseconds(prev_lap_time_ns)).count();
+    }
+*/
 
     // defining setter classes
     void Variables::setmph(int speed) {
         if (m_mph != speed) { 
             m_mph = speed;
-            emit Variables::instance()->mphChanged(); // Notify QML
+            emit mphChanged(); // Notify QML
         }
     }
 
@@ -235,14 +204,14 @@ namespace dashboard
             }
         }
 
-        emit Variables::instance()->vehiclestateChanged();
-        emit Variables::instance()->vehiclestate_colorChanged();
+        emit vehiclestateChanged();
+        emit vehiclestate_colorChanged();
     }
 
     void Variables::setsoc(int charge) {
         if (m_soc != charge) {
             m_soc = charge;
-            emit Variables::instance()->socChanged();
+            emit socChanged();
         }
     }
 
@@ -257,8 +226,8 @@ namespace dashboard
             } else {
                 m_mctemp_color = red;
             }
-            emit Variables::instance()->mctempChanged();
-            emit Variables::instance()->mctemp_colorChanged();
+            emit mctempChanged();
+            emit mctemp_colorChanged();
         }
     }
 
@@ -272,8 +241,8 @@ namespace dashboard
             } else {
                 m_glvv_color = red;
             }
-            emit Variables::instance()->glvvChanged();
-            emit Variables::instance()->glvv_colorChanged();
+            emit glvvChanged();
+            emit glvv_colorChanged();
         }
     }
 
@@ -281,7 +250,7 @@ namespace dashboard
         QString qswitch = QString::fromStdString(flippedswitch);
         if (m_shutdowncircuit != qswitch) {
             m_shutdowncircuit = qswitch;
-            emit Variables::instance()->shutdowncircuitChanged();
+            emit shutdowncircuitChanged();
         }
     }
 
@@ -424,28 +393,35 @@ namespace dashboard
 
         if (m_mcfault != qfault) {
             m_mcfault = qfault;
-            emit Variables::instance()->mcfaultChanged();
+            emit mcfaultChanged();
         }
     }
 
     void Variables::setpacktemp(int temp) {
         if (m_packtemp != temp) {
             m_packtemp = temp;
-            emit Variables::instance()->packtempChanged();
+            emit packtempChanged();
         }
     }
 
     void Variables::setmotortemp(int temp) {
         if (m_motortemp != temp) {
             m_motortemp = temp;
-            emit Variables::instance()->motortempChanged();
+            emit motortempChanged();
+        }
+    }
+
+    void Variables::setaccum_power(double power) {
+        if (m_accum_power != power) {
+            m_accum_power = power;
+            emit accum_powerChanged();
         }
     }
 
     void Variables::setovertake(int status) {
         if (m_overtake != status) {
             m_overtake = status;
-            emit Variables::instance()->overtakeChanged();
+            emit overtakeChanged();
         }
     }
 
@@ -453,7 +429,7 @@ namespace dashboard
         if (m_torquelimit >= limit+5 || m_torquelimit <= limit-5) {
             m_torquelimit = limit;
             showEventPopUp(1);
-            emit Variables::instance()->torquelimitChanged();
+            emit torquelimitChanged();
         }
     }
 
@@ -461,7 +437,7 @@ namespace dashboard
         if (m_launchcontrol >= param+5 || m_launchcontrol <= param-5) {
             m_launchcontrol = param;
             showEventPopUp(2);
-            emit Variables::instance()->launchcontrolChanged();
+            emit launchcontrolChanged();
         }
     }
 
@@ -470,24 +446,24 @@ namespace dashboard
             if (which == 0 && prev_vehicle_state != vehiclestate()) {
                 prev_vehicle_state = vehiclestate();
                 m_whichPopupVisible = which;
-                emit Variables::instance()->whichPopupVisibleChanged();
+                emit whichPopupVisibleChanged();
             }
             if (which == 1 && prev_knob1_val != torquelimit()) {
                 prev_knob1_val = torquelimit();
                 m_whichPopupVisible = which;
-                emit Variables::instance()->whichPopupVisibleChanged();
+                emit whichPopupVisibleChanged();
             }
             if (which == 2 && prev_knob2_val != launchcontrol()) {
                 prev_knob2_val = launchcontrol();
                 m_whichPopupVisible = which;
-                emit Variables::instance()->whichPopupVisibleChanged();
+                emit whichPopupVisibleChanged();
             }
         }
     }
     void Variables::hidePopup() {
         if (m_whichPopupVisible != -1) {
             m_whichPopupVisible = -1;
-            emit Variables::instance()->whichPopupVisibleChanged();
+            emit whichPopupVisibleChanged();
         }
     }
 
@@ -497,10 +473,111 @@ namespace dashboard
             qpage = "debug.qml";
         } else if (page == 2) {
             qpage = "practice.qml";
+            // driver_practice_init(); // start the lap time timer when practice mode opened
         }
         if (m_dashboardpage != qpage) {
             m_dashboardpage = qpage;
-            emit Variables::instance()->dashboardpageChanged();
+            emit dashboardpageChanged();
         }
     } 
+/* LAPTIME TO ADD
+    // private xsens functions
+
+    // update current coordinates from the Xsens
+    void Variables::update_curr_coordinates() { // TODO get coords from Xsens through USB or UART
+        curr_latitude = 404; // xsens_latitude
+        curr_longitude = 404; // xsens_longitude
+    }
+
+    // updates curr_lap_time_ns and prev_ns
+    void Variables::update_curr_lap_time() {
+        // get the time now then get that time from epoch then converts it into nanoseconds then gets the count and cast it into uint64_t
+        uint64_t curr_ns = (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+        uint64_t ns_passed = curr_ns - prev_ns;
+
+        prev_ns = curr_ns;
+
+        curr_lap_time_ns += ns_passed;
+        emit curr_lap_timeChanged();
+    }
+
+    // true if car is within starting area, false otherwise 
+    bool Variables::within_starting_area() {
+        // feet = 364,320 x Degrees (degrees of latitude / longitude)
+        return (abs(curr_latitude - start_latitude) <= (tolerance_feet / 364320.0)) && 
+               (abs(curr_longitude- start_longitude) <= (tolerance_feet / 364320.0));
+    }
+
+    // Should be called once when driver starts practice mode (at starting line)
+    void Variables::driver_practice_init() { // TODO get coordinates from Xsens over USB or UART
+        start_latitude = 404; // xsens_latitude
+        start_longitude = 404; // xsens_longitude
+
+        curr_latitude = 404; // xsens_latitude
+        curr_longitude = 404; // xsens_longitude
+
+        curr_lap_time_ns = 0;
+    }
+
+    // Should be called regularly after start coordinates have been initialized
+    void Variables::driver_practice_update() {
+        switch (driver_practice_state) {
+
+            case LapState::STARTING:
+                if (!within_starting_area()) {
+                    // start recording lap time once they leave the starting area (begin their run)
+                    driver_practice_state = LapState::IN_LAP;
+                    prev_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                }
+                
+                break;
+            
+            case LapState::IN_LAP:
+                update_curr_coordinates();
+                update_curr_lap_time();
+
+                if (within_starting_area()) {
+                    // driver is now finishing a lap (currently crossing start line)
+                    driver_practice_state = LapState::FINISHING_LAP;
+                }
+
+                break;
+            
+            case LapState::FINISHING_LAP:
+                update_curr_coordinates();
+                update_curr_lap_time();
+
+                if (!within_starting_area()) {
+                    // driver just finished a lap, calculate some lap data now
+                    //  TODO write ns_to_s(curr_lap_time_ns) and other lap data to somewhere?
+                    // TODO originally wanted to show temporarily on dash display
+
+                    double time_diff_sec = (double) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::nanoseconds(curr_lap_time_ns -  best_lap_time_ns)).count();
+
+                    if (curr_lap_time_ns < best_lap_time_ns) {
+                        best_lap_time_ns = curr_lap_time_ns;
+                        emit best_lap_timeChanged();
+                    }
+
+                    prev_lap_time_ns = curr_lap_time_ns; // curr becomes previous
+                    emit prev_lap_timeChanged();
+                    
+                    // reset the lap time
+                    curr_lap_time_ns = 0;
+                    emit curr_lap_timeChanged();
+
+
+                    // start recording next lap
+                    driver_practice_state = LapState::IN_LAP;
+                }  
+                break;
+
+            default:
+                // should not possible, but just in case, reset back to starting
+                driver_practice_state = LapState::STARTING;
+        }
+        emit curr_lap_timeChanged();
+    }
+*/
 }

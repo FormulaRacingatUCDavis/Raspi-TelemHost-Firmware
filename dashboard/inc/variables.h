@@ -6,9 +6,18 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <chrono>
+
 
 namespace dashboard
 {
+
+    enum class LapState{
+        STARTING=1, 
+        IN_LAP,
+        FINISHING_LAP
+    };
+
     class Variables : public QObject {
         Q_OBJECT
         
@@ -39,6 +48,8 @@ namespace dashboard
 
         Q_PROPERTY(int motortemp READ motortemp NOTIFY motortempChanged)
 
+        Q_PROPERTY(double accum_power READ accum_power NOTIFY accum_powerChanged)
+
         Q_PROPERTY(int overtake READ overtake NOTIFY overtakeChanged)
 
         Q_PROPERTY(int torquelimit READ torquelimit NOTIFY torquelimitChanged)
@@ -48,74 +59,108 @@ namespace dashboard
         Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
 
         Q_PROPERTY(QString dashboardpage READ dashboardpage NOTIFY dashboardpageChanged)
+/* LAPTIME TO ADD
+        Q_PROPERTY(double curr_lap_time READ curr_lap_time NOTIFY curr_lap_timeChanged)
+
+        Q_PROPERTY(double best_lap_time READ best_lap_time NOTIFY best_lap_timeChanged)
+        
+        Q_PROPERTY(double prev_lap_time READ prev_lap_time NOTIFY prev_lap_timeChanged)
+*/
+
 
     public:
-        // for the singleton thing
+
+        // set up singleton
         static Variables* instance();
         
+        Variables(const Variables&) = delete;
+        void operator=(const Variables&) = delete;
 
         // getter functions that the qml will call to get needed data to update dashboard with
-        static int mph();
+        int mph();
 
-        static QString vehiclestate();
-        static QString vehiclestate_color();
+        QString vehiclestate();
+        QString vehiclestate_color();
 
-        static int soc();
+        int soc();
 
-        static int mctemp();
-        static QString mctemp_color();
+        int mctemp();
+        QString mctemp_color();
 
-        static double glvv();
-        static QString glvv_color();
+        double glvv();
+        QString glvv_color();
 
-        static QString shutdowncircuit();
+        QString shutdowncircuit();
 
-        static QString mcfault();
+        QString mcfault();
 
-        static int packtemp();
+        int packtemp();
         
-        static int motortemp();
+        int motortemp();
 
-        static int overtake();
+        double accum_power();
 
-        static int torquelimit();
+        int overtake();
 
-        static int launchcontrol();
+        int torquelimit();
 
-        static int whichPopupVisible();
+        int launchcontrol();
 
-        static QString dashboardpage();
+        int whichPopupVisible();
+
+        QString dashboardpage();
+/* LAPTIME TO ADD
+        double curr_lap_time();
+
+        double best_lap_time();
+
+        double prev_lap_time();
+*/
 
 
         // setter functions
-        static void setmph(int speed);
+       void setmph(int speed);
 
-        static void setvehiclestate(int state, bool bms);
+       void setvehiclestate(int state, bool bms);
 
-        static void setsoc(int charge);
+       void setsoc(int charge);
 
-        static void setmctemp(int tempA, int tempB, int tempC);
+       void setmctemp(int tempA, int tempB, int tempC);
 
-        static void setglvv(double volt);
+       void setglvv(double volt);
 
-        static void setshutdowncircuit(std::string flippedswitch);
+       void setshutdowncircuit(std::string flippedswitch);
 
-        static void setmcfault(uint32_t faultid, bool post);
+       void setmcfault(uint32_t faultid, bool post);
 
-        static void setpacktemp(int temp);
+       void setpacktemp(int temp);
 
-        static void setmotortemp(int temp);
+       void setmotortemp(int temp);
 
-        static void setovertake(int status);
+       void setaccum_power(double power);
 
-        static void settorquelimit(int limit);
+       void setovertake(int status);
 
-        static void setlaunchcontrol(int param);
+       void settorquelimit(int limit);
 
-        static void showEventPopUp(int which);
-        Q_INVOKABLE static void hidePopup();
+       void setlaunchcontrol(int param);
 
-        static void setdashboardpage(int page);
+        void showEventPopUp(int which);
+        Q_INVOKABLE void hidePopup();
+
+        void setdashboardpage(int page);
+
+/* LAPTIME TO ADD
+        // public xsens functions
+
+        // Should be called once when driver starts practice mode (at starting line)
+        void driver_practice_init();
+
+        // Should be called regularly after start coordinates have been initialized
+         void driver_practice_update();
+*/
+
+
 
     signals:
         // for all the notify functions that get emitted in the setters
@@ -140,6 +185,8 @@ namespace dashboard
 
         void motortempChanged();
 
+        void accum_powerChanged();
+
         void overtakeChanged();
     
         void torquelimitChanged();
@@ -150,56 +197,94 @@ namespace dashboard
 
         void dashboardpageChanged();
 
+        void curr_lap_timeChanged();
+        
+        void best_lap_timeChanged();
+
+        void prev_lap_timeChanged();
+
+
     private:
 
-        // for singleton thing
+        // private constructor for singleton
         explicit Variables(QObject *parent = nullptr);
-
-        static Variables* s_instance;
 
 
         // instance variables
-        static int m_mph;
+        // specialized colors for more visibility in dashboard
+        const QString green = "#00FF00";
+        const QString yellow = "#FFFF00";
+        const QString red = "#ff5b1f";
 
-        static QString m_vehiclestate;
-        static QString m_vehiclestate_color;
+        int m_mph = -1;
 
-        static int m_soc;
+        QString m_vehiclestate = "STARTUP";
+        QString m_vehiclestate_color = green;
 
-        static int m_mctemp;
-        static QString m_mctemp_color;
+        int m_soc = -1;
 
-        static double m_glvv;
-        static QString m_glvv_color;
+        int m_mctemp = -1;
+        QString m_mctemp_color = "white";
 
-        static QString m_shutdowncircuit;
+        double m_glvv = -1;
+        QString m_glvv_color = "white";
 
-        static QString m_mcfault;
+        QString m_shutdowncircuit = "";
 
-        static int m_packtemp;
+        QString m_mcfault = "";
 
-        static int m_motortemp;
+        int m_packtemp = -1;
 
-        static int m_overtake;
+        int m_motortemp = -1;
 
-        static int m_torquelimit;
+        double m_accum_power =  -1;
 
-        static int m_launchcontrol;
+        int m_overtake = 0;
 
-        static int m_whichPopupVisible;
+        int m_torquelimit = 0;
+
+        int m_launchcontrol = 0;
+
+        int m_whichPopupVisible = -1;
         // -1 no flashscreens
         // 0 state
         // 1 knob1
         // 2 knob2
-        static QString prev_vehicle_state;
-        static int prev_knob1_val;
-        static int prev_knob2_val;
+        QString prev_vehicle_state = "";
+        int prev_knob1_val = m_torquelimit;
+        int prev_knob2_val = m_launchcontrol;
 
-        static QString m_dashboardpage;
+        QString m_dashboardpage = "drive.qml";
 
-        const static QString green;
-        const static QString yellow;
-        const static QString red;
+/* LAPTIME TO ADD
+        // xsens variables
+        LapState driver_practice_state = LapState::STARTING;
+
+        double start_latitude = 0.0;
+        double start_longitude = 0.0;
+
+        int tolerance_feet = 5; // TODO tune tolerance for starting area, depends on xsens accuracy / noise
+
+        double curr_latitude = 0.0;
+        double curr_longitude = 0.0;
+
+        uint64_t prev_ns = 0.0;
+
+        uint64_t best_lap_time_ns = (uint64_t) std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(41)).count();
+        uint64_t curr_lap_time_ns = 0;
+        uint64_t prev_lap_time_ns = 0;
+
+        // private xsens functions 
+
+        // update current coordinates from the Xsens
+        void update_curr_coordinates();
+
+        // updates curr_lap_time_ns and prev_n
+        void update_curr_lap_time();
+
+        // true if car is within starting area, false otherwise
+        bool within_starting_area();
+*/
 
     };
 }

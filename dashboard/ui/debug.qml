@@ -58,7 +58,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: packsocbox.top
                 y: grid.y
-                text: "Pack SOC"
+                text: "PACK SOC"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -93,7 +93,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "Pack Temperature"
+                text: "PACK TEMP"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -128,7 +128,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "Shutdown Circuit"
+                text: "SHUTDOWN CIRCUIT"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -163,7 +163,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "MC Temperature"
+                text: "MC TEMP"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -198,7 +198,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "Motor Temperature"
+                text: "MOTOR TEMP"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -233,7 +233,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "MC State"
+                text: "MC STATE"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -268,7 +268,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "Vehicle State"
+                text: "STATE"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -303,7 +303,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "GLV Voltage"
+                text: "GLV V"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true
@@ -311,7 +311,7 @@ Rectangle {
         }
 
         Rectangle {
-            id: freebox
+            id: powerbox
             color: "white"
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -319,26 +319,26 @@ Rectangle {
             Layout.preferredHeight: grid.height / 3
 
             Text {
-                id: freeboxvalue
+                id: powervalue
                 color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: "temp"
+                text: (Data.accum_power == -1) ? "" : "" + Data.accum_power
                 font.pixelSize: grid.valuefontsize
                 font.family: grid.typeface
                 font.bold: true
             }
 
             Text {
-                id: freeboxtext
+                id: powertext
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
                 anchors.bottom: parent.top
                 y: grid.y
-                text: "(free slot)"
+                text: "POWER"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
                 font.bold: true

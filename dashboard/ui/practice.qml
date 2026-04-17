@@ -44,6 +44,7 @@ Rectangle {
                 text: (Data.mph == -1) ? "" : "" + Data.mph
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
+                font.bold: true
                 color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
@@ -55,6 +56,7 @@ Rectangle {
                 text: "MPH"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -62,21 +64,23 @@ Rectangle {
                 anchors.bottom: parent.top
                 y: 0
             }
+
         }
 
         Rectangle {
-            id: accel
-            color: "lightblue"
+            id: mctempbox
+            color: Data.mctemp_color
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: grid.width / 4
             Layout.preferredHeight: grid.height / 2
 
             Text {
-                id: accelvalue
-                text: "temp"
+                id: mctempvalue
+                text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                 font.pixelSize: grid.fullfontsize
                 font.family: grid.typeface
+                font.bold: true
                 color: "black"
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
@@ -84,10 +88,11 @@ Rectangle {
             }
 
             Text {
-                id: acceltext
-                text: "Acceleration"
+                id: mctemptext
+                text: "MC TEMP"
                 font.pixelSize: grid.titlefontsize
                 font.family: grid.typeface
+                font.bold: true
                 color: "yellow"
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -95,6 +100,7 @@ Rectangle {
                 anchors.bottom: parent.top
                 y: 0
             }
+
         }
 
         ColumnLayout {
@@ -117,6 +123,7 @@ Rectangle {
                     text: (Data.soc == -1) ? "" : Data.soc + "%"
                     font.pixelSize: grid.smallerfontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "black"
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
@@ -125,9 +132,10 @@ Rectangle {
 
                 Text {
                     id: chargetext
-                    text: "State of Charge"
+                    text: "PACK SOCIT"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -135,19 +143,22 @@ Rectangle {
                     anchors.bottom: parent.top
                     y: 0
                 }
+
             }
 
             Rectangle {
-                id: mctempbox
-                color: Data.mctemp_color
+                id: best_laptimebox
+                color: (Data.best_lap_time == 0.0) ? "white" : mainpage.green
+                // white until record get a best lap time
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Text {
-                    id: mctempvalue
-                    text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
+                    id: best_laptimevalue
+                    text: "" // (Data.best_lap_time == 0.0) ? "" : "" + Data.best_lap_time
                     font.pixelSize: grid.smallerfontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "black"
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
@@ -155,10 +166,11 @@ Rectangle {
                 }
 
                 Text {
-                    id: mctemptext
-                    text: "MC Temperature"
+                    id: best_laptimetext
+                    text: "BEST LAP TIME"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -166,51 +178,52 @@ Rectangle {
                     anchors.bottom: parent.top
                     y: 0
                 }
-            }
-        }
 
-        Rectangle {
-            id: vechiclestatebox
-            color: Data.vehiclestate_color
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.preferredWidth: grid.width / 2
-            Layout.preferredHeight: grid.height / 2
-
-            Text {
-                id: vehiclestatevalue
-                text: Data.vehiclestate
-                font.pixelSize: grid.fullfontsize
-                font.family: grid.typeface
-                color: "black"
-                anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            Text {
-                id: vehiclestatetext
-                text: "Vehicle State"
-                font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
-                color: "yellow"
-                anchors.left: parent.left
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignHCenter
-                anchors.bottom: parent.top
-                y: 0
             }
         }
 
         ColumnLayout {
-            id: bottomrow
+            id: left_bottomrow
             Layout.columnSpan: 2
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: grid.width / 2
             Layout.preferredHeight: grid.height / 2
             spacing: grid.rowSpacing * 0.75
+
+            Rectangle {
+                id: vechiclestatebox
+                color: Data.vehiclestate_color
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Text {
+                    id: vehiclestatevalue
+                    text: Data.vehiclestate
+                    font.pixelSize: grid.smallerfontsize
+                    font.family: grid.typeface
+                    font.bold: true
+                    color: "black"
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: vehiclestatetext
+                    text: "STATE"
+                    font.pixelSize: grid.titlefontsize
+                    font.family: grid.typeface
+                    font.bold: true
+                    color: "yellow"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.bottom: parent.top
+                    y: 0
+                }
+
+            }
 
             Rectangle {
                 id: glvvbox
@@ -223,6 +236,7 @@ Rectangle {
                     text: (Data.glvv == -1) ? "" : "" + Data.glvv
                     font.pixelSize: grid.smallerfontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "black"
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
@@ -231,9 +245,10 @@ Rectangle {
 
                 Text {
                     id: glvvtext
-                    text: "GLV Voltage"
+                    text: "GLV V"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -241,19 +256,36 @@ Rectangle {
                     anchors.bottom: parent.top
                     y: 0
                 }
+
             }
+        }
+
+        ColumnLayout {
+            id: right_bottomrow
+            Layout.columnSpan: 2
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.preferredWidth: grid.width / 2
+            Layout.preferredHeight: grid.height / 2
+            spacing: grid.rowSpacing * 0.75
 
             Rectangle {
-                id: laptimebox
-                color: "white"
+                id: prev_laptimebox
+                color: {
+                    if (Data.prev_lap_time === 0.0)                   return "white";
+                    if (Data.prev_lap_time === Data.best_lap_time)    return mainpage.green;
+                    if (Data.best_lap_time - Data.prev_lap_time <= 1) return mainpage.yellow;
+                    return mainpage.red;
+                }
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Text {
-                    id: laptimevalue
-                    text: "temp"
+                    id: prev_laptimevalue
+                    text: "" // (Data.prev_lap_time == 0.0) ? "" : "" + Data.prev_lap_time
                     font.pixelSize: grid.smallerfontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "black"
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
@@ -261,10 +293,11 @@ Rectangle {
                 }
 
                 Text {
-                    id: laptimetext
-                    text: "Lap Time"
+                    id: prev_laptimetext
+                    text: "PREVIOUS LAP TIME"
                     font.pixelSize: grid.titlefontsize
                     font.family: grid.typeface
+                    font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -272,6 +305,41 @@ Rectangle {
                     anchors.bottom: parent.top
                     y: 0
                 }
+
+            }
+
+            Rectangle {
+                id: curr_laptimebox
+                color: "white"
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Text {
+                    id: curr_laptimevalue
+                    text: "" // Data.curr_lap_time
+                    font.pixelSize: grid.smallerfontsize
+                    font.family: grid.typeface
+                    font.bold: true
+                    color: "black"
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: curr_laptimetext
+                    text: "LAP TIME"
+                    font.pixelSize: grid.titlefontsize
+                    font.family: grid.typeface
+                    font.bold: true
+                    color: "yellow"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.bottom: parent.top
+                    y: 0
+                }
+
             }
         }
     }

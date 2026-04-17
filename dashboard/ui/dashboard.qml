@@ -29,9 +29,10 @@ Window {
         }
     }
 
-    property string green: "#00FF00"
-    property string yellow: "#FFFF00"
     property string red: "#ff5b1f"
+    property string orange: "#ff8c49"
+    property string yellow: "#FFFF00"
+    property string green: "#00FF00"
     property string blue: "#6fb4ff"
 
     Loader {

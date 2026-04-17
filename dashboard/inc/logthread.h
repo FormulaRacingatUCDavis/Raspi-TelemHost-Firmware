@@ -20,9 +20,10 @@ namespace dashboard
 
         void startContinuousLogging()
         {
+            
             while (true)
             {
-                canManager->decode_can();   
+                canManager->decode_can(dashboard::Variables::instance());   
                 QThread::msleep(1);
             }
         }
