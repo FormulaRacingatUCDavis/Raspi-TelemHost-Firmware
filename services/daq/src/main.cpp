@@ -92,16 +92,16 @@ int main()
             {
                 case 0x766:
                 {
-                    struct fe12_db_vehicle_state_t msg;
-                    fe12_db_vehicle_state_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+                    struct fe13_db_vehicle_state_t msg;
+                    fe13_db_vehicle_state_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["dashboard_hv_requested"]   = fe12_db_vehicle_state_dashboard_hv_requested_decode(msg.dashboard_hv_requested);
-                    j["dashboard_throttle1_level"] = fe12_db_vehicle_state_dashboard_throttle1_level_decode(msg.dashboard_throttle1_level);
-                    j["dashboard_throttle2_level"] = fe12_db_vehicle_state_dashboard_throttle2_level_decode(msg.dashboard_throttle2_level);
-                    j["dashboard_brake_level"]    = fe12_db_vehicle_state_dashboard_brake_level_decode(msg.dashboard_brake_level);
-                    j["dashboard_vcu_ticks"]      = fe12_db_vehicle_state_dashboard_vcu_ticks_decode(msg.dashboard_vcu_ticks);
-                    uint8_t vcu_state_code = fe12_db_vehicle_state_dashboard_state_decode(msg.dashboard_state);
+                    j["dashboard_hv_requested"]   = fe13_db_vehicle_state_dashboard_hv_requested_decode(msg.dashboard_hv_requested);
+                    j["dashboard_throttle1_level"] = fe13_db_vehicle_state_dashboard_throttle1_level_decode(msg.dashboard_throttle1_level);
+                    j["dashboard_throttle2_level"] = fe13_db_vehicle_state_dashboard_throttle2_level_decode(msg.dashboard_throttle2_level);
+                    j["dashboard_brake_level"]    = fe13_db_vehicle_state_dashboard_brake_level_decode(msg.dashboard_brake_level);
+                    j["dashboard_vcu_ticks"]      = fe13_db_vehicle_state_dashboard_vcu_ticks_decode(msg.dashboard_vcu_ticks);
+                    uint8_t vcu_state_code = fe13_db_vehicle_state_dashboard_state_decode(msg.dashboard_state);
                     j["dashboard_state"] = (telem::VEHICLE_STATE.find(vcu_state_code) != telem::VEHICLE_STATE.end()) ? telem::VEHICLE_STATE.at(vcu_state_code) : "YO WTF?";
                     j["timestamp"] = ms;
 
@@ -109,17 +109,17 @@ int main()
                 }
                 case 0xC0:
                 {
-                    struct fe12_db_torque_request_t msg;
-                    fe12_db_torque_request_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+                    struct fe13_db_torque_request_t msg;
+                    fe13_db_torque_request_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["dashboard_torque"] = fe12_db_torque_request_dashboard_torque_decode(msg.dashboard_torque);
-                    j["dashboard_speed"] = fe12_db_torque_request_dashboard_speed_decode(msg.dashboard_speed);
-                    j["dashboard_direction"] = fe12_db_torque_request_dashboard_direction_decode(msg.dashboard_direction);
-                    j["dashboard_inverter_enable"] = fe12_db_torque_request_dashboard_inverter_enable_decode(msg.dashboard_inverter_enable);
-                    j["dashboard_discharge_enable"] = fe12_db_torque_request_dashboard_discharge_enable_decode(msg.dashboard_discharge_enable);
-                    j["dashboard_speed_mode_enable"] = fe12_db_torque_request_dashboard_speed_mode_enable_decode(msg.dashboard_speed_mode_enable);
-                    j["dashboard_torque_limit"] = fe12_db_torque_request_dashboard_torque_limit_decode(msg.dashboard_torque_limit);
+                    j["dashboard_torque"] = fe13_db_torque_request_dashboard_torque_decode(msg.dashboard_torque);
+                    j["dashboard_speed"] = fe13_db_torque_request_dashboard_speed_decode(msg.dashboard_speed);
+                    j["dashboard_direction"] = fe13_db_torque_request_dashboard_direction_decode(msg.dashboard_direction);
+                    j["dashboard_inverter_enable"] = fe13_db_torque_request_dashboard_inverter_enable_decode(msg.dashboard_inverter_enable);
+                    j["dashboard_discharge_enable"] = fe13_db_torque_request_dashboard_discharge_enable_decode(msg.dashboard_discharge_enable);
+                    j["dashboard_speed_mode_enable"] = fe13_db_torque_request_dashboard_speed_mode_enable_decode(msg.dashboard_speed_mode_enable);
+                    j["dashboard_torque_limit"] = fe13_db_torque_request_dashboard_torque_limit_decode(msg.dashboard_torque_limit);
                     j["timestamp"] = ms;
 
                     break;
@@ -154,41 +154,67 @@ int main()
                 }
                 case 0x388:
                 {
-                    struct fe12_db_current_t msg;
-                    fe12_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+                    struct fe13_db_current_t msg;
+                    fe13_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["pei_current"] = fe12_db_current_pei_current_decode(msg.pei_current);
+                    j["pei_current"] = fe13_db_current_pei_current_decode(msg.pei_current);
                     j["timestamp"] = ms;
 
                     break;
                 }
                 case 0x380:
                 {
-                    struct fe12_db_bms_status_t msg;
-                    fe12_db_bms_status_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+                    struct fe13_db_bms_status_t msg;
+                    fe13_db_bms_status_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    uint8_t bms_state_code = fe12_db_bms_status_pei_bms_status_decode(msg.pei_bms_status);
+                    uint8_t bms_state_code = fe13_db_bms_status_pei_bms_status_decode(msg.pei_bms_status);
                     j["pei_bms_status"] = (telem::BMS_STATE.find(bms_state_code) != telem::BMS_STATE.end()) ? telem::BMS_STATE.at(bms_state_code) : "YO WTF?";
-                    j["pei_spi_error_flags"] = fe12_db_bms_status_pei_spi_error_flags_decode(msg.pei_spi_error_flags);
-                    j["pei_max_faulting_ic_address"] = fe12_db_bms_status_pei_max_faulting_ic_address_decode(msg.pei_max_faulting_ic_address);
-                    j["pei_communication_break_id"] = fe12_db_bms_status_pei_communication_break_id_decode(msg.pei_communication_break_id);
+                    j["pei_spi_error_flags"] = fe13_db_bms_status_pei_spi_error_flags_decode(msg.pei_spi_error_flags);
+                    j["pei_max_faulting_ic_address"] = fe13_db_bms_status_pei_max_faulting_ic_address_decode(msg.pei_max_faulting_ic_address);
+                    j["pei_communication_break_id"] = fe13_db_bms_status_pei_communication_break_id_decode(msg.pei_communication_break_id);
                     j["timestamp"] = ms;
                     
                     break;
                 }
                 case 0x381:
                 {
-                    struct fe12_db_diagnostic_bms_data_t msg;
-                    fe12_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+                    struct fe13_db_diagnostic_bms_data_t msg;
+                    fe13_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["pei_hi_temp"] = fe12_db_diagnostic_bms_data_pei_hi_temp_decode(msg.pei_hi_temp);
-                    j["pei_soc"] = fe12_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
-                    j["pei_pack_voltage"] = fe12_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
+                    j["pei_hi_temp"] = fe13_db_diagnostic_bms_data_pei_hi_temp_decode(msg.pei_hi_temp);
+                    j["pei_soc"] = fe13_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
+                    j["pei_pack_voltage"] = fe13_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
                     j["timestamp"] = ms;
                     
+                    break;
+                }
+                case 0x503:
+                {
+                    struct fe13_db_mcac_power_t msg;
+                    fe13_db_mcac_power_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["motor_power"] = fe13_db_mcac_power_motor_power_decode(msg.motor_power);
+                    j["acc_power"] = fe13_db_mcac_power_acc_power_decode(msg.acc_power);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x400:
+                {
+                    struct fe13_db_cooling_loop_temps_t msg;
+                    fe13_db_cooling_loop_temps_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["inlet_water_temp"] = fe13_db_cooling_loop_temps_telem_node_inlet_water_temp_decode(msg.telem_node_inlet_water_temp);
+                    j["outlet_water_temp"] = fe13_db_cooling_loop_temps_telem_node_outlet_water_temp_decode(msg.telem_node_outlet_water_temp);
+                    j["air_in_rad_temp"] = fe13_db_cooling_loop_temps_telem_node_air_into_radiator_temp_decode(msg.telem_node_air_into_radiator_temp);
+                    j["air_out_rad_temp"] = fe13_db_cooling_loop_temps_telem_node_air_out_of_radiator_temp_decode(msg.telem_node_air_out_of_radiator_temp);
+                    j["timestamp"] = ms;
+
                     break;
                 }
                 case 0xAB:

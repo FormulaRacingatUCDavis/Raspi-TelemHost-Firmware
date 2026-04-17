@@ -133,6 +133,10 @@ BO_ 1282 Raw_Throttle: 4 Dashboard
    SG_ Dashboard_Throttle_1 : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
    SG_ Dashboard_Throttle_2 : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
 
+BO_ 1283 MCAC_Power: 8 Dashboard
+   SG_ Motor_Power : 7|32@0- (1,0) [-200000|200000] "Watts" Vector__XXX
+   SG_ Acc_Power : 39|32@0- (1,0) [-200000|200000] "Watts" Vector__XXX
+
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
