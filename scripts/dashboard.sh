@@ -24,7 +24,7 @@ sudo ifconfig can0 txqueuelen 65536
 sudo ifconfig can1 txqueuelen 65536
 
 # Run dashboard if display available, else fallback
-cd /home/frucd/projects/Raspi-TelemHost-Firmware/
+cd /home/Raspi-TelemHost-Firmware/
 
 if [ -S /tmp/.X11-unix/X0 ]; then
     echo "Starting dashboard"

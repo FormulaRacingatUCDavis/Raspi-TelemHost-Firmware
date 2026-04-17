@@ -1,8 +1,8 @@
 #!/bin/bash
 
-cd /home/frucd/projects/Raspi-TelemHost-Firmware/services/
-./daq/build/DAQ
+cd /home/frucd/Raspi-TelemHost-Firmware/
+./services/daq/build/DAQ
 
 cd web
-source ../.venv/bin/activate
-python -m uvicorn main:app --host 0.0.0.0
+source venv_webapp/bin/activate
+python -m uvicorn main:app --host 192.168.105.2
