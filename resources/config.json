@@ -1,36 +1,36 @@
 {
     "servers":
     {
-        "mqttBroker": "ws://192.168.137.172:9001"
+        "mqttBroker": "ws://192.168.105.2:9001"
     },
     "paths":
     {
         "web":
         {
-            "build": "/Users/wilson/Documents/Raspi-TelemHost-Firmware/services/web/frontend/build",
-            "_app": "/Users/wilson/Documents/Raspi-TelemHost-Firmware/services/web/frontend/build/_app"
+            "build": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build",
+            "_app": "/home/frucd/Raspi-TelemHost-Firmware/services/web/frontend/build/_app"
         },
         "data":
         {
             "can": {
-                "intake": "/Users/wilson/Documents/Raspi-TelemHost-Firmware//data/can/intake",
-                "process": "/Users/wilson/Documents/Raspi-TelemHost-Firmware//data/can/process",
-                "raw": "/Users/wilson/Documents/Raspi-TelemHost-Firmware//data/can/raw",
-                "parsed": "/Users/wilson/Documents/Raspi-TelemHost-Firmware//data/can/parsed"
+                "intake": "/home/frucd/Raspi-TelemHost-Firmware//data/can/intake",
+                "process": "/home/frucd/Raspi-TelemHost-Firmware//data/can/process",
+                "raw": "/home/frucd/Raspi-TelemHost-Firmware//data/can/raw",
+                "parsed": "/home/frucd/Raspi-TelemHost-Firmware//data/can/parsed"
             },
             "camera": {
-                "intake": "/Users/wilson/Documents/Raspi-TelemHost-Firmware/data/camera/intake",
-                "ready": "/Users/wilson/Documents/Raspi-TelemHost-Firmware//data/camera/ready"
+                "intake": "/home/frucd/Raspi-TelemHost-Firmware/data/camera/intake",
+                "ready": "/home/frucd/Raspi-TelemHost-Firmware//data/camera/ready"
             }
         },
         "dbc": {
-            "fe12": "/Users/wilson/Documents/Raspi-TelemHost-Firmware/resources/FE12.dbc",
-            "mc": "/Users/wilson/Documents/Raspi-TelemHost-Firmware/resources/20240129 Gen5 CAN DB.dbc"
+            "fe12": "/home/frucd/Raspi-TelemHost-Firmware/resources/FE12.dbc",
+            "mc": "/home/frucd/Raspi-TelemHost-Firmware/resources/20240129 Gen5 CAN DB.dbc"
         }
     },
     "can":
     {
-        "pcan": "vcan0",
-        "tcan": "vcan1"
+        "pcan": "can0",
+        "tcan": "can1"
     }
 }
