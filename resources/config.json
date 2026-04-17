@@ -1,7 +1,7 @@
 {
     "servers":
     {
-        "mqttBroker": "ws://192.168.105.2:9001"
+        "mqttBroker": "ws://192.168.105.2:8080"
     },
     "paths":
     {
