@@ -19,7 +19,7 @@ namespace dashboard
 
         mCanSock = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 
-        strncpy(ifr.ifr_name, "vcan0", IFNAMSIZ - 1);
+        strncpy(ifr.ifr_name, "can0", IFNAMSIZ - 1);
         ioctl(mCanSock, SIOCGIFINDEX, &ifr);
 
         addr.can_family = AF_CAN;
