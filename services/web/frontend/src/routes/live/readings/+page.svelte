@@ -13,12 +13,7 @@
 		{ key: 'outlet_water_temp', label: 'Outlet Water Temp [C]' }
 	];
 
-	let chartSlots = $state([
-		{ key: 'dashboard_torque' },
-		{ key: 'inv_motor_speed' },
-		{ key: 'pei_soc' },
-		{ key: 'acc_power' }
-	]);
+	let chartSlots = $state([{ key: 'dashboard_torque' }, { key: 'inv_motor_speed' }]);
 
 	let mcChart: Chart;
 	let coolingChart: Chart;
@@ -128,25 +123,21 @@
 	</div>
 </div>
 
-<div class="grid bottom-grid">
-	{#each [0, 1] as col}
-		<div>
-			{#each chartSlots.slice(col * 2, col * 2 + 2) as slot}
-				<article data-theme="light" class="chart-card">
-					<select bind:value={slot.key} data-theme="light">
-						{#each lineOptions as opt}
-							<option value={opt.key}>{opt.label}</option>
-						{/each}
-					</select>
+<div class="grid">
+	{#each chartSlots as slot}
+		<article data-theme="light" class="chart-card">
+			<select bind:value={slot.key} data-theme="light">
+				{#each lineOptions as opt}
+					<option value={opt.key}>{opt.label}</option>
+				{/each}
+			</select>
 
-					<LineChart
-						value={$mqttDataNum[slot.key]}
-						timestamp={$mqttDataNum.timestamp}
-						label={lineOptions.find((o) => o.key === slot.key)?.label}
-					/>
-				</article>
-			{/each}
-		</div>
+			<LineChart
+				value={$mqttDataNum[slot.key]}
+				timestamp={$mqttDataNum.timestamp}
+				label={lineOptions.find((o) => o.key === slot.key)?.label}
+			/>
+		</article>
 	{/each}
 </div>
 

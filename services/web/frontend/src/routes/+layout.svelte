@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '@picocss/pico';
 	let { children } = $props();
+	import LogButton from '$lib/components/LogButton.svelte';
+	import { mqttDataStr } from '$lib/mqtt.svelte';
 </script>
 
 <div class="layout">
@@ -12,10 +14,14 @@
 				</li>
 				<hr />
 				<li>
-					<input type="button" value="Start Log">
+					<LogButton
+						control="can/log/control"
+						status={$mqttDataStr.logStatus}
+						request={$mqttDataStr.logReq}
+					/>
 				</li>
 				<li>
-					<input type="button" value="Record Camera">
+					<input type="button" value="Record Camera" />
 				</li>
 				<hr />
 				<li>

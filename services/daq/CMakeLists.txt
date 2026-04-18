@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(DAQ
     src/main.cpp
     src/daqhelper.cpp
-    src/fe12_db.c
+    src/fe13_db.c
     src/cm200_db.c
 )
 

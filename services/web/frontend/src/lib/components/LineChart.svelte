@@ -3,18 +3,13 @@
 	import Chart from 'chart.js/auto';
 	import 'chartjs-adapter-moment';
 
-	let {
-		value = 0,
-		timestamp = Date.now(),
-		label = 'Signal',
-		maxPoints = 1000
-	} = $props();
+	let { value = 0, timestamp = Date.now(), label = 'Signal', maxPoints = 1000 } = $props();
 
 	let lineChart: Chart;
 	let canvas: HTMLCanvasElement;
 
 	$effect(() => {
-		const currentLabel = label; 
+		const currentLabel = label;
 		if (lineChart) {
 			lineChart.data.datasets[0].label = currentLabel;
 			lineChart.data.datasets[0].data = [];
@@ -32,6 +27,7 @@
 				dataset.shift();
 			}
 			dataset.push({ x: time, y: val });
+			// 'none' mode skips all animation and extra logic
 			lineChart.update('none');
 		}
 	});
@@ -44,7 +40,14 @@
 					{
 						label,
 						data: [],
-						spanGaps: true
+						// Optimization: Use a single color/width for the whole line
+						borderColor: 'rgb(135, 139, 219)',
+						borderWidth: 1,
+						pointRadius: 0,
+						pointHitRadius: 0,
+						tension: 0,
+						fill: false,
+						spanGaps: false
 					}
 				]
 			},
@@ -52,12 +55,32 @@
 				responsive: true,
 				maintainAspectRatio: false,
 				animation: false,
+				// Optimization: Tell Chart.js data is already sorted and pre-parsed
 				parsing: false,
+				normalized: true,
+				// Optimization: Disable all event listeners (hover, tooltip, etc)
+				events: [],
+				elements: {
+					line: {
+						capBezierPoints: false // Prevents extra calc for line caps
+					}
+				},
 				scales: {
-					x: { type: 'time', time: { unit: 'second' } },
+					x: {
+						type: 'time',
+						time: { unit: 'second' },
+						ticks: {
+							source: 'auto',
+							maxRotation: 0,
+							autoSkip: true,
+							sampleSize: 1 // Only sample 1 tick for size calc
+						},
+						grid: { display: false } // Drawing less is faster
+					},
 					y: {
 						beginAtZero: false,
-						ticks: { precision: 2 }
+						ticks: { precision: 2 },
+						grid: { color: 'rgba(0,0,0,0.05)' }
 					}
 				},
 				plugins: {
@@ -65,6 +88,11 @@
 						display: true,
 						position: 'top',
 						align: 'center'
+					},
+					tooltip: { enabled: false }, // Major CPU saver
+					decimation: {
+						enabled: true,
+						algorithm: 'min-max'
 					}
 				}
 			}
