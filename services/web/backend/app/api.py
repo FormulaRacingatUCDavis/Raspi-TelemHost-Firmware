@@ -14,7 +14,7 @@ import json
 import asyncio
 from watchfiles import awatch, Change
 from .canhelper import CANHelper
-from psycopg_pool import AsyncConnectionPool
+# from psycopg_pool import AsyncConnectionPool
 
 
 
@@ -48,30 +48,28 @@ async def handle_file(path: str, app: FastAPI):
         async with semaphore:
             loop = asyncio.get_running_loop()
             await loop.run_in_executor(None, can_helper.generate_parsed, path)
-            async with app.async_pool.connection() as conn:
-                await can_helper.populate_tables(conn, path)
+            # async with app.async_pool.connection() as conn:
+            #     await can_helper.populate_tables(conn, path)
     except Exception as e:
         print(f"Failed to process {path}: {e}")  
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global database_pool
-    app.async_pool = AsyncConnectionPool(conninfo="postgresql://postgres:postgres@localhost:5432/frucd", open=False)
-    await app.async_pool.open()
-    database_pool = app.async_pool
+    # global database_pool
+    # app.async_pool = AsyncConnectionPool(conninfo="postgresql://postgres:postgres@localhost:5432/frucd", open=False)
+    # await app.async_pool.open()
+    # database_pool = app.async_pool
     watcher_task = asyncio.create_task(watcher(app))
-    async with app.async_pool.connection() as conn:
-        await can_helper.create_tables(conn)
-    print("Database pool and watcher task started")
+    # async with app.async_pool.connection() as conn:
+    #     await can_helper.create_tables(conn)
+    # print("Database pool and watcher task started")
     try:
         yield
     finally:
-        print("Shutting down...")
         watcher_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await watcher_task
-        await app.async_pool.close()
-        print("Database pool and watcher closed.")
+        # await app.async_pool.close()
 
 app = FastAPI(lifespan=lifespan)
 

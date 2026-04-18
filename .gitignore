@@ -7,7 +7,6 @@ venv_webapp
 _deps
 CMakeFiles
 CMakeUserPresets.json
-venv_webapp
 
 node_modules
 
