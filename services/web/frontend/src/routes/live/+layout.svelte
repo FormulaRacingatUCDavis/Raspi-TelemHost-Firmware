@@ -1,6 +1,10 @@
-<div style="display: flex; gap: 10px;">
-  <a href="/live/readings"><button class="secondary">Readings</button></a>
-  <a href="/live/camera"><button class="secondary">Camera</button></a>
-</div>
-<hr />
+<nav>
+  <ul>
+    <li><strong>Live</strong></li>
+  </ul>
+  <ul>
+    <li><a href="/live/readings">Readings</a></li>
+    <li><a href="/live/camera">Camera</a></li>
+  </ul>
+</nav>
 <slot />

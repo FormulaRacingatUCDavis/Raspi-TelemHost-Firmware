@@ -1,5 +1,64 @@
 <script lang="ts">
 	import '@picocss/pico';
+	let { children } = $props();
+</script>
+
+<div class="layout">
+	<aside class="sidebar">
+		<nav>
+			<ul>
+				<li>
+					<a href="/"><img src="/logo.svg" alt="FRUCD Logo" style="height:70px; width:auto;" /></a>
+				</li>
+				<hr />
+				<li>
+					<input type="button" value="Start Log">
+				</li>
+				<li>
+					<input type="button" value="Record Camera">
+				</li>
+				<hr />
+				<li>
+					<a
+						href="/live/readings"
+						role="button"
+						class="outline contrast"
+						style="display: block; width: 100%; text-align: center;"
+					>
+						Live
+					</a>
+				</li>
+				<li>
+					<a
+						href="/logs/readings"
+						role="button"
+						class="outline contrast"
+						style="display: block; width: 100%; text-align: center;"
+					>
+						Logs
+					</a>
+				</li>
+				<li>
+					<a
+						href="/control"
+						role="button"
+						class="outline contrast"
+						style="display: block; width: 100%; text-align: center;"
+					>
+						Control
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</aside>
+
+	<main id="main-content" class="container">
+		{@render children()}
+	</main>
+</div>
+
+<!-- <script lang="ts">
+	import '@picocss/pico';
 	import LogButton from '$lib/components/LogButton.svelte';
 	let { children } = $props();
 	import { mqttDataStr } from '$lib/mqtt.svelte';
@@ -96,22 +155,81 @@
 			</li>
 			<li>
 				<button class="contrast" disabled>Record Camera</button>
-				<!-- <LogButton
-					control="camera/log/control"
-					status={$mqttDataStr.recStatus}
-					request={$mqttDataStr.recReq}
-				/> -->
 			</li>
 		</ul>
 	</nav>
-	<hr />
-	<hgroup>
-		<h2>Telemetry Dashboard</h2>
-		<p>Formula Racing at UC Davis</p>
-	</hgroup>
 	<hr />
 </header>
 
 <main id="main-content" class="container">
 	{@render children()}
-</main>
+</main> -->
+
+<style>
+	/* Desktop Layout */
+	.layout {
+		display: flex;
+		gap: var(--pico-spacing);
+		min-height: 100vh;
+	}
+
+	.sidebar {
+		width: 250px;
+		border-right: var(--pico-border-width) solid var(--pico-muted-border-color);
+		padding: var(--pico-spacing);
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		flex-shrink: 0;
+	}
+
+	.sidebar nav,
+	.sidebar ul {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	.sidebar li {
+		width: 100%;
+		padding: calc(var(--pico-spacing) * 0.25) 0;
+		list-style: none;
+	}
+
+	.sidebar img {
+		display: block;
+		margin: 0 auto;
+	}
+
+	#main-content {
+		flex: 1;
+		/* Remove top padding and centered margins */
+		padding-top: 0;
+		margin-left: 0;
+		margin-right: 0;
+		/* Added padding to the right side */
+		padding-right: var(--pico-spacing);
+	}
+
+	/* Mobile Responsiveness */
+	@media (max-width: 768px) {
+		.layout {
+			flex-direction: column;
+		}
+
+		.sidebar {
+			width: 100%;
+			height: auto;
+			position: relative;
+			border-right: none;
+			border-bottom: var(--pico-border-width) solid var(--pico-muted-border-color);
+		}
+
+		#main-content {
+			padding-right: 0;
+		}
+	}
+</style>

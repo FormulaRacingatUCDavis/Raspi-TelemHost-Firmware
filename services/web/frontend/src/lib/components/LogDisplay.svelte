@@ -39,7 +39,7 @@
 	</select>
 	<hr />
 	<small>
-		<div class="overflow-auto" style="max-height: 300px;">
+		<div class="overflow-auto" style="max-height: 150px;">
             <table>
             <thead>
                 <tr>

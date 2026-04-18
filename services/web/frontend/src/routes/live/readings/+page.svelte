@@ -1,15 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Chart from 'chart.js/auto';
-	import 'chartjs-adapter-moment';
 	import { mqttDataNum, mqttDataStr } from '$lib/mqtt.svelte';
-
-	let selectedSignal = $state('');
-	let lineChart: Chart;
-	let barChart: Chart;
-
-	let lineCanvas: HTMLCanvasElement;
-	let barCanvas: HTMLCanvasElement;
+	import LineChart from '$lib/components/LineChart.svelte';
 
 	const lineOptions = [
 		{ key: 'dashboard_torque', label: 'Torque [Nm]' },
@@ -17,118 +10,81 @@
 		{ key: 'pei_soc', label: 'State of Charge [%]' },
 		{ key: 'acc_power', label: 'Acc Power [Watts]' },
 		{ key: 'inlet_water_temp', label: 'Inlet Water Temp [C]' },
-		{ key: 'outlet_water_temp', label: 'Outlet Wate Temp [C]' }
+		{ key: 'outlet_water_temp', label: 'Outlet Water Temp [C]' }
 	];
 
-	let lineData = {
-		datasets: [
-			{
-				data: [],
-				spanGaps: true,
-				backgroundColor: 'rgb(135, 139, 219)',
-				borderColor: 'rgb(135, 139, 219)',
-				fill: false
-			}
-		]
-	};
-	let barData = {
-		labels: ['Module A', 'Module B', 'Module C'],
-		datasets: [
-			{
-				label: 'Motor Controller Module Temperatures [C]',
-				data: [0, 0, 0],
-				backgroundColor: [
-					'rgba(255, 99, 132, 0.2)',
-					'rgba(255, 159, 64, 0.2)',
-					'rgba(255, 205, 86, 0.2)'
-				],
-				borderColor: ['rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(255, 205, 86)'],
-				borderWidth: 1
-			}
-		]
-	};
+	let chartSlots = $state([
+		{ key: 'dashboard_torque' },
+		{ key: 'inv_motor_speed' },
+		{ key: 'pei_soc' },
+		{ key: 'acc_power' }
+	]);
 
-	$effect(() => {
-		if (!lineChart) return;
-		if (!selectedSignal) return;
-
-		lineChart.data.datasets[0].data = [];
-		lineChart.update('none');
-	});
+	let mcChart: Chart;
+	let coolingChart: Chart;
+	let mcCanvas: HTMLCanvasElement;
+	let coolingCanvas: HTMLCanvasElement;
 
 	onMount(() => {
-		lineChart = new Chart(lineCanvas, {
-			type: 'line',
-			data: lineData,
-			options: {
-				spanGaps: false,
-				parsing: false,
-				normalized: true,
-				scales: {
-					x: {
-						ticks: {
-							sampleSize: 10,
-							maxTicksLimit: 10
-						},
-						type: 'time',
-						time: {
-							unit: 'second'
-						},
-						title: {
-							display: false
-						}
-					},
-					y: {
-						title: {
-							display: false
-						}
-					}
-				},
-				plugins: {
-					legend: {
-						display: false
-					}
-				}
-			}
-		});
-		barChart = new Chart(barCanvas, {
+		mcChart = new Chart(mcCanvas, {
 			type: 'bar',
-			data: barData,
-			options: {
-				maintainAspectRatio: false,
-				scales: {
-					y: { beginAtZero: true, title: { display: false } }
-				},
-				plugins: {
-					legend: {
-						display: false
+			data: {
+				labels: ['Module A', 'Module B', 'Module C'],
+				datasets: [
+					{
+						label: 'MC Temps [C]',
+						data: [0, 0, 0],
+						backgroundColor: [
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(255, 159, 64, 0.2)',
+							'rgba(255, 205, 86, 0.2)'
+						],
+						borderColor: ['rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(255, 205, 86)'],
+						borderWidth: 1
 					}
-				}
-			}
+				]
+			},
+			options: { responsive: true, maintainAspectRatio: false }
+		});
+
+		coolingChart = new Chart(coolingCanvas, {
+			type: 'bar',
+			data: {
+				labels: ['Inlet', 'Outlet'],
+				datasets: [
+					{
+						label: 'Cooling Temps [C]',
+						data: [0, 0],
+						backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)'],
+						borderColor: ['rgb(54, 162, 235)', 'rgb(255, 159, 64)'],
+						borderWidth: 1
+					}
+				]
+			},
+			options: { responsive: true, maintainAspectRatio: false }
 		});
 
 		const unsubscribeNum = mqttDataNum.subscribe((data) => {
-			if (barChart) {
-				barChart.data.datasets[0].data = [
-					data['moduleTempA'] ?? 0,
-					data['moduleTempB'] ?? 0,
-					data['moduleTempC'] ?? 0
+			if (mcChart) {
+				mcChart.data.datasets[0].data = [
+					data.moduleTempA ?? 0,
+					data.moduleTempB ?? 0,
+					data.moduleTempC ?? 0
 				];
-				barChart.update();
+				mcChart.update('none');
 			}
-			if (lineChart && selectedSignal in data) {
-				const dataset = lineChart.data.datasets[0].data;
-				if (dataset.length > 1000) {
-					dataset.splice(0, dataset.length - 1000);
-				}
-				dataset.push({ x: data['timestamp'], y: data[selectedSignal] });
-				lineChart.update('none');
+			if (coolingChart) {
+				coolingChart.data.datasets[0].data = [
+					data.inlet_water_temp ?? 0,
+					data.outlet_water_temp ?? 0
+				];
+				coolingChart.update('none');
 			}
 		});
 
 		return () => {
-			if (lineChart) lineChart.destroy();
-			if (barChart) barChart.destroy();
+			mcChart.destroy();
+			coolingChart.destroy();
 			unsubscribeNum();
 		};
 	});
@@ -139,30 +95,15 @@
 		<small>
 			<table class="striped">
 				<thead>
-					<tr>
-						<th scope="col">Source</th>
-						<th scope="col">State</th>
-					</tr>
+					<tr><th scope="col">Source</th><th scope="col">State</th></tr>
 				</thead>
 				<tbody>
-					<tr>
-						<th scope="row">Vehicle Control Unit</th>
-						<td>{$mqttDataStr.vcuState}</td>
-					</tr>
-					<tr>
-						<th scope="row">Power Electronics Interface</th>
-						<td>{$mqttDataStr.bmsState}</td>
-					</tr>
-					<tr>
-						<th scope="row">Motor Controller</th>
-						<td>{$mqttDataStr.mcState}</td>
-					</tr>
+					<tr><th scope="row">Vehicle Control Unit</th><td>{$mqttDataStr.vcuState}</td></tr>
+					<tr><th scope="row">Power Electronics Interface</th><td>{$mqttDataStr.bmsState}</td></tr>
+					<tr><th scope="row">Motor Controller</th><td>{$mqttDataStr.mcState}</td></tr>
 				</tbody>
 				<thead>
-					<tr>
-						<th scope="col">Metric</th>
-						<th scope="col">Value</th>
-					</tr>
+					<tr><th scope="col">Metric</th><th scope="col">Value</th></tr>
 				</thead>
 				<tbody>
 					<tr>
@@ -174,10 +115,6 @@
 						<td></td>
 					</tr>
 					<tr>
-						<th scope="row">Motor Controller Temperature [C]</th>
-						<td></td>
-					</tr>
-					<tr>
 						<th scope="row">Ground Level Voltage [V]</th>
 						<td></td>
 					</tr>
@@ -185,26 +122,40 @@
 			</table>
 		</small>
 	</article>
-
-	<article data-theme="light">
-		<canvas bind:this={barCanvas}></canvas>
-	</article>
+	<div class="grid">
+		<article data-theme="light"><canvas bind:this={mcCanvas}></canvas></article>
+		<article data-theme="light"><canvas bind:this={coolingCanvas}></canvas></article>
+	</div>
 </div>
 
-<article data-theme="light">
-	<select
-		bind:value={selectedSignal}
-		onchange={() => {
-			if (!lineChart) return;
+<div class="grid bottom-grid">
+	{#each [0, 1] as col}
+		<div>
+			{#each chartSlots.slice(col * 2, col * 2 + 2) as slot}
+				<article data-theme="light" class="chart-card">
+					<select bind:value={slot.key} data-theme="light">
+						{#each lineOptions as opt}
+							<option value={opt.key}>{opt.label}</option>
+						{/each}
+					</select>
 
-			lineChart.data.datasets[0].data = [];
-			lineChart.update();
-		}}
-	>
-		<option selected disabled value="">Select</option>
-		{#each lineOptions as signal}
-			<option value={signal.key}>{signal.label}</option>
-		{/each}
-	</select>
-	<canvas bind:this={lineCanvas}></canvas>
-</article>
+					<LineChart
+						value={$mqttDataNum[slot.key]}
+						timestamp={$mqttDataNum.timestamp}
+						label={lineOptions.find((o) => o.key === slot.key)?.label}
+					/>
+				</article>
+			{/each}
+		</div>
+	{/each}
+</div>
+
+<style>
+	.chart-card {
+		margin-bottom: var(--pico-block-spacing-vertical);
+		overflow: visible;
+	}
+	select {
+		margin-bottom: 1rem;
+	}
+</style>

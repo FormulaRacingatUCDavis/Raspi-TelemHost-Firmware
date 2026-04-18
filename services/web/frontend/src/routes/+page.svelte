@@ -1,3 +1,9 @@
+<hr />
+<hgroup>
+	<h2>Telemetry Dashboard</h2>
+	<p>Formula Racing at UC Davis</p>
+</hgroup>
+<hr />
 <blockquote>
 	A time splashed with interest, wounded with tragedy, crevassed with joy—that's the time that seems
 	long in the memory. And this is right when you think about it. Eventlessness has no posts to drape
@@ -8,5 +14,5 @@
 </blockquote>
 <hr />
 <div class="grid" style="display: grid; place-items: center;">
-<img src="/cow.svg" alt="Cow" style="height:450px; width:auto; padding-bottom:15px;" />
+	<img src="/cow.svg" alt="Cow" style="height:450px; width:auto; padding-bottom:15px;" />
 </div>
