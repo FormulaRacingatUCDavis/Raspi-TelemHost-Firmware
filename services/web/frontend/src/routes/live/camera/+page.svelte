@@ -1,1 +1,1 @@
-<img id="frame" src="/photo_error.jpg" width="100%" alt="Error monkey"/>
+<div>TODO</div>
