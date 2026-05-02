@@ -53,7 +53,7 @@ class CANHelper:
                         data_bytes.append(0)
                     else:
                         try:
-                            data_bytes.append(int(b))
+                            data_bytes.append(int(b, 16))
                         except ValueError:
                             data_bytes.append(0)
 
