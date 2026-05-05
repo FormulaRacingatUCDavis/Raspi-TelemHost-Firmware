@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(RaspiTelemHost C CXX)
+project(driver_dashboard C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,8 +18,8 @@ set(DAQ_SOURCES
     src/main.cpp
     src/daq.cpp
     src/variables.cpp
-    src/fe12.c
-    src/gen5_inv.c
+    src/fe13_db.c
+    src/cm200_db.c
 
     inc/variables.h
     inc/logthread.h
@@ -27,14 +27,14 @@ set(DAQ_SOURCES
 
 set(DASHBOARD_RESOURCES dashboard.qrc)
 
-qt_add_executable(RaspiTelemHost ${DAQ_SOURCES} ${DASHBOARD_RESOURCES})
+qt_add_executable(driver_dashboard ${DAQ_SOURCES} ${DASHBOARD_RESOURCES})
 
-target_include_directories(RaspiTelemHost PUBLIC  
+target_include_directories(driver_dashboard PUBLIC  
     inc
     ui
 )
 
-target_link_libraries(RaspiTelemHost PRIVATE
+target_link_libraries(driver_dashboard PRIVATE
     m
     Qt6::Core
     Qt6::Gui

@@ -28,7 +28,7 @@ cd /home/frucd/Raspi-TelemHost-Firmware
 
 if [ -S /tmp/.X11-unix/X0 ]; then
     echo "Starting dashboard"
-    ./dashboard/build/RaspiTelemHost
+    ./dashboard/build/driver_dashboard
 else
     echo "No display found"
 fi
