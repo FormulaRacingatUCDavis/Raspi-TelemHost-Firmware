@@ -104,6 +104,7 @@ mqttClient.on("message", (topic, message) => {
             case 0x503: {
                 mqttDataNum.update((data) => ({
                     ...data,
+                    motor_power: msg.motor_power,
                     acc_power: msg.acc_power,
                     timestamp: msg.timestamp,
                 }));
