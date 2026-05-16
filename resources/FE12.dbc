@@ -1,5 +1,6 @@
 VERSION ""
 
+
 NS_ :
     NS_DESC_
     CM_
@@ -30,9 +31,8 @@ NS_ :
     BU_BO_REL_
     SG_MUL_VAL_
 
-BS_:
-BU_: Dashboard PEI TelemNode
-
+BS_: 
+BU_: Dashboard PEI TelemNode 
 BO_ 1894 Vehicle_State: 7 Dashboard
    SG_ Dashboard_HV_Requested : 7|8@0+ (1,0) [0|1] "" Vector__XXX
    SG_ Dashboard_Throttle1_Level : 15|8@0+ (1,0) [0|100] "%" Vector__XXX
@@ -129,9 +129,11 @@ BO_ 1028 Shock_Angles_Rear: 4 TelemNode
    SG_ TelemNode_RL_Shock_Angle : 7|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
    SG_ TelemNode_RR_Shock_Angle : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
 
-BO_ 1282 Raw_Throttle: 4 Dashboard
+BO_ 1282 Raw_Pedals: 8 Dashboard
    SG_ Dashboard_Throttle_1 : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
    SG_ Dashboard_Throttle_2 : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
+   SG_ Dashboard_Brake_1 : 39|16@0+ (1,0) [0|65535] "" Vector__XXX
+   SG_ Dashboard_Brake_2 : 55|16@0+ (1,0) [0|65535] "" Vector__XXX
 
 BO_ 1283 MCAC_Power: 8 Dashboard
    SG_ Motor_Power : 7|32@0- (1,0) [-200000|200000] "Watts" Vector__XXX
@@ -141,9 +143,8 @@ BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
-BA_DEF_ BO_ "GenMsgCycleTime" INT 0 100000 ;
+BA_DEF_ BO_ "GenMsgCycleTime" INT 0 100000;
 BA_DEF_ "BusType" STRING ;
-
 BA_ "GenMsgForegroundColor" BO_ 1894 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 896 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 903 "#000000";
@@ -154,13 +155,13 @@ BA_ "GenMsgForegroundColor" BO_ 899 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 900 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1028 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1282 "#000000";
-
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
 BA_DEF_DEF_ "filterlabeling" 0;
 BA_DEF_DEF_ "GenMsgCycleTime" 0;
 BA_DEF_DEF_ "BusType" "CAN";
+
 
 VAL_ 1894 Dashboard_State
     0 "LV"
