@@ -8,6 +8,7 @@
 		{ key: 'dashboard_torque', label: 'Torque [Nm]' },
 		{ key: 'inv_motor_speed', label: 'Motor Speed [RPM]' },
 		{ key: 'pei_soc', label: 'State of Charge [%]' },
+		{ key: 'motor_power', label: 'Motor Power [Watts]' },
 		{ key: 'acc_power', label: 'Acc Power [Watts]' },
 		{ key: 'inlet_water_temp', label: 'Inlet Water Temp [C]' },
 		{ key: 'outlet_water_temp', label: 'Outlet Water Temp [C]' }
