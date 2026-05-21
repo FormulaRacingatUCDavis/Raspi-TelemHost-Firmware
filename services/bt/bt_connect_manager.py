@@ -17,7 +17,7 @@ class BTHeadsetManager:
         scanned_rssis = subprocess.run(bt_cmd,
                                        capture_output=True,
                                        shell=True,
-                                       text=True)
+                                       text=True).stdout
         scanned_rssis = scanned_rssis.splitlines()
         for line in scanned_rssis:
             line_split = line.split()
@@ -33,7 +33,7 @@ class BTHeadsetManager:
             conn_headset_rssi = subprocess.run(bt_cmd,
                                                capture_output=True,
                                                shell=True,
-                                               text=True)
+                                               text=True).stdout
             conn_headset_rssi = int(conn_headset_rssi.split()[4])
             # RSSI return value: -6
 
