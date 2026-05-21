@@ -50,10 +50,13 @@ class BTHeadsetManager:
     def connect_to_closest(self):
         self.get_headset_rssis()
 
-        closest_headest = max(self.headset_rssis, key=self.headset_rssis.get)
+        closest_headset = max(self.headset_rssis, key=self.headset_rssis.get)
 
-        self.disconnect_device(self.conn_headset_mac)
-        self.connect_device(closest_headest)
+        if self.conn_headset_mac is not None:
+            self.disconnect_device(self.conn_headset_mac)
+
+        if self.headset_rssis[closest_headset] != -121:
+            self.connect_device(closest_headset)
 
     def bt_headset_man(self):
         while True:
