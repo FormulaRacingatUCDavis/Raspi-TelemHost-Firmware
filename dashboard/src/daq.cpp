@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include "daq.h"
-#include "fe13.db.h"
+#include "fe13_db.h"
 #include "cm200_db.h"
 
 namespace dashboard
