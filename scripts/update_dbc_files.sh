@@ -12,3 +12,20 @@ python3 -m cantools generate_c_source --database-name fe13_db --output-directory
 python3 -m cantools generate_c_source --database-name fe13_db --output-directory services/daq/src resources/FE12.dbc && mv services/daq/src/*.h services/daq/inc
 
 echo "finished updating dbc source files"
+
+echo "rebuilding driver dashboard files"
+cd dashboard/build
+cmake ..
+cmake --build .
+cd ../..
+echo "finished building driver dashboard files"
+
+echo "rebuilding web app files"
+cd services/daq
+cmake -S . -B build \ 
+    -DCMAKE_C_COMPILER=gcc \ 
+    -DCMAKE_CXX_COMPILER=g++ \ 
+    -DCMAKE_TOOLCHAIN_FILE="/home/frucd/vcpkg/scripts/buildsystems/vcpkg.cmake"
+cmake --build build
+cd ../..
+echo "finished rebuilding web app files"
