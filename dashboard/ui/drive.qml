@@ -56,7 +56,7 @@ Rectangle {
 
         Rectangle {
             id: speedbox
-            color: (Data.overtake == 0) ? mainpage.blue : "#ff8c49"
+            color: (Data.overtake == 0) ? mainpage.blue : mainpage.orange
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: grid.width / 2
@@ -105,7 +105,7 @@ Rectangle {
 
                 Text {
                     id: chargevalue
-                    text: (Data.soc == -1) ? "" : Data.soc + "%"
+                    text: (Data.soc == -1) ? "" : Data.soc.toFixed(2) + "%"
                     font.pixelSize: mainwindow.smallerfontsize
                     font.family: mainwindow.typeface
                     font.bold: true
@@ -206,7 +206,7 @@ Rectangle {
 
             Text {
                 id: glvvvalue
-                text: (Data.glvv == -1) ? "" : "" + Data.glvv
+                text: (Data.glvv == -1) ? "" : "" + Data.glvv.toFixed(2)
                 font.pixelSize: mainwindow.fullfontsize
                 font.family: mainwindow.typeface
                 font.bold: true
