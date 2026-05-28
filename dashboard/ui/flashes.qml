@@ -58,7 +58,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 0.4
                 Layout.fillHeight: true
-                color: mainpage.red
+                color: mainpage.pink
 
                 Text {
                     id: torqueval
