@@ -125,10 +125,6 @@ BO_ 900 BMS_Temps: 8 PEI
    SG_ PEI_Temp_2 : 39|16@0+ (0.001,0) [0|65.535] "C" Vector__XXX
    SG_ PEI_Temp_3 : 55|16@0+ (0.001,0) [0|65.535] "C" Vector__XXX
 
-BO_ 1028 Shock_Angles_Rear: 4 TelemNode
-   SG_ TelemNode_RL_Shock_Angle : 7|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-   SG_ TelemNode_RR_Shock_Angle : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-
 BO_ 1282 Raw_Pedals: 8 Dashboard
    SG_ Dashboard_Throttle_1 : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
    SG_ Dashboard_Throttle_2 : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
@@ -299,5 +295,5 @@ VAL_ 899 PEI_Group
     6 "G"
     7 "H";
 BA_DEF_DEF_ "matchingcriteria" 0;
-BA_DEF_DEF_ "filterlabeling" false;
+BA_DEF_DEF_ "filterlabeling" 0;
 CM_ BU_ Xsens "not actual CAN messages, only used for SD card parsing";
