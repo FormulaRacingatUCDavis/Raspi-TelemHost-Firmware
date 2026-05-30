@@ -32,7 +32,7 @@ NS_ :
     SG_MUL_VAL_
 
 BS_: 
-BU_: Dashboard PEI TelemNode Xsens 
+BU_: Dashboard PEI TelemNode Xsens TelemHost 
 BO_ 1894 Vehicle_State: 7 Dashboard
    SG_ Dashboard_HV_Requested : 7|8@0+ (1,0) [0|1] "" Vector__XXX
    SG_ Dashboard_Throttle1_Level : 15|8@0+ (1,0) [0|100] "%" Vector__XXX
@@ -210,6 +210,10 @@ BO_ 1121 Wheel_Speeds_Rear: 4 TelemNode
 BO_ 1129 Brake_Temp: 2 TelemNode
    SG_ Brake_Temp : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
 
+BO_ 1152 Latitude_Longitude: 8 TelemHost
+   SG_ Latitude : 7|32@0- (1e-06,0) [-2.14748e+09|2.14748e+09] "degrees" Vector__XXX
+   SG_ Longitude : 39|32@0- (1e-06,0) [-2.14748e+09|2.14748e+09] "degrees" Vector__XXX
+
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
@@ -249,6 +253,7 @@ BA_ "GenMsgForegroundColor" BO_ 1125 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1120 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1121 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1129 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1152 "#000000";
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
