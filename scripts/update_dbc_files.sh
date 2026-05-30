@@ -3,10 +3,8 @@
 cd /home/frucd/Raspi-TelemHost-Firmware/
 
 echo "generating new dbc source files an doverwritting old ones"
-python3 -m cantools generate_c_source --database-name cm200_db --output-directory dashboard/src "resources/20240129 Gen5 CAN DB.dbc"
-python3 -m cantools generate_c_source --database-name cm200_db --output-directory services/daq/src "resources/20240129 Gen5 CAN DB.dbc"
 python3 -m cantools generate_c_source --database-name fe13_db --output-directory dashboard/src resources/FE12.dbc && mv dashboard/src/*.h dashboard/inc
-python3 -m cantools generate_c_source --database-name fe13_db --output-directory services/daq/src resources/FE12.dbc && mv services/daq/src/*.h services/daq/inc
+python3 -m cantools generate_c_source --database-name fe13_db --output-directory services/daq/src resources/FE12.dbc && mv services/daq/src/*.h services/daq/include
 echo "finished updating dbc source files"
 
 echo "rebuilding driver dashboard files"
