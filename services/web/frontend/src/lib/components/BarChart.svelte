@@ -8,7 +8,7 @@
 	onMount(() => {
 		if (canvas) {
 			chart = new Chart(canvas, {
-				type: 'line',
+				type: 'bar',
 				data: {
 					labels: [],
 					datasets: [
@@ -26,14 +26,12 @@
 	});
 </script>
 
-<article data-theme="light">
-	<div class="chart">
-		<canvas bind:this={canvas}></canvas>
-	</div>
+<article data-theme="light" class="chart-container">
+	<canvas bind:this={canvas}></canvas>
 </article>
 
 <style>
-	.chart {
+	.chart-container {
 		height: 400px;
 	}
 </style>
