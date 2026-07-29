@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi import Request
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 from io import BytesIO
@@ -14,9 +13,6 @@ import json
 import asyncio
 from watchfiles import awatch, Change
 from .canhelper import CANHelper
-# from psycopg_pool import AsyncConnectionPool
-
-
 
 class FileRequest(BaseModel):
     filenames: List[str]
@@ -48,30 +44,32 @@ async def handle_file(path: str, app: FastAPI):
         async with semaphore:
             loop = asyncio.get_running_loop()
             await loop.run_in_executor(None, can_helper.generate_parsed, path)
-            # async with app.async_pool.connection() as conn:
-            #     await can_helper.populate_tables(conn, path)
     except Exception as e:
         print(f"Failed to process {path}: {e}")  
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # global database_pool
-    # app.async_pool = AsyncConnectionPool(conninfo="postgresql://postgres:postgres@localhost:5432/frucd", open=False)
-    # await app.async_pool.open()
-    # database_pool = app.async_pool
     watcher_task = asyncio.create_task(watcher(app))
-    # async with app.async_pool.connection() as conn:
-    #     await can_helper.create_tables(conn)
-    # print("Database pool and watcher task started")
     try:
         yield
     finally:
         watcher_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await watcher_task
-        # await app.async_pool.close()
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+async def root():
+    return {"status": "ok"}
 
 @app.post("/api/can/logs/zip/{type}")
 def zip_logs(type: str, payload: FileRequest):
@@ -102,13 +100,3 @@ async def get_log_list(source:str, type: str):
     logs.sort(key=lambda x: x["creation_date"], reverse=True)
 
     return logs
-
-app.mount("/_app", StaticFiles(directory=config["paths"]["web"]["_app"]), name="app")
-
-@app.get("/{full_path:path}")
-async def spa_fallback(full_path: str):
-    file_path = os.path.join(config["paths"]["web"]["build"], full_path)
-    if os.path.isfile(file_path):
-        return FileResponse(file_path)
-
-    return FileResponse(os.path.join(config["paths"]["web"]["build"], "index.html"))

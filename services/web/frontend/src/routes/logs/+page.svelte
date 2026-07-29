@@ -1,11 +1,22 @@
 <script lang="ts">
-	import LogDisplay from '$lib/components/LogDisplay.svelte';
-	type Log = { file_name: string };
+	import { onMount } from 'svelte';
+
+	type Log = { file_name: string; creation_date: number; file_size: number };
 	let files = $state<Log[]>([]);
 	let selectedFiles = $state([]);
 
+	function formatTime(ts: number) {
+		return new Date(ts * 1000).toLocaleString();
+	}
+
+	function formatSize(bytes: number) {
+		if (bytes < 1024) return `${bytes} B`;
+		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+		return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+	}
+
 	async function updateDropdown() {
-		const res = await fetch('/api/can/logs/list/raw');
+		const res = await fetch(`/api/can/logs/list/raw`);
 		const data: Log[] = await res.json();
 		files = data;
 	}
@@ -33,7 +44,52 @@
 		console.log(selectedFiles);
 	}
 
-	let selectedLog = $state('');
+	onMount(() => {
+		updateDropdown();
+	});
 </script>
 
-<LogDisplay source={"can"} log={selectedLog} logPath={"raw"} />
+<article data-theme="light">
+	<small>
+		<div class="overflow-auto" style="max-height: 250px;">
+			<table>
+				<thead>
+					<tr>
+						<th>Filename</th>
+						<th>Date Created</th>
+						<th>Size (R)</th>
+						<th>Size (P)</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each files as file}
+						<tr>
+							<th scope="row">
+								<label>
+									<input type="checkbox" name="english" />
+									{file.file_name}
+								</label>
+							</th>
+							<td>{formatTime(file.creation_date)}</td>
+							<td>{formatSize(file.file_size)}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</small>
+	<hr />
+	<small>
+		<fieldset>
+			<label>
+				<input type="checkbox" name="raw" />
+				Raw (R)
+			</label>
+			<label>
+				<input type="checkbox" name="parsed" />
+				Parsed (P)
+			</label>
+		</fieldset>
+	</small>
+	<input type="button" value="Download" disabled/>
+</article>

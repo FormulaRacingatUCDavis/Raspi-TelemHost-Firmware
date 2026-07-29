@@ -11,6 +11,7 @@
 		<ul>
 			<li><a href="/">Live</a></li>
 			<li><a href="/logs">Logs</a></li>
+			<li><a href="/config">Configure</a></li>
 		</ul>
 	</nav>
 </header>
