@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -17,7 +17,7 @@ from .canhelper import CANHelper
 class FileRequest(BaseModel):
     filenames: List[str]
 
-RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "resources"))
+RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "common"))
 with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
     config = json.load(f)
 can_helper = CANHelper(config)
@@ -88,6 +88,20 @@ def zip_logs(type: str, payload: FileRequest):
         media_type="application/zip",
         headers={"Content-Disposition": 'attachment; filename="canlogs.zip"'}
     )
+
+@app.get("/api/dbc/messages")
+async def get_dbc_messages():
+    return can_helper.get_messages()
+
+@app.put("/api/dbc/upload")
+async def update_dbc(file: UploadFile = File(...)):
+    global current_db
+
+    pass
+
+    return {
+        'message_count': len(current_db.messages)
+    }
 
 @app.get("/api/{source}/logs/list/{type}")
 async def get_log_list(source:str, type: str):

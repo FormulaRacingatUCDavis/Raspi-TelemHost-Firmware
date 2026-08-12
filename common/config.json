@@ -1,0 +1,27 @@
+{
+    "servers": {
+        "mqttBroker": "ws://192.168.105.2:8080"
+    },
+    "paths": {
+        "web": {
+            "build": "C:\\Raspi-TelemHost-Firmware\\pi\\services\\web\\frontend\\build",
+            "_app": "C:\\Raspi-TelemHost-Firmware\\pi\\services\\web\\frontend\\build\\_app"
+        },
+        "data": {
+            "can": {
+                "intake": "C:\\Raspi-TelemHost-Firmware\\pi\\data\\can\\intake",
+                "process": "C:\\Raspi-TelemHost-Firmware\\pi\\data\\can\\process",
+                "raw": "C:\\Raspi-TelemHost-Firmware\\pi\\data\\can\\raw",
+                "parsed": "C:\\Raspi-TelemHost-Firmware\\pi\\data\\can\\parsed"
+            }
+        },
+        "dbc": {
+            "fe12": "C:\\Raspi-TelemHost-Firmware\\common\\FE12.dbc",
+            "mc": "C:\\Raspi-TelemHost-Firmware\\common\\20240129 Gen5 CAN DB.dbc"
+        }
+    },
+    "can": {
+        "pcan": "can0",
+        "tcan": "can1"
+    }
+}

@@ -82,3 +82,17 @@ class CANHelper:
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
         shutil.move(path, os.path.join(self.config["paths"]["data"]["can"]["raw"], log))
+
+    def get_messages(self):
+        messages = {}
+        for message in self.frucd_db.messages:
+            sender = message.senders[0]
+
+            if sender not in messages:
+                messages[sender] = {}
+
+            messages[sender][message.name] = [
+                signal.name for signal in message.signals
+            ]
+
+        return messages
