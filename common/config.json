@@ -23,5 +23,11 @@
     "can": {
         "pcan": "can0",
         "tcan": "can1"
+    },
+    "telemetry": {
+        "signals": [
+            "Vehicle_State.Dashboard_HV_Requested",
+            "Vehicle_State.Dashboard_Throttle1_Level"
+        ]
     }
 }

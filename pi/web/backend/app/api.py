@@ -17,6 +17,9 @@ from .canhelper import CANHelper
 class FileRequest(BaseModel):
     filenames: List[str]
 
+class TelemetryConfig(BaseModel):
+    signals: List[str]
+
 RESOURCES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "common"))
 with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
     config = json.load(f)
@@ -102,6 +105,23 @@ async def update_dbc(file: UploadFile = File(...)):
     return {
         'message_count': len(current_db.messages)
     }
+
+@app.get("/api/telemetry/config")
+async def get_telemetry_config():
+    return {
+        "signals": config.get("telemetry", {}).get("signals", [])
+    }
+
+@app.put("/api/telemetry/config")
+async def update_telemetry_config(payload: TelemetryConfig):
+    config["telemetry"] = {
+        "signals": payload.signals
+    }
+
+    with open(os.path.join(RESOURCES_DIR, "config.json"), "w") as f:
+        json.dump(config, f, indent=4)
+
+    return {"message": "Telemetry config updated"}
 
 @app.get("/api/{source}/logs/list/{type}")
 async def get_log_list(source:str, type: str):
