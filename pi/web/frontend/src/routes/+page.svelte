@@ -3,86 +3,138 @@
 	import BarChart from '$lib/components/BarChart.svelte';
 	import LineChart from '$lib/components/LineChart.svelte';
 
-	onMount(() => {
-		return () => {};
+	let selectedSignals: string[] = [];
+
+	onMount(async () => {
+		try {
+			const res = await fetch('/api/telemetry/config');
+			const config = await res.json();
+
+			selectedSignals = config.signals ?? [];
+		} catch (error) {
+			console.error('Failed to fetch telemetry config:', error);
+		}
 	});
 </script>
 
-<div class="grid">
-	<div>
-		<form>
-			<fieldset class="grid">
-				<input placeholder="Enter driver name (optional)" />
-				<div class="grid">
-					<input type="submit" value="Record" />
-					<input type="submit" class="secondary" value="Stop" disabled />
-				</div>
-			</fieldset>
-		</form>
-		<article data-theme="light">
-			<small>
-				<table class="striped">
-					<thead>
-						<tr><th scope="col">Source</th><th scope="col">State</th></tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th>
-								<!-- Placeholder -->
-							</th>
-						</tr>
-					</tbody>
-					<thead>
-						<tr><th scope="col">Metric</th><th scope="col">Value</th></tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th>
-								<!-- Placeholder -->
-							</th>
-						</tr>
-					</tbody>
-				</table>
-			</small>
-		</article>
-	</div>
+<div>
+	<form>
+		<fieldset class="grid">
+			<input placeholder="Enter driver name (optional)" />
+			<div class="grid">
+				<input type="submit" value="Record" />
+				<input type="submit" class="secondary" value="Stop" disabled />
+			</div>
+		</fieldset>
+	</form>
+	<article data-theme="light">
+		<small>
+			<table class="striped">
+				<thead>
+					<tr>
+						<th scope="col">Source</th>
+						<th scope="col">Message</th>
+						<th scope="col">Signal</th>
+						<th scope="col">Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>
+							<!-- Placeholder -->
+						</th>
+					</tr>
+				</tbody>
+			</table>
+		</small>
+	</article>
+</div>
+
+<div>
 	<div class="grid">
-		<BarChart />
-		<BarChart />
+		<div>
+			<small>Bar 1</small>
+			<article>
+				<div class="overflow-auto" style="max-height: 100px;">
+					<small>
+						<fieldset>
+							{#each selectedSignals as signal}
+								<label>
+									<input type="checkbox" name="graph1" />
+									{signal}
+								</label>
+							{/each}
+						</fieldset>
+					</small>
+				</div>
+			</article>
+			<BarChart />
+		</div>
+		<div>
+			<small>Bar 2</small>
+			<article>
+				<div class="overflow-auto" style="max-height: 100px;">
+					<small>
+						<fieldset>
+							{#each selectedSignals as signal}
+								<label>
+									<input type="checkbox" name="graph1" />
+									{signal}
+								</label>
+							{/each}
+						</fieldset>
+					</small>
+				</div>
+			</article>
+			<BarChart />
+		</div>
 	</div>
 </div>
 
-<div class="grid">
-	<article>
-		<small>Graph 1</small>
-		<hr />
-		<div class="overflow-auto" style="max-height: 75px;">
-			<small>
-				<fieldset>
-					<label>
-						<input type="radio" name="graph1" />
-						<!-- Placeholder -->
-					</label>
-				</fieldset>
-			</small>
+<div>
+	<div class="grid">
+		<div>
+			<small>Y1, X1</small>
+			<article>
+				<div class="overflow-auto" style="max-height: 100px;">
+					<small>
+						<fieldset>
+							{#each selectedSignals as signal}
+								<label>
+									<input type="radio" name="graph1" />
+									{signal}
+								</label>
+							{/each}
+						</fieldset>
+					</small>
+				</div>
+			</article>
+			<article>
+				<small>Select Y-axis</small>
+			</article>
 		</div>
-	</article>
-	<article>
-		<small>Graph 2</small>
-		<hr />
-		<div class="overflow-auto" style="max-height: 75px;">
-			<small>
-				<fieldset>
-					<label>
-						<input type="radio" name="graph2" />
-						<!-- Placeholder -->
-					</label>
-				</fieldset>
-			</small>
+		<div>
+			<small>Y2, X2</small>
+			<article>
+				<div class="overflow-auto" style="max-height: 100px;">
+					<small>
+						<fieldset>
+							{#each selectedSignals as signal}
+								<label>
+									<input type="radio" name="graph1" />
+									{signal}
+								</label>
+							{/each}
+						</fieldset>
+					</small>
+				</div>
+			</article>
+			<article>
+				<small>Select Y-axis</small>
+			</article>
 		</div>
-	</article>
+	</div>
 </div>
-
 <div class="grid">
 	<LineChart />
 	<LineChart />

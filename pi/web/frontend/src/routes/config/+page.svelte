@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 
 	let file: File | null = null;
-	let messagesData: Record<string, Record<string, string[]>> = {};
+	let dbcFiles: string[] = [];
+	let messagesData: Record<string, Record<string, Record<string, string[]>>> = {};
 	let selectedSignals = new Set<string>();
 
 	async function uploadDBC(file: File) {
@@ -16,6 +17,10 @@
 
 		const data = await res.json();
 		console.log(data);
+
+		if (res.ok) {
+			await loadDBCs();
+		}
 	}
 
 	async function updateConfig() {
@@ -34,94 +39,118 @@
 		}
 	}
 
-	function isMessageChecked(msgName: string, signals: string[]): boolean {
-		return signals.some((signal) => selectedSignals.has(`${msgName}.${signal}`));
+	function isMessageChecked(dbcName: string, msgName: string, signals: string[]): boolean {
+		return signals.some((signal) => selectedSignals.has(`${dbcName}.${msgName}.${signal}`));
 	}
 
-	function isSenderChecked(messages: Record<string, string[]>): boolean {
+	function isSenderChecked(dbcName: string, messages: Record<string, string[]>): boolean {
 		return Object.entries(messages).some(([msgName, signals]) =>
-			isMessageChecked(msgName, signals)
+			isMessageChecked(dbcName, msgName, signals)
 		);
+	}
+
+	async function loadDBCs() {
+		const res = await fetch('/api/dbc/list');
+		dbcFiles = await res.json();
+
+		messagesData = {};
+
+		for (const dbcFile of dbcFiles) {
+			const res = await fetch(`/api/dbc/messages?file=${encodeURIComponent(dbcFile)}`);
+			const data = await res.json();
+
+			messagesData[dbcFile] = data;
+			messagesData = { ...messagesData };
+		}
 	}
 
 	onMount(async () => {
 		try {
-			const [messagesRes, configRes] = await Promise.all([
-				fetch('/api/dbc/messages'),
-				fetch('/api/telemetry/config')
-			]);
-
-			messagesData = await messagesRes.json();
+			const configRes = await fetch('/api/telemetry/config');
 
 			const config = await configRes.json();
 			selectedSignals = new Set(config.signals ?? []);
+
+			await loadDBCs();
 		} catch (error) {
-			console.error('Failed to fetch messages:', error);
+			console.error('Failed to fetch DBC data:', error);
 		}
 	});
 </script>
 
-<input
-	type="file"
-	onchange={async (e) => {
-		file = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
+<label>
+	CAN DBC
+	<input
+		type="file"
+		accept=".dbc"
+		onchange={async (e) => {
+			file = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
 
-		if (file) {
-			await uploadDBC(file);
-		}
-	}}
-/>
+			if (file) {
+				await uploadDBC(file);
+			}
+		}}
+	/>
+</label>
 
-{#if Object.keys(messagesData).length > 0}
-	<article data-theme="light">
-		{#each Object.entries(messagesData) as [sender, messages]}
-			<details>
-				<!-- svelte-ignore a11y_no_redundant_roles -->
-				<summary role="button" class={isSenderChecked(messages) ? '' : 'outline'}>
-					{sender}
-				</summary>
+{#each dbcFiles as dbcFile}
+	{#if messagesData[dbcFile]}
+		<div>
+			<small>{dbcFile}</small>
 
-				<article>
-					{#each Object.entries(messages) as [msgName, signals]}
-						<details>
-							<!-- svelte-ignore a11y_no_redundant_roles -->
-							<summary
-								role="button"
-								class={isMessageChecked(msgName, signals) ? 'secondary' : 'outline secondary'}
-							>
-								{msgName}
-							</summary>
+			<article data-theme="light">
+				{#each Object.entries(messagesData[dbcFile]) as [sender, messages]}
+					<details>
+						<!-- svelte-ignore a11y_no_redundant_roles -->
+						<summary role="button" class={isSenderChecked(dbcFile, messages) ? '' : 'outline'}>
+							{sender}
+						</summary>
 
-							<fieldset>
-								{#each signals as signal}
-									{@const signalId = `${msgName}.${signal}`}
+						<article>
+							{#each Object.entries(messages) as [msgName, signals]}
+								<details>
+									<!-- svelte-ignore a11y_no_redundant_roles -->
+									<summary
+										role="button"
+										class={isMessageChecked(dbcFile, msgName, signals)
+											? 'secondary'
+											: 'outline secondary'}
+									>
+										{msgName}
+									</summary>
 
-									<label>
-										<input
-											type="checkbox"
-											checked={selectedSignals.has(signalId)}
-											onchange={(e) => {
-												const checked = (e.currentTarget as HTMLInputElement).checked;
+									<fieldset>
+										{#each signals as signal}
+											{@const signalId = `${dbcFile}.${msgName}.${signal}`}
 
-												if (checked) {
-													selectedSignals.add(signalId);
-												} else {
-													selectedSignals.delete(signalId);
-												}
+											<label>
+												<input
+													type="checkbox"
+													checked={selectedSignals.has(signalId)}
+													onchange={(e) => {
+														const checked = (e.currentTarget as HTMLInputElement).checked;
 
-												selectedSignals = new Set(selectedSignals);
-											}}
-										/>
-										{signal}
-									</label>
-								{/each}
-							</fieldset>
-						</details>
-					{/each}
-				</article>
-			</details>
-		{/each}
-	</article>
-{/if}
+														if (checked) {
+															selectedSignals.add(signalId);
+														} else {
+															selectedSignals.delete(signalId);
+														}
+
+														selectedSignals = new Set(selectedSignals);
+													}}
+												/>
+												{signal}
+											</label>
+										{/each}
+									</fieldset>
+								</details>
+							{/each}
+						</article>
+					</details>
+				{/each}
+			</article>
+		</div>
+	{/if}
+{/each}
 
 <input type="submit" onclick={updateConfig} />
