@@ -11,19 +11,7 @@ class CANHelper:
     def __init__(self, config):
         self.config = config
 
-        dbc_dir = Path(
-            os.path.abspath(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    "..",
-                    "..",
-                    "..",
-                    "..",
-                    "common",
-                    "dbc"
-                )
-            )
-        )
+        dbc_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "common", "dbc")))
 
         self.dbs = []
 

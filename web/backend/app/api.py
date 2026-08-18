@@ -7,12 +7,12 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 from typing import List
 import contextlib
-from contextlib import asynccontextmanager
-import os
-import json
 import asyncio
+import json
+import os
 from watchfiles import awatch, Change
 from .canhelper import CANHelper
+from .settings import settings
 
 class FileRequest(BaseModel):
     filenames: List[str]
@@ -20,29 +20,17 @@ class FileRequest(BaseModel):
 class TelemetryConfig(BaseModel):
     signals: List[str]
 
-RESOURCES_DIR = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
-        "..",
-        "..",
-        "..",
-        "..",
-        "common"
-    )
-)
-
-DBC_DIR = os.path.join(RESOURCES_DIR, "dbc")
-
-with open(os.path.join(RESOURCES_DIR, "config.json"), "r") as f:
+with open(settings.config_path, "r") as f:
     config = json.load(f)
 
+DBC_DIR = settings.dbc_dir
 can_helper = CANHelper(config)
 processing_files = set()
 
-os.makedirs(config["paths"]["data"]["can"]["intake"], exist_ok=True)
-os.makedirs(config["paths"]["data"]["can"]["process"], exist_ok=True)
-os.makedirs(config["paths"]["data"]["can"]["raw"], exist_ok=True)
-os.makedirs(config["paths"]["data"]["can"]["parsed"], exist_ok=True)
+os.makedirs(settings.can_intake_path, exist_ok=True)
+os.makedirs(settings.can_process_path, exist_ok=True)
+os.makedirs(settings.can_raw_path, exist_ok=True)
+os.makedirs(settings.can_parsed_path, exist_ok=True)
 os.makedirs(DBC_DIR, exist_ok=True)
 
 semaphore = asyncio.Semaphore(1)
@@ -50,7 +38,7 @@ semaphore = asyncio.Semaphore(1)
 async def watcher(app: FastAPI):
     global processing_files
 
-    async for changes in awatch(config["paths"]["data"]["can"]["process"]):
+    async for changes in awatch(settings.can_process_path):
         for change, path in changes:
             if change == Change.added and path.endswith(".csv"):
                 if path not in processing_files:
@@ -69,7 +57,8 @@ async def handle_file(path: str, app: FastAPI):
     except Exception as e:
         print(f"Failed to process {path}: {e}")
 
-@asynccontextmanager
+
+@contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     watcher_task = asyncio.create_task(watcher(app))
 
@@ -97,7 +86,20 @@ async def root():
 
 @app.post("/api/can/logs/zip/{type}")
 def zip_logs(type: str, payload: FileRequest):
-    log_dir = Path(config["paths"]["data"]["can"][type])
+    log_dirs = {
+        "intake": settings.can_intake_path,
+        "process": settings.can_process_path,
+        "raw": settings.can_raw_path,
+        "parsed": settings.can_parsed_path
+    }
+
+    if type not in log_dirs:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid log type: {type}"
+        )
+
+    log_dir = Path(log_dirs[type])
 
     memory_file = BytesIO()
 
@@ -183,7 +185,7 @@ async def update_telemetry_config(payload: TelemetryConfig):
     }
 
     with open(
-        os.path.join(RESOURCES_DIR, "config.json"),
+        settings.config_path,
         "w"
     ) as f:
         json.dump(config, f, indent=4)
@@ -194,7 +196,12 @@ async def update_telemetry_config(payload: TelemetryConfig):
 
 @app.get("/api/{source}/logs/list/{type}")
 async def get_log_list(source: str, type: str):
-    path = Path(config["paths"]["data"][source][type])
+    path = Path(
+        getattr(
+            settings,
+            f"can_{type}_path"
+        )
+    )
 
     logs = []
 
