@@ -1,5 +1,4 @@
 services:
-
   backend:
     build:
       context: ./web/backend
@@ -14,3 +13,25 @@ services:
 
     ports:
       - "8000:8000"
+
+  frontend:
+    build:
+      context: ./web/frontend
+      dockerfile: Dockerfile
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      - PORT=3000
+      - ORIGIN=http://localhost:3000
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ${RESOURCES_HOST_PATH}:/mosquitto/config
