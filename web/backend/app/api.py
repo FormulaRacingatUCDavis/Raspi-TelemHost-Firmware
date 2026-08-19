@@ -38,11 +38,16 @@ semaphore = asyncio.Semaphore(1)
 async def watcher(app: FastAPI):
     global processing_files
 
+    print(f"[WATCHER] Watching: {settings.can_process_path}")
+
     async for changes in awatch(settings.can_process_path):
         for change, path in changes:
-            if change == Change.added and path.endswith(".csv"):
+            print(f"[WATCHER] Change: {change} Path: {path}")
+
+            if path.endswith(".csv"):
                 if path not in processing_files:
                     processing_files.add(path)
+                    print(f"[WATCHER] Processing: {path}")
                     asyncio.create_task(handle_file(path, app))
 
 async def handle_file(path: str, app: FastAPI):
@@ -60,6 +65,8 @@ async def handle_file(path: str, app: FastAPI):
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
+    print("[LIFESPAN] Starting watcher")
+
     watcher_task = asyncio.create_task(watcher(app))
 
     try:

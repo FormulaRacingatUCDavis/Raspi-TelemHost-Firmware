@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
 #include "daqhelper.h"
 
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message);
@@ -16,14 +17,21 @@ std::atomic<bool> log_en{false};
 
 int main()
 {
-    nlohmann::json cfg;
-    std::ifstream cfg_file("resources/config.json");
-    cfg_file >> cfg;
-    std::string PCAN_IFACE = cfg["can"]["pcan"];
-    std::string TCAN_IFACE = cfg["can"]["tcan"];
-    std::filesystem::path INTAKE_DIR = cfg["paths"]["data"]["can"]["intake"];
-    std::filesystem::path PROCESS_DIR = cfg["paths"]["data"]["can"]["process"];
-    cfg_file.close();
+    const char* pcan_env = std::getenv("PCAN_INTERFACE");
+    const char* tcan_env = std::getenv("TCAN_INTERFACE");
+    const char* intake_env = std::getenv("CAN_INTAKE_PATH");
+    const char* process_env = std::getenv("CAN_PROCESS_PATH");
+
+    if (!pcan_env || !tcan_env || !intake_env || !process_env)
+    {
+        std::cerr << "[DAQ] Missing required environment variables" << std::endl;
+        return 1;
+    }
+
+    std::string PCAN_IFACE = pcan_env;
+    std::string TCAN_IFACE = tcan_env;
+    std::filesystem::path INTAKE_DIR = intake_env;
+    std::filesystem::path PROCESS_DIR = process_env;
 
     mosquitto_lib_init();
     struct mosquitto* mosq = mosquitto_new("can-publisher", true, nullptr);

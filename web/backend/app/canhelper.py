@@ -3,6 +3,7 @@ import cantools
 import os
 import csv
 from pathlib import Path
+from .settings import settings
 
 class CANHelper:
     """
@@ -11,7 +12,7 @@ class CANHelper:
     def __init__(self, config):
         self.config = config
 
-        dbc_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "common", "dbc")))
+        dbc_dir = Path(settings.dbc_dir)
 
         self.dbs = []
 
@@ -81,7 +82,7 @@ class CANHelper:
 
         with open(
             os.path.join(
-                self.config["paths"]["data"]["can"]["parsed"],
+                settings.can_parsed_path,
                 log
             ),
             'w',
@@ -108,7 +109,7 @@ class CANHelper:
         shutil.move(
             path,
             os.path.join(
-                self.config["paths"]["data"]["can"]["raw"],
+                settings.can_raw_path,
                 log
             )
         )
