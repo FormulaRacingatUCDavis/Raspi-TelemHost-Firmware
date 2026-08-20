@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import BarChart from '$lib/components/BarChart.svelte';
 	import LineChart from '$lib/components/LineChart.svelte';
+	import mqtt from 'mqtt';
 
 	let selectedSignals: string[] = [];
 
@@ -11,6 +12,16 @@
 			const config = await res.json();
 
 			selectedSignals = config.signals ?? [];
+
+			const mqttClient = mqtt.connect('ws://localhost:9001');
+
+			mqttClient.on('connect', () => {
+				console.log('[MQTT] Connected to broker.');
+			});
+
+			mqttClient.on('close', () => {
+				console.log('[MQTT] Connection closed.');
+			});
 		} catch (error) {
 			console.error('Failed to fetch telemetry config:', error);
 		}
