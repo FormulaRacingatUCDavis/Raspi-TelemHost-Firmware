@@ -1,24 +1,30 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+
 from pydantic import BaseModel
 from pathlib import Path
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
-from typing import List
+from typing import Dict, List
 import contextlib
 import asyncio
 import json
 import os
-from watchfiles import awatch, Change
+from watchfiles import awatch
+
 from .canhelper import CANHelper
 from .settings import settings
 
 class FileRequest(BaseModel):
     filenames: List[str]
 
-class TelemetryConfig(BaseModel):
+class MessageConfig(BaseModel):
+    id: int
     signals: List[str]
+
+class TelemetryConfig(BaseModel):
+    dbc: Dict[str, Dict[str, Dict[str, MessageConfig]]]
 
 with open(settings.config_path, "r") as f:
     config = json.load(f)
@@ -93,7 +99,6 @@ def zip_logs(type: str, payload: FileRequest):
         raise HTTPException(status_code=400, detail=f"Invalid log type: {type}")
 
     log_dir = Path(log_dirs[type])
-
     memory_file = BytesIO()
 
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as zf:
@@ -119,7 +124,7 @@ async def get_dbc_list():
 
 @app.get("/api/dbc/messages")
 async def get_dbc_messages(file: str):
-    dbc_path = Path(DBC_DIR) / file
+    dbc_path = Path(DBC_DIR) / Path(file).name
 
     if not dbc_path.is_file() or dbc_path.suffix.lower() != ".dbc":
         raise HTTPException(status_code=404, detail="DBC file not found")
@@ -127,9 +132,12 @@ async def get_dbc_messages(file: str):
     return can_helper.get_messages(dbc_path)
 
 @app.put("/api/dbc/upload")
-async def update_dbc(file: UploadFile = File(...)):
+async def upload_dbc(file: UploadFile = File(...)):
     if not file.filename or not file.filename.lower().endswith(".dbc"):
-        raise HTTPException(status_code=400, detail="File must be a DBC file")
+        raise HTTPException(
+            status_code=400,
+            detail="File must be a DBC file"
+        )
 
     dbc_path = Path(DBC_DIR) / Path(file.filename).name
 
@@ -139,13 +147,14 @@ async def update_dbc(file: UploadFile = File(...)):
 
     return {"message": "DBC uploaded", "file": dbc_path.name}
 
-@app.get("/api/telemetry/config")
+@app.get("/api/config")
 async def get_telemetry_config():
-    return {"signals": config.get("telemetry", {}).get("signals", [])}
+    return config
 
-@app.put("/api/telemetry/config")
+@app.put("/api/config")
 async def update_telemetry_config(payload: TelemetryConfig):
-    config["telemetry"] = {"signals": payload.signals}
+    global config
+    config = payload.model_dump()
     with open(settings.config_path, "w") as f:
         json.dump(config, f, indent=4)
 
@@ -159,7 +168,7 @@ async def get_log_list(source: str, type: str):
     for file in path.iterdir():
         if file.is_file():
             stats = file.stat()
-            logs.append({"file_name": file.name, "creation_date": stats.st_mtime, "file_size": stats.st_size})
+            logs.append({"file_name": file.name, "creation_date": stats.st_mtime,"file_size": stats.st_size})
 
     logs.sort(key=lambda x: x["creation_date"], reverse=True)
 

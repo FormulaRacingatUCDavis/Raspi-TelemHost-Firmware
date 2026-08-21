@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import Chart from 'chart.js/auto';
 
+	let { labels, title=null, datasets } = $props();
+
 	let canvas: HTMLCanvasElement | null = $state(null);
 	let chart: Chart | null = null;
 
@@ -10,18 +12,32 @@
 			chart = new Chart(canvas, {
 				type: 'bar',
 				data: {
-					labels: [],
-					datasets: [
-						{
-							data: []
-						}
-					]
+					labels: labels,
+					datasets: datasets
 				},
 				options: {
 					responsive: true,
-					maintainAspectRatio: false
+					maintainAspectRatio: false,
+					plugins: {
+						title: {
+							display: title != null,
+							text: title
+						}
+					}
 				}
 			});
+		}
+
+		return () => {
+			chart?.destroy();
+		};
+	});
+
+	$effect(() => {
+		if (chart) {
+			chart.data.labels = labels;
+			chart.data.datasets = datasets;
+			chart.update();
 		}
 	});
 </script>

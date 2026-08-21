@@ -1,13 +1,15 @@
 {
-    "telemetry": {
-        "signals": [
-            "FRUCD.dbc.Vehicle_State.Dashboard_HV_Requested",
-            "FRUCD.dbc.Vehicle_State.Dashboard_Throttle1_Level",
-            "FRUCD.dbc.Vehicle_State.Dashboard_Brake_Level",
-            "20240129 Gen5 CAN DB.dbc.M173_Modulation_And_Flux_Info.INV_Modulation_Index",
-            "20240129 Gen5 CAN DB.dbc.M173_Modulation_And_Flux_Info.INV_Flux_Weakening_Output",
-            "20240129 Gen5 CAN DB.dbc.M193_Read_Write_Param_Command.VCU_INV_Parameter_Address",
-            "20240129 Gen5 CAN DB.dbc.M193_Read_Write_Param_Command.VCU_INV_Parameter_RW_Command"
-        ]
+    "dbc": {
+        "FRUCD.dbc": {
+            "dashboard": {
+                "vehicle_state": {
+                    "id": 1894,
+                    "signals": [
+                        "dashboard_hv_requested",
+                        "dashboard_throttle1_level"
+                    ]
+                }
+            }
+        }
     }
 }

@@ -1,10 +1,44 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	type Message = {
+		id: number;
+		signals: string[];
+	};
+
+	type Messages = Record<string, Message>;
+	type DBCMessages = Record<string, Messages>;
+
 	let file: File | null = null;
 	let dbcFiles: string[] = [];
-	let messagesData: Record<string, Record<string, Record<string, string[]>>> = {};
+	let messagesData: Record<string, DBCMessages> = {};
 	let selectedSignals = new Set<string>();
+
+	function signalKey(dbc: string, sender: string, message: string, signal: string) {
+		return `${dbc}|${sender}|${message}|${signal}`;
+	}
+
+	function isMessageChecked(dbc: string, sender: string, msgName: string, message: Message) {
+		return message.signals.some((signal) =>
+			selectedSignals.has(signalKey(dbc, sender, msgName, signal))
+		);
+	}
+
+	function isSenderChecked(dbc: string, sender: string, messages: Messages) {
+		return Object.entries(messages).some(([msgName, message]) =>
+			isMessageChecked(dbc, sender, msgName, message)
+		);
+	}
+
+	function toggleSignal(key: string, checked: boolean) {
+		if (checked) {
+			selectedSignals.add(key);
+		} else {
+			selectedSignals.delete(key);
+		}
+
+		selectedSignals = new Set(selectedSignals);
+	}
 
 	async function uploadDBC(file: File) {
 		const form = new FormData();
@@ -15,38 +49,41 @@
 			body: form
 		});
 
-		const data = await res.json();
-		console.log(data);
-
 		if (res.ok) {
 			await loadDBCs();
 		}
 	}
 
 	async function updateConfig() {
-		const res = await fetch('/api/telemetry/config', {
+		const dbc: Record<string, DBCMessages> = {};
+
+		for (const key of selectedSignals) {
+			const [dbcName, sender, msgName, signal] = key.split('|');
+			const message = messagesData[dbcName]?.[sender]?.[msgName];
+
+			if (!message) continue;
+
+			dbc[dbcName] ??= {};
+			dbc[dbcName][sender] ??= {};
+			dbc[dbcName][sender][msgName] ??= {
+				id: message.id,
+				signals: []
+			};
+
+			dbc[dbcName][sender][msgName].signals.push(signal);
+		}
+
+		const res = await fetch('/api/config', {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({
-				signals: [...selectedSignals]
-			})
+			body: JSON.stringify({ dbc })
 		});
 
 		if (!res.ok) {
 			console.error('Failed to update telemetry config');
 		}
-	}
-
-	function isMessageChecked(dbcName: string, msgName: string, signals: string[]): boolean {
-		return signals.some((signal) => selectedSignals.has(`${dbcName}.${msgName}.${signal}`));
-	}
-
-	function isSenderChecked(dbcName: string, messages: Record<string, string[]>): boolean {
-		return Object.entries(messages).some(([msgName, signals]) =>
-			isMessageChecked(dbcName, msgName, signals)
-		);
 	}
 
 	async function loadDBCs() {
@@ -57,19 +94,30 @@
 
 		for (const dbcFile of dbcFiles) {
 			const res = await fetch(`/api/dbc/messages?file=${encodeURIComponent(dbcFile)}`);
-			const data = await res.json();
 
-			messagesData[dbcFile] = data;
-			messagesData = { ...messagesData };
+			const data = await res.json();
+			messagesData[dbcFile] = data[dbcFile];
 		}
+
+		messagesData = { ...messagesData };
 	}
 
 	onMount(async () => {
 		try {
-			const configRes = await fetch('/api/telemetry/config');
+			const res = await fetch('/api/config');
+			const config = await res.json();
 
-			const config = await configRes.json();
-			selectedSignals = new Set(config.signals ?? []);
+			for (const [dbc, senders] of Object.entries(config.dbc ?? {})) {
+				for (const [sender, messages] of Object.entries(senders as DBCMessages)) {
+					for (const [msgName, message] of Object.entries(messages)) {
+						for (const signal of message.signals) {
+							selectedSignals.add(signalKey(dbc, sender, msgName, signal));
+						}
+					}
+				}
+			}
+
+			selectedSignals = new Set(selectedSignals);
 
 			await loadDBCs();
 		} catch (error) {
@@ -84,7 +132,7 @@
 		type="file"
 		accept=".dbc"
 		onchange={async (e) => {
-			file = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
+			file = e.currentTarget.files?.[0] ?? null;
 
 			if (file) {
 				await uploadDBC(file);
@@ -102,17 +150,20 @@
 				{#each Object.entries(messagesData[dbcFile]) as [sender, messages]}
 					<details>
 						<!-- svelte-ignore a11y_no_redundant_roles -->
-						<summary role="button" class={isSenderChecked(dbcFile, messages) ? '' : 'outline'}>
+						<summary
+							role="button"
+							class={isSenderChecked(dbcFile, sender, messages) ? '' : 'outline'}
+						>
 							{sender}
 						</summary>
 
 						<article>
-							{#each Object.entries(messages) as [msgName, signals]}
+							{#each Object.entries(messages) as [msgName, message]}
 								<details>
 									<!-- svelte-ignore a11y_no_redundant_roles -->
 									<summary
 										role="button"
-										class={isMessageChecked(dbcFile, msgName, signals)
+										class={isMessageChecked(dbcFile, sender, msgName, message)
 											? 'secondary'
 											: 'outline secondary'}
 									>
@@ -120,24 +171,14 @@
 									</summary>
 
 									<fieldset>
-										{#each signals as signal}
-											{@const signalId = `${dbcFile}.${msgName}.${signal}`}
+										{#each message.signals as signal}
+											{@const key = signalKey(dbcFile, sender, msgName, signal)}
 
 											<label>
 												<input
 													type="checkbox"
-													checked={selectedSignals.has(signalId)}
-													onchange={(e) => {
-														const checked = (e.currentTarget as HTMLInputElement).checked;
-
-														if (checked) {
-															selectedSignals.add(signalId);
-														} else {
-															selectedSignals.delete(signalId);
-														}
-
-														selectedSignals = new Set(selectedSignals);
-													}}
+													checked={selectedSignals.has(key)}
+													onchange={(e) => toggleSignal(key, e.currentTarget.checked)}
 												/>
 												{signal}
 											</label>
@@ -153,4 +194,4 @@
 	{/if}
 {/each}
 
-<input type="submit" onclick={updateConfig} />
+<input type="submit" value="Save Config" onclick={updateConfig} />

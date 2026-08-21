@@ -17,7 +17,6 @@ class CANHelper:
         self.dbs = []
 
         for dbc_path in dbc_dir.glob("*.dbc"):
-            print(f'[CAN HELPER] Loading DBC: {dbc_path.name}')
             self.dbs.append(cantools.db.load_file(dbc_path))
 
     def generate_parsed(self, path: str):
@@ -80,15 +79,7 @@ class CANHelper:
                     for signal in message.signals:
                         signals.add(signal.name)
 
-        with open(
-            os.path.join(
-                settings.can_parsed_path,
-                log
-            ),
-            'w',
-            newline=''
-        ) as log_parsed:
-
+        with open(os.path.join(settings.can_parsed_path, log), 'w', newline='') as log_parsed:
             signals_list = sorted(signals)
             header = ['Timestamp [s]', 'Source', 'ID', 'Message'] + signals_list
 
@@ -106,27 +97,20 @@ class CANHelper:
 
             print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
-        shutil.move(
-            path,
-            os.path.join(
-                settings.can_raw_path,
-                log
-            )
-        )
+        shutil.move(path, os.path.join(settings.can_raw_path, log))
 
     def get_messages(self, dbc_path):
         db = cantools.db.load_file(dbc_path)
+        dbc_name = Path(dbc_path).name
 
         messages = {}
-
         for message in db.messages:
-            sender = message.senders[0] if message.senders else "Unknown"
-
+            sender = message.senders[0].lower()
             if sender not in messages:
                 messages[sender] = {}
+            messages[sender][message.name.lower()] = {
+                "id": message.frame_id,
+                "signals": [signal.name.lower() for signal in message.signals]
+            }
 
-            messages[sender][message.name] = [
-                signal.name for signal in message.signals
-            ]
-
-        return messages
+        return {dbc_name: messages}
