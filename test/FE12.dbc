@@ -1,5 +1,6 @@
 VERSION ""
 
+
 NS_ :
     NS_DESC_
     CM_
@@ -30,9 +31,8 @@ NS_ :
     BU_BO_REL_
     SG_MUL_VAL_
 
-BS_:
-BU_: Dashboard PEI TelemNode
-
+BS_: 
+BU_: Dashboard PEI TelemNode Xsens TelemHost 
 BO_ 1894 Vehicle_State: 7 Dashboard
    SG_ Dashboard_HV_Requested : 7|8@0+ (1,0) [0|1] "" Vector__XXX
    SG_ Dashboard_Throttle1_Level : 15|8@0+ (1,0) [0|100] "%" Vector__XXX
@@ -125,21 +125,109 @@ BO_ 900 BMS_Temps: 8 PEI
    SG_ PEI_Temp_2 : 39|16@0+ (0.001,0) [0|65.535] "C" Vector__XXX
    SG_ PEI_Temp_3 : 55|16@0+ (0.001,0) [0|65.535] "C" Vector__XXX
 
-BO_ 1028 Shock_Angles_Rear: 4 TelemNode
-   SG_ TelemNode_RL_Shock_Angle : 7|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-   SG_ TelemNode_RR_Shock_Angle : 23|16@0+ (1,0) [0|4095] "Raw_ADC" Vector__XXX
-
-BO_ 1282 Raw_Throttle: 4 Dashboard
+BO_ 1282 Raw_Pedals: 8 Dashboard
    SG_ Dashboard_Throttle_1 : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
    SG_ Dashboard_Throttle_2 : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
+   SG_ Dashboard_Brake_1 : 39|16@0+ (1,0) [0|65535] "" Vector__XXX
+   SG_ Dashboard_Brake_2 : 55|16@0+ (1,0) [0|65535] "" Vector__XXX
+
+BO_ 1283 MCAC_Power: 8 Dashboard
+   SG_ Motor_Power : 7|32@0- (1,0) [-200000|200000] "Watts" Vector__XXX
+   SG_ Acc_Power : 39|32@0- (1,0) [-200000|200000] "Watts" Vector__XXX
+
+BO_ 257 UTC_Time: 8 Xsens
+   SG_ nanoseconds : 7|32@0+ (1,0) [0|4.29497e+09] "ns" Vector__XXX
+   SG_ hour : 39|8@0+ (1,0) [0|24] "hour" Vector__XXX
+   SG_ minute : 47|8@0+ (1,0) [0|60] "" Vector__XXX
+   SG_ second : 55|8@0+ (1,0) [0|60] "" Vector__XXX
+   SG_ utc_flags : 63|8@0+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 258 Packet_Count: 2 Xsens
+   SG_ packet_count : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
+
+BO_ 262 Euler: 6 Xsens
+   SG_ angle_x : 7|16@0- (0.01,0) [-100000|100000] "" Vector__XXX
+   SG_ angle_y : 23|16@0- (0.01,0) [-100000|100000] "" Vector__XXX
+   SG_ angle_z : 39|16@0- (0.01,0) [-100000|100000] "" Vector__XXX
+
+BO_ 274 Delta_Q: 8 Xsens
+   SG_ delta1 : 7|16@0- (0.01,0) [-100000|100000] "" Vector__XXX
+   SG_ delta2 : 23|16@0- (0.01,0) [-100000|100000] "" Vector__XXX
+   SG_ delta3 : 39|16@0- (0.01,0) [-100000|100000] "" Vector__XXX
+   SG_ delta4 : 55|16@0+ (0.01,0) [-100000|100000] "" Vector__XXX
+
+BO_ 295 Lat_Lon: 8 Xsens
+   SG_ latitude : 7|32@0- (0.0001,0) [-1e+07|1e+07] "degrees" Vector__XXX
+   SG_ longitude : 39|32@0- (0.0001,0) [-1e+07|1e+07] "degrees" Vector__XXX
+
+BO_ 275 Acceleration: 6 Xsens
+   SG_ accel_x : 7|16@0- (0.01,0) [-100000|100000] "m/s^2" Vector__XXX
+   SG_ accel_y : 23|16@0- (0.01,0) [-100000|100000] "m/s^2" Vector__XXX
+   SG_ accel_z : 39|16@0- (0.01,0) [-100000|100000] "m/s^2" Vector__XXX
+
+BO_ 276 Free_Acceleration: 6 Xsens
+   SG_ free_accel_x : 7|16@0- (0.01,0) [-100000|100000] "m/s^2" Vector__XXX
+   SG_ free_accel_y : 23|16@0- (0.01,0) [-100000|100000] "m/s^2" Vector__XXX
+   SG_ free_accel_z : 39|16@0- (0.01,0) [-100000|100000] "m/s^2" Vector__XXX
+
+BO_ 273 Delta_V: 6 Xsens
+   SG_ delta_v_x : 7|16@0- (0.01,0) [-100000|100000] "m/s" Vector__XXX
+   SG_ delta_v_y : 23|16@0- (0.01,0) [-100000|100000] "m/s" Vector__XXX
+   SG_ delta_v_z : 39|16@0- (0.01,0) [-100000|100000] "m/s" Vector__XXX
+
+BO_ 297 Velocity_XYZ: 6 Xsens
+   SG_ velocity_x : 7|16@0- (0.01,0) [-100000|100000] "m/s" Vector__XXX
+   SG_ velocity_y : 23|16@0- (0.01,0) [-100000|100000] "m/s" Vector__XXX
+   SG_ velocity_z : 39|16@0- (0.01,0) [-100000|100000] "m/s" Vector__XXX
+
+BO_ 278 Rate_Of_Turn: 6 Xsens
+   SG_ gyro_x : 7|16@0- (0.01,0) [-100000|100000] "rad/s" Vector__XXX
+   SG_ gyro_y : 23|16@0- (0.01,0) [-100000|100000] "rad/s" Vector__XXX
+   SG_ gyro_z : 39|16@0- (0.01,0) [-100000|100000] "rad/s" Vector__XXX
+
+BO_ 272 Pressure: 4 Xsens
+   SG_ pressure : 7|32@0+ (1,0) [0|1e+07] "pascals" Vector__XXX
+
+BO_ 291 StatusWord: 4 Xsens
+   SG_ status : 7|32@0+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 1124 Shock_Angles_Front: 4 TelemNode
+   SG_ Front_Shock_Angle_1 : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
+   SG_ Front_Shock_Angle_2 : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
+
+BO_ 1125 Shock_Angles_Rear: 4 TelemNode
+   SG_ Rear_Shock_Angle_1 : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
+   SG_ Rear_Shock_Angle_2 : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
+
+BO_ 1120 Wheel_Speeds_Front: 4 TelemNode
+   SG_ Front_Wheel_Speed_1 : 7|16@0+ (1,0) [0|65535] "cps" Vector__XXX
+   SG_ Front_Wheel_Speed_2 : 23|16@0+ (1,0) [0|65535] "cps" Vector__XXX
+
+BO_ 1121 Wheel_Speeds_Rear: 4 TelemNode
+   SG_ Rear_Wheel_Speed_1 : 7|16@0+ (1,0) [0|65535] "cps" Vector__XXX
+   SG_ Rear_Wheel_Speed_2 : 23|16@0+ (1,0) [0|65535] "cps" Vector__XXX
+
+BO_ 1129 Brake_Temp: 2 TelemNode
+   SG_ Brake_Temp : 7|16@0+ (1,0) [0|65535] "" Vector__XXX
+
+BO_ 1152 Latitude_Longitude: 8 TelemHost
+   SG_ Latitude : 7|32@0- (1e-06,0) [-2.14748e+09|2.14748e+09] "degrees" Vector__XXX
+   SG_ Longitude : 39|32@0- (1e-06,0) [-2.14748e+09|2.14748e+09] "degrees" Vector__XXX
 
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
 BA_DEF_ BO_ "filterlabeling" INT 0 0;
-BA_DEF_ BO_ "GenMsgCycleTime" INT 0 100000 ;
+BA_DEF_ BO_ "GenMsgCycleTime" INT 0 100000;
 BA_DEF_ "BusType" STRING ;
-
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
+BA_DEF_ BO_ "matchingcriteria" INT 0 0;
+BA_DEF_ BO_ "filterlabeling" INT 0 0;
 BA_ "GenMsgForegroundColor" BO_ 1894 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 896 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 903 "#000000";
@@ -150,13 +238,29 @@ BA_ "GenMsgForegroundColor" BO_ 899 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 900 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1028 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 1282 "#000000";
-
+BA_ "GenMsgForegroundColor" BO_ 257 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 274 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 295 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 275 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 276 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 273 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 297 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 278 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 272 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 291 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1124 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1125 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1120 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1121 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1129 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 1152 "#000000";
 BA_DEF_DEF_ "GenMsgBackgroundColor" "#ffffff";
 BA_DEF_DEF_ "GenMsgForegroundColor" "#000000";
 BA_DEF_DEF_ "matchingcriteria" 0;
 BA_DEF_DEF_ "filterlabeling" 0;
 BA_DEF_DEF_ "GenMsgCycleTime" 0;
 BA_DEF_DEF_ "BusType" "CAN";
+
 
 VAL_ 1894 Dashboard_State
     0 "LV"
@@ -195,3 +299,6 @@ VAL_ 899 PEI_Group
     5 "F"
     6 "G"
     7 "H";
+BA_DEF_DEF_ "matchingcriteria" 0;
+BA_DEF_DEF_ "filterlabeling" 0;
+CM_ BU_ Xsens "not actual CAN messages, only used for SD card parsing";

@@ -2,11 +2,11 @@
     "dbc": {
         "FRUCD.dbc": {
             "dashboard": {
-                "vehicle_state": {
-                    "id": 1894,
+                "torque_request": {
+                    "id": 192,
                     "signals": [
-                        "dashboard_hv_requested",
-                        "dashboard_throttle1_level"
+                        "dashboard_torque",
+                        "dashboard_speed"
                     ]
                 }
             }

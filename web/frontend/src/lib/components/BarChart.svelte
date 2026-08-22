@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import Chart from 'chart.js/auto';
 
-	let { labels, title=null, datasets } = $props();
+	let { title = null, data } = $props();
 
 	let canvas: HTMLCanvasElement | null = $state(null);
 	let chart: Chart | null = null;
@@ -11,13 +11,11 @@
 		if (canvas) {
 			chart = new Chart(canvas, {
 				type: 'bar',
-				data: {
-					labels: labels,
-					datasets: datasets
-				},
+				data: data,
 				options: {
 					responsive: true,
 					maintainAspectRatio: false,
+					animation: false,
 					plugins: {
 						title: {
 							display: title != null,
@@ -35,9 +33,8 @@
 
 	$effect(() => {
 		if (chart) {
-			chart.data.labels = labels;
-			chart.data.datasets = datasets;
-			chart.update();
+			chart.data = data;
+			chart.update('none');
 		}
 	});
 </script>
