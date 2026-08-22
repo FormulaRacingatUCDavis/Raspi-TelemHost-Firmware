@@ -234,6 +234,31 @@ int main()
 
                     break;
                 }
+                case 0x480:
+                {
+                    struct fe13_db_lat_lon_t msg;
+                    fe13_db_lat_lon_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["latitude"] = fe13_db_lat_lon_latitude_decode(msg.latitude);
+                    j["longitude"] = fe13_db_lat_lon_longitude_decode(msg.longitude);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x113:
+                {
+                    struct fe13_db_acceleration_t msg;
+                    fe13_db_acceleration_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["accel_x"] = fe13_db_acceleration_accel_x_decode(msg.accel_x);
+                    j["accel_y"] = fe13_db_acceleration_accel_y_decode(msg.accel_y);
+                    j["accel_z"] = fe13_db_acceleration_accel_z_decode(msg.accel_z);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
             }
             
             if (!j.empty())

@@ -24,7 +24,9 @@
 		{ id: 0x384, signals: ['pei_subpack', 'pei_group', 'pei_temp_1', 'pei_temp_2', 'pei_temp_3'] },
 		{ id: 0x388, signals: ['pei_current'] },
 		{ id: 0x504, signals: ['motor_power', 'acc_power'] },
-		{ id: 0x400, signals: ['inlet_water_temp', 'outlet_water_temp'] }
+		{ id: 0x400, signals: ['inlet_water_temp', 'outlet_water_temp'] },
+		{ id: 0x480, signals: [ 'latitude', 'longitude' ] },
+		{ id: 0x113, signals: [ 'accel_x', 'accel_y', 'accel_z' ] }
 	];
 
 	const signals = liveValues.flatMap((value) => value.signals);
@@ -160,12 +162,27 @@
 				<tr>
 					<th scope="row">Xsens</th>
 					<th scope="row">Latitude [°]</th>
-					<td><!-- Placeholder --></td>
+					<td>{liveData.latitude ?? '--'}</td>
 				</tr>
 				<tr>
 					<th scope="row">Xsens</th>
 					<th scope="row">Longitude [°]</th>
-					<td><!-- Placeholder --></td>
+					<td>{liveData.longitude ?? '--'}</td>
+				</tr>
+				<tr>
+					<th scope="row">Xsens</th>
+					<th scope="row">Acceleration X [m/s^2]</th>
+					<td>{liveData.accel_x ?? '--'}</td>
+				</tr>
+				<tr>
+					<th scope="row">Xsens</th>
+					<th scope="row">Acceleration Y [m/s^2]</th>
+					<td>{liveData.accel_y ?? '--'}</td>
+				</tr>
+				<tr>
+					<th scope="row">Xsens</th>
+					<th scope="row">Acceleration Z [m/s^2]</th>
+					<td>{liveData.accel_z ?? '--'}</td>
 				</tr>
 			</tbody>
 		</table>
