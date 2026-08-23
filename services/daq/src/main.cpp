@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
 #include "daqhelper.h"
 
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message);
@@ -19,10 +20,12 @@ int main()
     nlohmann::json cfg;
     std::ifstream cfg_file("resources/config.json");
     cfg_file >> cfg;
+
     std::string PCAN_IFACE = cfg["can"]["pcan"];
     std::string TCAN_IFACE = cfg["can"]["tcan"];
     std::filesystem::path INTAKE_DIR = cfg["paths"]["data"]["can"]["intake"];
     std::filesystem::path PROCESS_DIR = cfg["paths"]["data"]["can"]["process"];
+
     cfg_file.close();
 
     mosquitto_lib_init();
@@ -96,11 +99,6 @@ int main()
                     fe13_db_vehicle_state_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["dashboard_hv_requested"]   = fe13_db_vehicle_state_dashboard_hv_requested_decode(msg.dashboard_hv_requested);
-                    j["dashboard_throttle1_level"] = fe13_db_vehicle_state_dashboard_throttle1_level_decode(msg.dashboard_throttle1_level);
-                    j["dashboard_throttle2_level"] = fe13_db_vehicle_state_dashboard_throttle2_level_decode(msg.dashboard_throttle2_level);
-                    j["dashboard_brake_level"]    = fe13_db_vehicle_state_dashboard_brake_level_decode(msg.dashboard_brake_level);
-                    j["dashboard_vcu_ticks"]      = fe13_db_vehicle_state_dashboard_vcu_ticks_decode(msg.dashboard_vcu_ticks);
                     uint8_t vcu_state_code = fe13_db_vehicle_state_dashboard_state_decode(msg.dashboard_state);
                     j["dashboard_state"] = (telem::VEHICLE_STATE.find(vcu_state_code) != telem::VEHICLE_STATE.end()) ? telem::VEHICLE_STATE.at(vcu_state_code) : "YO WTF?";
                     j["timestamp"] = ms;
@@ -114,12 +112,6 @@ int main()
 
                     j["id"] = id;
                     j["dashboard_torque"] = fe13_db_torque_request_dashboard_torque_decode(msg.dashboard_torque);
-                    j["dashboard_speed"] = fe13_db_torque_request_dashboard_speed_decode(msg.dashboard_speed);
-                    j["dashboard_direction"] = fe13_db_torque_request_dashboard_direction_decode(msg.dashboard_direction);
-                    j["dashboard_inverter_enable"] = fe13_db_torque_request_dashboard_inverter_enable_decode(msg.dashboard_inverter_enable);
-                    j["dashboard_discharge_enable"] = fe13_db_torque_request_dashboard_discharge_enable_decode(msg.dashboard_discharge_enable);
-                    j["dashboard_speed_mode_enable"] = fe13_db_torque_request_dashboard_speed_mode_enable_decode(msg.dashboard_speed_mode_enable);
-                    j["dashboard_torque_limit"] = fe13_db_torque_request_dashboard_torque_limit_decode(msg.dashboard_torque_limit);
                     j["timestamp"] = ms;
 
                     break;
@@ -133,7 +125,6 @@ int main()
                     j["inv_module_a_temp"] = cm200_db_m160_temperature_set_1_inv_module_a_temp_decode(msg.inv_module_a_temp);
                     j["inv_module_b_temp"] = cm200_db_m160_temperature_set_1_inv_module_b_temp_decode(msg.inv_module_b_temp);
                     j["inv_module_c_temp"] = cm200_db_m160_temperature_set_1_inv_module_c_temp_decode(msg.inv_module_c_temp);
-                    j["inv_gate_driver_board_temp"] = cm200_db_m160_temperature_set_1_inv_gate_driver_board_temp_decode(msg.inv_gate_driver_board_temp);
                     j["timestamp"] = ms;
 
                     break;
@@ -144,10 +135,7 @@ int main()
                     cm200_db_m165_motor_position_info_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["inv_motor_angle_electrical"] = cm200_db_m165_motor_position_info_inv_motor_angle_electrical_decode(msg.inv_motor_angle_electrical);
                     j["inv_motor_speed"] = cm200_db_m165_motor_position_info_inv_motor_speed_decode(msg.inv_motor_speed);
-                    j["inv_electrical_output_frequency"] = cm200_db_m165_motor_position_info_inv_electrical_output_frequency_decode(msg.inv_electrical_output_frequency);
-                    j["inv_delta_resolver_filtered"] = cm200_db_m165_motor_position_info_inv_delta_resolver_filtered_decode(msg.inv_delta_resolver_filtered);
                     j["timestamp"] = ms;
 
                     break;
@@ -171,9 +159,6 @@ int main()
                     j["id"] = id;
                     uint8_t bms_state_code = fe13_db_bms_status_pei_bms_status_decode(msg.pei_bms_status);
                     j["pei_bms_status"] = (telem::BMS_STATE.find(bms_state_code) != telem::BMS_STATE.end()) ? telem::BMS_STATE.at(bms_state_code) : "YO WTF?";
-                    j["pei_spi_error_flags"] = fe13_db_bms_status_pei_spi_error_flags_decode(msg.pei_spi_error_flags);
-                    j["pei_max_faulting_ic_address"] = fe13_db_bms_status_pei_max_faulting_ic_address_decode(msg.pei_max_faulting_ic_address);
-                    j["pei_communication_break_id"] = fe13_db_bms_status_pei_communication_break_id_decode(msg.pei_communication_break_id);
                     j["timestamp"] = ms;
                     
                     break;
@@ -184,14 +169,13 @@ int main()
                     fe13_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["pei_hi_temp"] = fe13_db_diagnostic_bms_data_pei_hi_temp_decode(msg.pei_hi_temp);
                     j["pei_soc"] = fe13_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
                     j["pei_pack_voltage"] = fe13_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
                     j["timestamp"] = ms;
                     
                     break;
                 }
-                case 0x503:
+                case 0x504:
                 {
                     struct fe13_db_mcac_power_t msg;
                     fe13_db_mcac_power_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
@@ -211,8 +195,6 @@ int main()
                     j["id"] = id;
                     j["inlet_water_temp"] = fe13_db_cooling_loop_temps_telem_node_inlet_water_temp_decode(msg.telem_node_inlet_water_temp);
                     j["outlet_water_temp"] = fe13_db_cooling_loop_temps_telem_node_outlet_water_temp_decode(msg.telem_node_outlet_water_temp);
-                    j["air_in_rad_temp"] = fe13_db_cooling_loop_temps_telem_node_air_into_radiator_temp_decode(msg.telem_node_air_into_radiator_temp);
-                    j["air_out_rad_temp"] = fe13_db_cooling_loop_temps_telem_node_air_out_of_radiator_temp_decode(msg.telem_node_air_out_of_radiator_temp);
                     j["timestamp"] = ms;
 
                     break;
@@ -228,6 +210,46 @@ int main()
                     j["id"] = id;
                     j["inv_post_fault"] = (telem::MC_STATE.find(post_fault_code) != telem::MC_STATE.end()) ? telem::MC_STATE.at(post_fault_code) : "YO WTF?";
                     j["inv_run_fault"] = (telem::MC_STATE.find(run_fault_code) != telem::MC_STATE.end()) ? telem::MC_STATE.at(run_fault_code) : "YO WTF?";
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x384:
+                {
+                    struct fe13_db_bms_temps_t msg;
+                    fe13_db_bms_temps_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["pei_subpack"] = fe13_db_bms_temps_pei_subpack_decode(msg.pei_subpack);
+                    j["pei_group"] = fe13_db_bms_temps_pei_group_decode(msg.pei_group);
+                    j["pei_temp_1"] = fe13_db_bms_temps_pei_temp_1_decode(msg.pei_temp_1);
+                    j["pei_temp_2"] = fe13_db_bms_temps_pei_temp_2_decode(msg.pei_temp_2);
+                    j["pei_temp_3"] = fe13_db_bms_temps_pei_temp_3_decode(msg.pei_temp_3);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x480:
+                {
+                    struct fe13_db_lat_lon_t msg;
+                    fe13_db_lat_lon_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["latitude"] = fe13_db_lat_lon_latitude_decode(msg.latitude);
+                    j["longitude"] = fe13_db_lat_lon_longitude_decode(msg.longitude);
+                    j["timestamp"] = ms;
+
+                    break;
+                }
+                case 0x113:
+                {
+                    struct fe13_db_acceleration_t msg;
+                    fe13_db_acceleration_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
+
+                    j["id"] = id;
+                    j["accel_x"] = fe13_db_acceleration_accel_x_decode(msg.accel_x);
+                    j["accel_y"] = fe13_db_acceleration_accel_y_decode(msg.accel_y);
+                    j["accel_z"] = fe13_db_acceleration_accel_z_decode(msg.accel_z);
                     j["timestamp"] = ms;
 
                     break;
