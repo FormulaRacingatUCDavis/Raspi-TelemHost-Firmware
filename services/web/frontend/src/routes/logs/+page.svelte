@@ -70,7 +70,7 @@
 	}
 
 	onMount(() => {
-		mqttClient = mqtt.connect('ws://192.168.105.2:9001');
+		mqttClient = mqtt.connect('ws://192.168.105.2:8080');
 		mqttClient.on('connect', () => {
 			console.log('[MQTT] Connected to broker.');
 			mqttConnected = true;

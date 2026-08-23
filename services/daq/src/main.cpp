@@ -13,7 +13,7 @@
 
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message);
 
-std::atomic<bool> log_en{false};
+std::atomic<bool> log_en{true};
 
 int main()
 {
@@ -36,6 +36,7 @@ int main()
         std::cerr << "MQTT connect failed: " << mosquitto_strerror(rc) << std::endl;
         return 1;
     }
+
     mosquitto_message_callback_set(mosq, on_message);
     mosquitto_subscribe(mosq, nullptr, "can/log/control", 0);
     mosquitto_loop_start(mosq);
@@ -85,6 +86,7 @@ int main()
             if (std::filesystem::exists(dst)) std::filesystem::remove(dst);
             std::filesystem::rename(src, dst);
         }
+
         if (q.try_dequeue(cap))
         {
             uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
@@ -160,7 +162,7 @@ int main()
                     uint8_t bms_state_code = fe13_db_bms_status_pei_bms_status_decode(msg.pei_bms_status);
                     j["pei_bms_status"] = (telem::BMS_STATE.find(bms_state_code) != telem::BMS_STATE.end()) ? telem::BMS_STATE.at(bms_state_code) : "YO WTF?";
                     j["timestamp"] = ms;
-                    
+
                     break;
                 }
                 case 0x381:
@@ -172,7 +174,7 @@ int main()
                     j["pei_soc"] = fe13_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
                     j["pei_pack_voltage"] = fe13_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
                     j["timestamp"] = ms;
-                    
+
                     break;
                 }
                 case 0x504:
@@ -255,7 +257,7 @@ int main()
                     break;
                 }
             }
-            
+
             if (!j.empty())
             {
                 std::string payload = j.dump();
@@ -265,6 +267,7 @@ int main()
             if (log_status == "{\"status\":\"on\"}")
             {
                 auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(cap.timestamp - start).count();
+
                 log << std::hex << std::uppercase
                     << id << ","
                     << static_cast<int>(cap.frame.data[0]) << ","
@@ -277,6 +280,7 @@ int main()
                     << static_cast<int>(cap.frame.data[7]) << ","
                     << std::dec << elapsed
                     << std::endl;
+
                 log_count++;
                 if (log_count == 50)
                     log.flush();
