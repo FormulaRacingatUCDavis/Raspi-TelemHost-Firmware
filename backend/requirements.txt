@@ -1,0 +1,7 @@
+fastapi[standard]
+cantools
+uvicorn
+nicegui
+watchfiles
+psycopg
+pydantic-settings

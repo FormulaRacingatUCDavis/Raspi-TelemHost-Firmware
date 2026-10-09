@@ -1,6 +1,0 @@
-fastapi
-cantools
-uvicorn
-nicegui
-watchfiles
-psycopg

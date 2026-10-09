@@ -8,5 +8,5 @@
 | [4" IPS Touchscreen LCD Display (800×480)](https://www.amazon.com/dp/B07XBVF1C9) | HDMI touchscreen display for dashboard |
 | [Mobile Router Industrial](https://store.ui.com/us/en/category/internet-solutions/collections/unifi-mobile-routing/products/umr-industrial-us) | WiFi router designed for indoor/outdoor IoT applications |
 
-## System Diagram
-![TelemetrySystem](assets/telemetry_system.jpg)
+## Data Pipeline
+![Data Pipeline](docs/pipeline.jpg)

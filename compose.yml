@@ -1,0 +1,48 @@
+services:
+  daq:
+    build:
+      context: ./daq
+      dockerfile: Dockerfile
+
+    network_mode: host
+
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+    environment:
+      PCAN_INTERFACE: ${PCAN_INTERFACE}
+      TCAN_INTERFACE: ${TCAN_INTERFACE}
+      CAN_INTAKE_PATH: ${CAN_INTAKE_PATH}
+      CAN_PROCESS_PATH: ${CAN_PROCESS_PATH}
+
+    volumes:
+      - ./data:/app/data
+      - ./resources:/app/resources
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    env_file:
+      - .env
+
+    volumes:
+      - ${DATA_HOST_PATH}:/app/data
+      - ${RESOURCES_HOST_PATH}:/app/resources
+
+    ports:
+      - "8000:8000"
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: unless-stopped
+
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+    volumes:
+      - ./resources/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
