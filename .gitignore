@@ -1,33 +1,14 @@
-.venv
+.venv/
 .env
-.vscode
-__pycache__
-data
-build
-venv_webapp
-_deps
-CMakeFiles
+.vscode/
+__pycache__/
+data/
+build/
+
+# vcpkg
 CMakeUserPresets.json
 
-node_modules
-
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-.svelte-kit
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Env
-.env
-.env.*
-!.env.example
-!.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# Node-RED
+resources/node-red/node_modules/
+resources/node-red/.config.*
+resources/node-red/*_cred.json

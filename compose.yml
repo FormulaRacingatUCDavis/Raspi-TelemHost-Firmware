@@ -46,3 +46,21 @@ services:
 
     volumes:
       - ./resources/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    restart: unless-stopped
+
+    ports:
+      - "127.0.0.1:1880:1880"
+
+    environment:
+      TZ: America/Los_Angeles
+      NODE_RED_CREDENTIAL_SECRET: ${NODE_RED_CREDENTIAL_SECRET}
+
+    volumes:
+      - ./resources/node-red:/data
+
+    depends_on:
+      - mosquitto
