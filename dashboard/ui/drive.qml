@@ -21,27 +21,6 @@ Rectangle {
     property real fullfontsize: mainwindow.width * 0.08
     property real smallerfontsize: mainwindow.width * 0.065
     property real titlefontsize: mainwindow.width * 0.04
-
-    Rectangle {
-        id: ovtbox
-        // color: (Data.overtake == 1) ? "white" : "black"
-        color: "black"
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: parent.width * 0.1
-        height: parent.height * 0.1
-
-        Text {
-            id: ovttext
-            text: "OVT" 
-            font.pixelSize: ovtbox.width * 0.5
-            font.family: mainwindow.typeface
-            color: "black"
-            anchors.fill: parent
-            horizontalAlignment: Text.AlignHCenter 
-            verticalAlignment: Text.AlignVCenter
-        }
-    }
     
     GridLayout {
         id: grid
@@ -61,6 +40,8 @@ Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: grid.width / 2
             Layout.preferredHeight: grid.height / 2
+            border.weight: loggerindicator ? 2 : 0
+            border.color: "#FFFFFF"
 
             Text {
                 id: speedvalue

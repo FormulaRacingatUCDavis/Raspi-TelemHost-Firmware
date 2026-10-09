@@ -68,8 +68,8 @@ namespace dashboard
         return m_motortemp;
     }
 
-    double Variables::accum_power() {
-        return m_accum_power;
+    double Variables::accumpower() {
+        return m_accumpower;
     }
 
     int Variables::overtake() {
@@ -90,6 +90,10 @@ namespace dashboard
 
     QString Variables::dashboardpage() {
         return m_dashboardpage;
+    }
+
+    bool Variables::loggerindicator() {
+        return m_loggerindicator;
     }
 /* LAPTIME TO ADD
     double Variables::curr_lap_time() {
@@ -411,10 +415,10 @@ namespace dashboard
         }
     }
 
-    void Variables::setaccum_power(double power) {
-        if (m_accum_power != power) {
-            m_accum_power = power;
-            emit accum_powerChanged();
+    void Variables::setaccumpower(double power) {
+        if (m_accumpower != power) {
+            m_accumpower = power;
+            emit accumpowerChanged();
         }
     }
 
@@ -480,6 +484,13 @@ namespace dashboard
             emit dashboardpageChanged();
         }
     } 
+
+    void Variables::setloggerindicator(bool status) {
+        if (m_loggerindicator != status) {
+            m_loggerindicator = status;
+            emit loggerindicatorChanged();
+        }
+    }
 /* LAPTIME TO ADD
     // private xsens functions
 

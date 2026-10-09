@@ -48,7 +48,7 @@ namespace dashboard
 
         Q_PROPERTY(int motortemp READ motortemp NOTIFY motortempChanged)
 
-        Q_PROPERTY(double accum_power READ accum_power NOTIFY accum_powerChanged)
+        Q_PROPERTY(double accumpower READ accumpower NOTIFY accumpowerChanged)
 
         Q_PROPERTY(int overtake READ overtake NOTIFY overtakeChanged)
 
@@ -59,6 +59,9 @@ namespace dashboard
         Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
 
         Q_PROPERTY(QString dashboardpage READ dashboardpage NOTIFY dashboardpageChanged)
+
+        Q_PROPERTY(bool loggerindicator READ loggerindicator NOTIFY loggerindicatorChanged)
+
 /* LAPTIME TO ADD
         Q_PROPERTY(double curr_lap_time READ curr_lap_time NOTIFY curr_lap_timeChanged)
 
@@ -98,7 +101,7 @@ namespace dashboard
         
         int motortemp();
 
-        double accum_power();
+        double accumpower();
 
         int overtake();
 
@@ -109,6 +112,9 @@ namespace dashboard
         int whichPopupVisible();
 
         QString dashboardpage();
+
+        bool loggerindicator();
+
 /* LAPTIME TO ADD
         double curr_lap_time();
 
@@ -119,36 +125,38 @@ namespace dashboard
 
 
         // setter functions
-       void setmph(int speed);
+        void setmph(int speed);
 
-       void setvehiclestate(int state, bool bms);
+        void setvehiclestate(int state, bool bms);
 
-       void setsoc(int charge);
+        void setsoc(int charge);
 
-       void setmctemp(int tempA, int tempB, int tempC);
+        void setmctemp(int tempA, int tempB, int tempC);
 
-       void setglvv(double volt);
+        void setglvv(double volt);
 
-       void setshutdowncircuit(std::string flippedswitch);
+        void setshutdowncircuit(std::string flippedswitch);
 
-       void setmcfault(uint32_t faultid, bool post);
+        void setmcfault(uint32_t faultid, bool post);
 
-       void setpacktemp(int temp);
+        void setpacktemp(int temp);
 
-       void setmotortemp(int temp);
+        void setmotortemp(int temp);
 
-       void setaccum_power(double power);
+        void setaccumpower(double power);
 
-       void setovertake(int status);
+        void setovertake(int status);
 
-       void settorquelimit(int limit);
+        void settorquelimit(int limit);
 
-       void setlaunchcontrol(int param);
+        void setlaunchcontrol(int param);
 
         void showEventPopUp(int which);
         Q_INVOKABLE void hidePopup();
 
         void setdashboardpage(int page);
+
+        void setloggerindicator(bool status);
 
 /* LAPTIME TO ADD
         // public xsens functions
@@ -185,7 +193,7 @@ namespace dashboard
 
         void motortempChanged();
 
-        void accum_powerChanged();
+        void accumpowerChanged();
 
         void overtakeChanged();
     
@@ -197,11 +205,15 @@ namespace dashboard
 
         void dashboardpageChanged();
 
+        void loggerindicatorChanged();
+
+/* LAPTIME TO ADD      
         void curr_lap_timeChanged();
         
         void best_lap_timeChanged();
 
         void prev_lap_timeChanged();
+*/
 
 
     private:
@@ -237,7 +249,7 @@ namespace dashboard
 
         int m_motortemp = -1;
 
-        double m_accum_power =  -1;
+        double m_accumpower =  -1;
 
         int m_overtake = 0;
 
@@ -255,6 +267,8 @@ namespace dashboard
         int prev_knob2_val = m_launchcontrol;
 
         QString m_dashboardpage = "drive.qml";
+
+        bool m_loggerindicator = false;
 
 /* LAPTIME TO ADD
         // xsens variables
