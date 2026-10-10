@@ -232,6 +232,7 @@ namespace dashboard
 
         QString m_vehiclestate = "STARTUP";
         QString m_vehiclestate_color = green;
+        int prevstate = -1;
 
         int m_soc = -1;
 
@@ -244,6 +245,7 @@ namespace dashboard
         QString m_shutdowncircuit = "";
 
         QString m_mcfault = "";
+        uint32_t prevfault = -1;
 
         int m_packtemp = -1;
 

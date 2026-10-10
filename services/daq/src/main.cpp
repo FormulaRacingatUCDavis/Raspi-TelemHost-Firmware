@@ -52,7 +52,7 @@ int main()
     std::ofstream log;
     auto start = std::chrono::system_clock::now();
     std::string filename;
-    std::string log_status = "{\"status\":\"off\"}";
+    std::string log_status = "{\"status\":\"off\"}"; // make sure this matches whatever payload == in dashboard/src/main.cpp
     uint8_t log_count = 0;
     mosquitto_publish(mosq, nullptr, "can/log/status", log_status.length(), log_status.c_str(), 1, true);
 

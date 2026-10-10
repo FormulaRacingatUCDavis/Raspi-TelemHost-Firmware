@@ -118,96 +118,134 @@ namespace dashboard
     }
 
     void Variables::setvehiclestate(int state, bool bms) {
+        if (state == prevstate) {
+            return;
+        }
+
         if (bms == false) {
-            if (state == 0) {
-                m_vehiclestate = "LV";
-                m_vehiclestate_color = green;
-            } else if (state == 1) {
-                m_vehiclestate = "PRECHARGE";
-                m_vehiclestate_color = green;
-            } else if (state == 2) {
-                m_vehiclestate = "HV";
-                m_vehiclestate_color = green;
-            } else if (state == 3) {
-                m_vehiclestate = "DRIVE";
-                m_vehiclestate_color = green;
-            } else if (state == 5) {
-                m_vehiclestate = "STARTUP";
-                m_vehiclestate_color = green;
-            } else if (state == 129) {
-                m_vehiclestate = "DRV FRM LV";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 130) {
-                m_vehiclestate = "PRE TM OUT";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 131) {
-                m_vehiclestate = "BR NOT PRS";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 132) {
-                m_vehiclestate = "HV OFF DRV";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 133) {
-                m_vehiclestate = "SNSR DSCRP";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 134) {
-                m_vehiclestate = "BSPD TRIPD";
-                m_vehiclestate_color = yellow;
-                showEventPopUp(0);
-            } else if (state == 135) {
-                m_vehiclestate = "SHTDWN OPN";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 136) {
-                m_vehiclestate = "UNCALIBRTD";
-                m_vehiclestate_color = yellow;
-                showEventPopUp(0);
-            } else if (state == 137) {
-                m_vehiclestate = "HARD BSPD";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 138) {
-                m_vehiclestate = "MC FAULT";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
+            switch (state) {
+                case 0:
+                    m_vehiclestate = "LV";
+                    m_vehiclestate_color = green; 
+                    break;
+                case 1:
+                    m_vehiclestate = "PRECHARGE";
+                    m_vehiclestate_color = green;
+                    break;
+                case 2:
+                    m_vehiclestate = "HV";
+                    m_vehiclestate_color = green;
+                    break;
+                case 3:
+                    m_vehiclestate = "DRIVE";
+                    m_vehiclestate_color = green;
+                    break;
+                case 5:
+                    m_vehiclestate = "STARTUP";
+                    m_vehiclestate_color = green;
+                    break;
+                case 129:
+                    m_vehiclestate = "DRV FRM LV";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 130:
+                    m_vehiclestate = "PRE TM OUT";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 131:
+                    m_vehiclestate = "BR NOT PRS";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 132:
+                    m_vehiclestate = "HV OFF DRV";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 133:
+                    m_vehiclestate = "SNSR DSCRP";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 134:
+                    m_vehiclestate = "BSPD TRIPD";
+                    m_vehiclestate_color = yellow;
+                    showEventPopUp(0);
+                    break;
+                case 135:
+                    m_vehiclestate = "SHTDWN OPN";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 136:
+                    m_vehiclestate = "UNCALIBRTD";
+                    m_vehiclestate_color = yellow;
+                    showEventPopUp(0);
+                    break;
+                case 137:
+                    m_vehiclestate = "HARD BSPD";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 138:
+                    m_vehiclestate = "MC FAULT";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                default:
+                    m_vehiclestate = "YO WTF?";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
             }
         }
         if (bms == true) {
-            if (state == 2) {
-                m_vehiclestate = "BMS TEMP OVER";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 4) {
-                m_vehiclestate = "BMS TEMP UNDER";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 8) {
-                m_vehiclestate = "OVERVOLT";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 16) {
-                m_vehiclestate = "UNDERVOLT";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 32) {
-                m_vehiclestate = "OPEN WIRE";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 64) {
-                m_vehiclestate = "MISMATCH";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
-            } else if (state == 128) {
-                m_vehiclestate = "SPI FAULT";
-                m_vehiclestate_color = red;
-                showEventPopUp(0);
+            switch (state) {
+                case 2:
+                    m_vehiclestate = "BMS TEMP OVER";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 4:
+                    m_vehiclestate = "BMS TEMP UNDER";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 8:
+                    m_vehiclestate = "OVERVOLT";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 16:
+                    m_vehiclestate = "UNDERVOLT";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 32:
+                    m_vehiclestate = "OPEN WIRE";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 64:
+                    m_vehiclestate = "MISMATCH";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                case 128:
+                    m_vehiclestate = "SPI FAULT";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
+                default:
+                    m_vehiclestate = "YO WTF?";
+                    m_vehiclestate_color = red;
+                    showEventPopUp(0);
+                    break;
             }
         }
-
+        prevstate = state;
         emit vehiclestateChanged();
         emit vehiclestate_colorChanged();
     }
@@ -259,146 +297,217 @@ namespace dashboard
     }
 
     void Variables::setmcfault(uint32_t fault, bool post) {
-        QString qfault = "";
+        if (fault == prevfault) {
+            return;
+        }
 
         if (post) {
-            if (fault == (uint32_t) pow(2, 0)) {
-                qfault = "Hardware Gate/Desaturation";
-            } else if (fault == (uint32_t) pow(2, 1)) {
-                qfault = "HW Overcurrent";
-            } else if (fault == (uint32_t) pow(2, 2)) {
-                qfault = "Accelerator Shorted";
-            } else if (fault == (uint32_t) pow(2, 3)) {
-                qfault = "Accelerator Open";
-            } else if (fault == (uint32_t) pow(2, 4)) {
-                qfault = "Curr Sensor Lo";
-            } else if (fault == (uint32_t) pow(2, 5)) {
-                qfault = "Curr Sensor Hi";
-            } else if (fault == (uint32_t) pow(2, 6)) {
-                qfault = "Module Temp Lo";
-            } else if (fault == (uint32_t) pow(2, 7)) {
-                qfault = "Module Temp Hi";
-            } else if (fault == (uint32_t) pow(2, 8)) {
-                qfault = "Ctrl PCB Temp Lo";
-            } else if (fault == (uint32_t) pow(2, 9)) {
-                qfault = "Ctrl PCB Temp Hi";
-            } else if (fault == (uint32_t) pow(2, 10)) {
-                qfault = "Gate Drive PCB Temp Low";
-            } else if (fault == (uint32_t) pow(2, 11)) {
-                qfault = "Gate Drive PCB Temp Hi";
-            } else if (fault == (uint32_t) pow(2, 12)) {
-                qfault = "5V Sense Volt Lo";
-            } else if (fault == (uint32_t) pow(2, 13)) {
-                qfault = "5V Sense Volt Hi";
-            } else if (fault == (uint32_t) pow(2, 14)) {
-                qfault = "12V Sense Volt Lo";
-            } else if (fault == (uint32_t) pow(2, 15)) {
-                qfault = "12V Sense Volt Hi";
-            } else if (fault == (uint32_t) pow(2, 16)) {
-                qfault = "2.5V Sense Volt Lo";
-            } else if (fault == (uint32_t) pow(2, 17)) {
-                qfault = "2.5V Sense Volt Hi";
-            } else if (fault == (uint32_t) pow(2, 18)) {
-                qfault = "1.5V Sense Volt Lo";
-            } else if (fault == (uint32_t) pow(2, 19)) {
-                qfault = "1.5V Sense Volt Hi";
-            } else if (fault == (uint32_t) pow(2, 20)) {
-                qfault = "DC Bus Volt Hi";
-            } else if (fault == (uint32_t) pow(2, 21)) {
-                qfault = "DC Bus Volt Lo";
-            } else if (fault == (uint32_t) pow(2, 22)) {
-                qfault = "Precharge Timeout";
-            } else if (fault == (uint32_t) pow(2, 23)) {
-                qfault = "Precharge Volt Fail";
-            } else if (fault == (uint32_t) pow(2, 24)) {
-                qfault = "EEPROM Checksum Invalid";
-            } else if (fault == (uint32_t) pow(2, 25)) {
-                qfault = "EEPROM Data Out of Range";
-            } else if (fault == (uint32_t) pow(2, 26)) {
-                qfault = "EEPROM Update Req";
-            } else if (fault == (uint32_t) pow(2, 27)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 28)) {
-                qfault = "Gate Drive Init";
-            } else if (fault == (uint32_t) pow(2, 29)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 30)) {
-                qfault = "Brake Shorted";
-            } else if (fault == (uint32_t) pow(2, 31)) {
-                qfault = "Brake Open";
+            switch (fault) {
+                case ((uint32_t) pow(2, 0)):
+                    m_mcfault = "Hardware Gate/Desaturation";
+                    break;
+                case ((uint32_t) pow(2, 1)):
+                    qfault = "HW Overcurrent";
+                    break;
+                case ((uint32_t) pow(2, 2)):
+                    qfault = "Accelerator Shorted";
+                    break;
+                case ((uint32_t) pow(2, 3)):
+                    qfault = "Accelerator Open";
+                    break;
+                case ((uint32_t) pow(2, 4)):
+                    qfault = "Curr Sensor Lo";
+                    break;
+                case ((uint32_t) pow(2, 5)):
+                    qfault = "Curr Sensor Hi";
+                    break;
+                case ((uint32_t) pow(2, 6)):
+                    qfault = "Module Temp Lo";
+                    break;
+                case ((uint32_t) pow(2, 7)):
+                    qfault = "Module Temp Hi";
+                    break;
+                case ((uint32_t) pow(2, 8)):
+                    qfault = "Ctrl PCB Temp Lo";
+                    break;
+                case ((uint32_t) pow(2, 9)):
+                    qfault = "Ctrl PCB Temp Hi";
+                    break;
+                case ((uint32_t) pow(2, 10)):
+                    qfault = "Gate Drive PCB Temp Low";
+                    break;
+                case ((uint32_t) pow(2, 11)):
+                    qfault = "Gate Drive PCB Temp Hi";
+                    break;
+                case ((uint32_t) pow(2, 12)):
+                    qfault = "5V Sense Volt Lo";
+                    break;
+                case ((uint32_t) pow(2, 13)):
+                    qfault = "5V Sense Volt Hi";
+                    break;
+                case ((uint32_t) pow(2, 14)):
+                    qfault = "12V Sense Volt Lo";
+                    break;
+                case ((uint32_t) pow(2, 15)):
+                    qfault = "12V Sense Volt Hi";
+                    break;
+                case ((uint32_t) pow(2, 16)):
+                    qfault = "2.5V Sense Volt Lo";
+                    break;
+                case ((uint32_t) pow(2, 17)):
+                    qfault = "2.5V Sense Volt Hi";
+                    break;
+                case ((uint32_t) pow(2, 18)):
+                    qfault = "1.5V Sense Volt Lo";
+                    break;
+                case ((uint32_t) pow(2, 19)):
+                    qfault = "1.5V Sense Volt Hi";
+                    break;
+                case ((uint32_t) pow(2, 20)):
+                    qfault = "DC Bus Volt Hi";
+                    break;
+                case ((uint32_t) pow(2, 21)):
+                    qfault = "DC Bus Volt Lo";
+                    break;
+                case ((uint32_t) pow(2, 22)):
+                    qfault = "Precharge Timeout";
+                    break;
+                case ((uint32_t) pow(2, 23)):
+                    qfault = "Precharge Volt Fail";
+                    break;
+                case ((uint32_t) pow(2, 24)):
+                    qfault = "EEPROM Checksum Invalid";
+                    break;
+                case ((uint32_t) pow(2, 25)):
+                    qfault = "EEPROM Data Out of Range";
+                    break;
+                case ((uint32_t) pow(2, 26)): 
+                    qfault = "EEPROM Update Req";
+                    break;
+                case ((uint32_t) pow(2, 27)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 28)):
+                    qfault = "Gate Drive Init";
+                    break;
+                case ((uint32_t) pow(2, 29)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 30)):
+                    qfault = "Brake Shorted";
+                    break;
+                case ((uint32_t) pow(2, 31)):
+                    qfault = "Brake Open";
+                    break;
+                default:
+                    m_mcfault = "YO WTF?";
+                    break;
             }
         } else {
-            if (fault == (uint32_t) pow(2, 0)) {
-                qfault = "Motor Overspeed";
-            } else if (fault == (uint32_t) pow(2, 1)) {
-                qfault = "Overcurrent fault";
-            }else if (fault == (uint32_t) pow(2, 2)) {
-                qfault = "Overvolt fault";
-            } else if (fault == (uint32_t) pow(2, 3)) {
-                qfault = "Inverter Overtemp";
-            } else if (fault == (uint32_t) pow(2, 4)) {
-                qfault = "Accelerator Input Shorted";
-            } else if (fault == (uint32_t) pow(2, 5)) {
-                qfault = "Accelerator Input Open";
-            } else if (fault == (uint32_t) pow(2, 6)) {
-                qfault = "Direction Command Fault";
-            } else if (fault == (uint32_t) pow(2, 7)) {
-                qfault = "Inverter Response Timeout";
-            } else if (fault == (uint32_t) pow(2, 8)) {
-                qfault = "Hardware Gate/Desaturation";
-            } else if (fault == (uint32_t) pow(2, 9)) {
-                qfault = "Hardware Overcurrent";
-            } else if (fault == (uint32_t) pow(2, 10)) {
-                qfault = "Undervolt";
-            } else if (fault == (uint32_t) pow(2, 11)) {
-                qfault = "CAN Cmd Msg Lost";
-            } else if (fault == (uint32_t) pow(2, 12)) {
-                qfault = "Motor Overtemp";
-            } else if (fault == (uint32_t) pow(2, 13)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 14)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 15)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 16)) {
-                qfault = "Brake Input Shorted";
-            } else if (fault == (uint32_t) pow(2, 17)) {
-                qfault = "Brake Input Open";
-            } else if (fault == (uint32_t) pow(2, 18)) {
-                qfault = "Module A Overtemp";
-            } else if (fault == (uint32_t) pow(2, 19)) {
-                qfault = "Module B Overtemp";
-            } else if (fault == (uint32_t) pow(2, 20)) {
-                qfault = "Module C Overtemp";
-            } else if (fault == (uint32_t) pow(2, 21)) {
-                qfault = "PCB Overtemp";
-            } else if (fault == (uint32_t) pow(2, 22)) {
-                qfault = "GDB1 Overtemp";
-            } else if (fault == (uint32_t) pow(2, 23)) {
-                qfault = "GDB2 Overtemp";
-            } else if (fault == (uint32_t) pow(2, 24)) {
-                qfault = "GDB3 Overtemp";
-            } else if (fault == (uint32_t) pow(2, 25)) {
-                qfault = "Curr Sensor fault";
-            } else if (fault == (uint32_t) pow(2, 26)) {
-                qfault = "Gate Driver Overvolt";
-            } else if (fault == (uint32_t) pow(2, 27)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 28)) {
-                qfault = "Hardware Overvolt";
-            } else if (fault == (uint32_t) pow(2, 29)) {
-                qfault = "Reserved";
-            } else if (fault == (uint32_t) pow(2, 30)) {
-                qfault = "Resolver Fault";
-            } else if (fault == (uint32_t) pow(2, 31)) {
-                qfault = "Reserved";
+            switch (fault) {
+                case ((uint32_t) pow(2, 0)):
+                    qfault = "Motor Overspeed";
+                    break;
+                case (fault == (uint32_t) pow(2, 1)):
+                    qfault = "Overcurrent fault";
+                    break;
+                case ((uint32_t) pow(2, 2)):
+                    qfault = "Overvolt fault";
+                    break;
+                case ((uint32_t) pow(2, 3)):
+                    qfault = "Inverter Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 4)):
+                    qfault = "Accelerator Input Shorted";
+                    break;
+                case ((uint32_t) pow(2, 5)):
+                    qfault = "Accelerator Input Open";
+                    break;
+                case ((uint32_t) pow(2, 6)):
+                    qfault = "Direction Command Fault";
+                    break;
+                case ((uint32_t) pow(2, 7)):
+                    qfault = "Inverter Response Timeout";
+                    break;
+                case ((uint32_t) pow(2, 8)):
+                    qfault = "Hardware Gate/Desaturation";
+                    break;
+                case ((uint32_t) pow(2, 9)):
+                    qfault = "Hardware Overcurrent";
+                    break;
+                case ((uint32_t) pow(2, 10)):
+                    qfault = "Undervolt";
+                    break;
+                case ((uint32_t) pow(2, 11)):
+                    qfault = "CAN Cmd Msg Lost";
+                    break;
+                case ((uint32_t) pow(2, 12)):
+                    qfault = "Motor Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 13)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 14)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 15)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 16)):
+                    qfault = "Brake Input Shorted";
+                    break;
+                case ((uint32_t) pow(2, 17)):
+                    qfault = "Brake Input Open";
+                    break;
+                case ((uint32_t) pow(2, 18)):
+                    qfault = "Module A Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 19)):
+                    qfault = "Module B Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 20)):
+                    qfault = "Module C Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 21)):
+                    qfault = "PCB Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 22)):
+                    qfault = "GDB1 Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 23)):
+                    qfault = "GDB2 Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 24)):
+                    qfault = "GDB3 Overtemp";
+                    break;
+                case ((uint32_t) pow(2, 25)):
+                    qfault = "Curr Sensor fault";
+                    break;
+                case ((uint32_t) pow(2, 26)):
+                    qfault = "Gate Driver Overvolt";
+                    break;
+                case ((uint32_t) pow(2, 27)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 28)):
+                    qfault = "Hardware Overvolt";
+                    break;
+                case ((uint32_t) pow(2, 29)):
+                    qfault = "Reserved";
+                    break;
+                case ((uint32_t) pow(2, 30)):
+                    qfault = "Resolver Fault";
+                    break;
+                case ((uint32_t) pow(2, 31)):
+                    qfault = "Reserved";
+                    break;
+                default:
+                    m_mcfault = "YO WTF?";
+                    break;
             }
         }
-
-        if (m_mcfault != qfault) {
-            m_mcfault = qfault;
-            emit mcfaultChanged();
-        }
+        prevfault = fault;
+        emit mcfaultChanged();
     }
 
     void Variables::setpacktemp(int temp) {
