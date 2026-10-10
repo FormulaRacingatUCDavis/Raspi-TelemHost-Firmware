@@ -142,18 +142,8 @@ Rectangle {
             Text {
                 id: vehiclestateavalue
                 text: Data.vehiclestate
+                fontSizeMode: Text.Fit
                 font.pixelSize: mainwindow.fullfontsize
-                onTextChanged: {
-                    if (Data.vehiclestate.length < 10) {
-                        font.pixelSize = mainwindow.fullfontsize
-                    } else if (Data.vehiclestate.length == 10) {
-                        font.pixelSize = mainwindow.fullfontsize * 0.75
-                    } else if (Data.vehiclestate.length == 11) {
-                        font.pixelSize = mainwindow.fullfontsize * 0.7
-                    } else if (Data.vehiclestate.length >= 12) {
-                        font.pixelSize = mainwindow.fullfontsize * 0.6
-                    }
-                }
                 font.family: mainwindow.typeface
                 font.bold: true
                 color: "black"
