@@ -28,7 +28,6 @@ Rectangle {
 
         property real titlefontsize: mainwindow.width / 32
         property real valuefontsize: mainwindow.width * 0.04
-        property string typeface: "Helvetica"
 
         Rectangle {
             id: packsocbox
@@ -45,8 +44,9 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: (Data.soc == -1) ? "" : Data.soc + "%"
+                
                 font.pixelSize: grid.valuefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -60,7 +60,7 @@ Rectangle {
                 y: grid.y
                 text: "PACK SOC"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -81,7 +81,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 text: (Data.packtemp == -1) ? "" : Data.packtemp + "C"
                 font.pixelSize: grid.valuefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -95,7 +95,7 @@ Rectangle {
                 y: grid.y
                 text: "PACK TEMP"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -112,11 +112,13 @@ Rectangle {
                 id: shutdowncircuitvalue
                 color: "black"
                 anchors.fill: parent
+                anchors.margin: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.shutdowncircuit
-                font.pixelSize: (Data.shutdowncircuit.length < 11) ? grid.valuefontsize : grid.valuefontsize * 0.7
-                font.family: grid.typeface
+                fontSizeMode: Text.Fit
+                font.pixelSize: grid.valuefontsize
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -130,7 +132,7 @@ Rectangle {
                 y: grid.y
                 text: "SHUTDOWN CIRCUIT"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -151,7 +153,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                 font.pixelSize: grid.valuefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -165,7 +167,7 @@ Rectangle {
                 y: grid.y
                 text: "MC TEMP"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -186,7 +188,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 text: (Data.motortemp == -1) ? "" : Data.motortemp + "C"
                 font.pixelSize: grid.valuefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -200,7 +202,7 @@ Rectangle {
                 y: grid.y
                 text: "MOTOR TEMP"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -217,11 +219,13 @@ Rectangle {
                 id: mcstatevalue
                 color: "black"
                 anchors.fill: parent
+                anchors.margin: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.mcfault
+                fontSizeMode: Text.Fit
                 font.pixelSize: grid.valuefontsize * 0.45
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -235,7 +239,7 @@ Rectangle {
                 y: grid.y
                 text: "MC STATE"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -252,11 +256,13 @@ Rectangle {
                 id: vehiclestatevalue
                 color: "black"
                 anchors.fill: parent
+                anchors.margin: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.vehiclestate
-                font.pixelSize: (Data.vehiclestate.length < 10) ? grid.valuefontsize : grid.valuefontsize * 0.8
-                font.family: grid.typeface
+                fontSizeMode: Text.Fit
+                font.pixelSize: grid.valuefontsize 
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -270,7 +276,7 @@ Rectangle {
                 y: grid.y
                 text: "STATE"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -291,7 +297,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 text: (Data.glvv == -1) ? "" : "" + Data.glvv.toFixed(2)
                 font.pixelSize: grid.valuefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -305,7 +311,7 @@ Rectangle {
                 y: grid.y
                 text: "GLV V"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }
@@ -326,7 +332,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 text: (Data.accum_power == -1) ? "" : "" + Data.accum_power
                 font.pixelSize: grid.valuefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
 
@@ -340,7 +346,7 @@ Rectangle {
                 y: grid.y
                 text: "POWER"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
             }
         }

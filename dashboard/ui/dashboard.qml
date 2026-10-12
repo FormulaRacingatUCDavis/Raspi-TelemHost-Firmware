@@ -36,6 +36,8 @@ Window {
     property string blue: "#6fb4ff"
     property string pink: "#FF10F0"
 
+    property string typeface: (!Data.errormode) ? "Helvetica" : "Piboto"
+
     Loader {
         id: pageLoader
         anchors.fill: parent

@@ -26,7 +26,6 @@ Rectangle {
         columnSpacing: mainwindow.width / 48
         rowSpacing: grid.y
 
-        property string typeface: "Helvetica"
         property real fullfontsize: mainwindow.width * 0.075
         property real smallerfontsize: mainwindow.width * 0.06
         property real titlefontsize: mainwindow.width / 34
@@ -43,7 +42,7 @@ Rectangle {
                 id: speedvalue
                 text: (Data.mph == -1) ? "" : "" + Data.mph
                 font.pixelSize: grid.fullfontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "black"
                 anchors.fill: parent
@@ -55,7 +54,7 @@ Rectangle {
                 id: speedtext
                 text: "MPH"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "yellow"
                 anchors.left: parent.left
@@ -79,7 +78,7 @@ Rectangle {
                 id: mctempvalue
                 text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                 font.pixelSize: grid.fullfontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "black"
                 anchors.fill: parent
@@ -91,7 +90,7 @@ Rectangle {
                 id: mctemptext
                 text: "MC TEMP"
                 font.pixelSize: grid.titlefontsize
-                font.family: grid.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "yellow"
                 anchors.left: parent.left
@@ -122,7 +121,7 @@ Rectangle {
                     id: chargevalue
                     text: (Data.soc == -1) ? "" : Data.soc + "%"
                     font.pixelSize: grid.smallerfontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -134,7 +133,7 @@ Rectangle {
                     id: chargetext
                     text: "PACK SOCIT"
                     font.pixelSize: grid.titlefontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
@@ -157,7 +156,7 @@ Rectangle {
                     id: best_laptimevalue
                     text: "" // (Data.best_lap_time == 0.0) ? "" : "" + Data.best_lap_time
                     font.pixelSize: grid.smallerfontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -169,7 +168,7 @@ Rectangle {
                     id: best_laptimetext
                     text: "BEST LAP TIME"
                     font.pixelSize: grid.titlefontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
@@ -200,11 +199,13 @@ Rectangle {
                 Text {
                     id: vehiclestatevalue
                     text: Data.vehiclestate
+                    fontSizeMode: Text.Fit
                     font.pixelSize: grid.smallerfontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
+                    anchors.margin: parent.width * 0.05
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -213,7 +214,7 @@ Rectangle {
                     id: vehiclestatetext
                     text: "STATE"
                     font.pixelSize: grid.titlefontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
@@ -235,7 +236,7 @@ Rectangle {
                     id: glvvvalue
                     text: (Data.glvv == -1) ? "" : "" + Data.glvv
                     font.pixelSize: grid.smallerfontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -247,7 +248,7 @@ Rectangle {
                     id: glvvtext
                     text: "GLV V"
                     font.pixelSize: grid.titlefontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
@@ -284,7 +285,7 @@ Rectangle {
                     id: prev_laptimevalue
                     text: "" // (Data.prev_lap_time == 0.0) ? "" : "" + Data.prev_lap_time
                     font.pixelSize: grid.smallerfontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -296,7 +297,7 @@ Rectangle {
                     id: prev_laptimetext
                     text: "PREVIOUS LAP TIME"
                     font.pixelSize: grid.titlefontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
@@ -318,7 +319,7 @@ Rectangle {
                     id: curr_laptimevalue
                     text: "" // Data.curr_lap_time
                     font.pixelSize: grid.smallerfontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -330,7 +331,7 @@ Rectangle {
                     id: curr_laptimetext
                     text: "LAP TIME"
                     font.pixelSize: grid.titlefontsize
-                    font.family: grid.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left

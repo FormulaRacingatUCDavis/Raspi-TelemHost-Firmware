@@ -17,7 +17,6 @@ Rectangle {
         }
     }
 
-    property string typeface: "Helvetica"
     property real fullfontsize: mainwindow.width * 0.08
     property real smallerfontsize: mainwindow.width * 0.065
     property real titlefontsize: mainwindow.width * 0.04
@@ -47,7 +46,7 @@ Rectangle {
                 id: speedvalue
                 text: (Data.mph == -1) ? "" : "" + Data.mph
                 font.pixelSize: mainwindow.fullfontsize
-                font.family: mainwindow.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "black"
                 anchors.fill: parent
@@ -59,7 +58,7 @@ Rectangle {
                 id: speedtext
                 text: "MPH"
                 font.pixelSize: mainwindow.titlefontsize
-                font.family: mainwindow.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "yellow"
                 anchors.left: parent.left
@@ -88,7 +87,7 @@ Rectangle {
                     id: chargevalue
                     text: (Data.soc == -1) ? "" : Data.soc.toFixed(2) + "%"
                     font.pixelSize: mainwindow.smallerfontsize
-                    font.family: mainwindow.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -100,7 +99,7 @@ Rectangle {
                     id: chargetext
                     text: "PACK SOCIT"
                     font.pixelSize: mainwindow.titlefontsize
-                    font.family: mainwindow.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "yellow"
                     anchors.left: parent.left
@@ -121,7 +120,7 @@ Rectangle {
                     id: mctemptext
                     text: (Data.mctemp == -1) ? "" : Data.mctemp + "C"
                     font.pixelSize: mainwindow.smallerfontsize
-                    font.family: mainwindow.typeface
+                    font.family: mainpage.typeface
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
@@ -144,10 +143,11 @@ Rectangle {
                 text: Data.vehiclestate
                 fontSizeMode: Text.Fit
                 font.pixelSize: mainwindow.fullfontsize
-                font.family: mainwindow.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "black"
                 anchors.fill: parent
+                anchors.margin: parent.width * 0.5
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -156,7 +156,7 @@ Rectangle {
                 id: vehiclestatetext
                 text: "STATE"
                 font.pixelSize: mainwindow.titlefontsize
-                font.family: mainwindow.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "yellow"
                 anchors.left: parent.left
@@ -179,7 +179,7 @@ Rectangle {
                 id: glvvvalue
                 text: (Data.glvv == -1) ? "" : "" + Data.glvv.toFixed(2)
                 font.pixelSize: mainwindow.fullfontsize
-                font.family: mainwindow.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "black"
                 anchors.fill: parent
@@ -191,7 +191,7 @@ Rectangle {
                 id: glvvtext
                 text: "GLV V"
                 font.pixelSize: mainwindow.titlefontsize
-                font.family: mainwindow.typeface
+                font.family: mainpage.typeface
                 font.bold: true
                 color: "yellow"
                 anchors.left: parent.left

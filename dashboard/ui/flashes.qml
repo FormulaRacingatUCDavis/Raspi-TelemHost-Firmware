@@ -27,6 +27,7 @@ Item {
             id: faulttext
             color: "black"
             font.pixelSize: (Data.vehiclestate.length > 9) ? faultpopup.width * 0.1 : faultpopup.width * 0.15
+            font.family: mainpage.typeface
             font.bold: true
             text: Data.vehiclestate
             onTextChanged: closetimer.restart()
@@ -64,6 +65,7 @@ Item {
                     id: torqueval
                     color: "black"
                     font.pixelSize: torquepopup.width * 0.15
+                    font.family: mainpage.typeface
                     font.bold: true
                     text: (Data.torquelimit == -1) ? "" : "" + Data.torquelimit + "%"
                     onTextChanged: closetimer.restart()
@@ -132,6 +134,7 @@ Item {
                     id: launchcontrolval
                     color: "black"
                     font.pixelSize: launchcontrolpopup.width * 0.15
+                    font.family: mainpage.typeface
                     font.bold: true
                     text: (Data.launchcontrol == -1) ? "" : Data.launchcontrol + "%"
                     onTextChanged: closetimer.restart()

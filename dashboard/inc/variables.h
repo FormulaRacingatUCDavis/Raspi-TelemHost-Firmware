@@ -62,6 +62,8 @@ namespace dashboard
 
         Q_PROPERTY(bool loggerindicator READ loggerindicator NOTIFY loggerindicatorChanged)
 
+        Q_PROPERTY(bool errormode READ errormode NOTIFY errormodeChanged)
+
 /* LAPTIME TO ADD
         Q_PROPERTY(double curr_lap_time READ curr_lap_time NOTIFY curr_lap_timeChanged)
 
@@ -114,6 +116,8 @@ namespace dashboard
         QString dashboardpage();
 
         bool loggerindicator();
+
+        bool errormode();
 
 /* LAPTIME TO ADD
         double curr_lap_time();
@@ -207,6 +211,8 @@ namespace dashboard
 
         void loggerindicatorChanged();
 
+        void errormodeChanged();
+
 /* LAPTIME TO ADD      
         void curr_lap_timeChanged();
         
@@ -271,6 +277,8 @@ namespace dashboard
         QString m_dashboardpage = "drive.qml";
 
         bool m_loggerindicator = false;
+
+        bool m_errormode = false;
 
 /* LAPTIME TO ADD
         // xsens variables

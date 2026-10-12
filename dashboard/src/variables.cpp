@@ -122,6 +122,8 @@ namespace dashboard
             return;
         }
 
+        m_errormode = false;
+
         if (bms == false) {
             switch (state) {
                 case 0:
@@ -197,6 +199,7 @@ namespace dashboard
                 default:
                     m_vehiclestate = "YO WTF?";
                     m_vehiclestate_color = red;
+                    m_errormode = true;
                     showEventPopUp(0);
                     break;
             }
@@ -241,6 +244,7 @@ namespace dashboard
                 default:
                     m_vehiclestate = "YO WTF?";
                     m_vehiclestate_color = red;
+                    m_errormode = true;
                     showEventPopUp(0);
                     break;
             }
@@ -248,6 +252,7 @@ namespace dashboard
         prevstate = state;
         emit vehiclestateChanged();
         emit vehiclestate_colorChanged();
+        emit errormodeChanged();
     }
 
     void Variables::setsoc(int charge) {
@@ -301,213 +306,218 @@ namespace dashboard
             return;
         }
 
+        m_errormode = false;
+
         if (post) {
             switch (fault) {
                 case ((uint32_t) pow(2, 0)):
                     m_mcfault = "Hardware Gate/Desaturation";
                     break;
                 case ((uint32_t) pow(2, 1)):
-                    qfault = "HW Overcurrent";
+                    m_mcfault = "HW Overcurrent";
                     break;
                 case ((uint32_t) pow(2, 2)):
-                    qfault = "Accelerator Shorted";
+                    m_mcfault = "Accelerator Shorted";
                     break;
                 case ((uint32_t) pow(2, 3)):
-                    qfault = "Accelerator Open";
+                    m_mcfault = "Accelerator Open";
                     break;
                 case ((uint32_t) pow(2, 4)):
-                    qfault = "Curr Sensor Lo";
+                    m_mcfault = "Curr Sensor Lo";
                     break;
                 case ((uint32_t) pow(2, 5)):
-                    qfault = "Curr Sensor Hi";
+                    m_mcfault = "Curr Sensor Hi";
                     break;
                 case ((uint32_t) pow(2, 6)):
-                    qfault = "Module Temp Lo";
+                    m_mcfault = "Module Temp Lo";
                     break;
                 case ((uint32_t) pow(2, 7)):
-                    qfault = "Module Temp Hi";
+                    m_mcfault = "Module Temp Hi";
                     break;
                 case ((uint32_t) pow(2, 8)):
-                    qfault = "Ctrl PCB Temp Lo";
+                    m_mcfault = "Ctrl PCB Temp Lo";
                     break;
                 case ((uint32_t) pow(2, 9)):
-                    qfault = "Ctrl PCB Temp Hi";
+                    m_mcfault = "Ctrl PCB Temp Hi";
                     break;
                 case ((uint32_t) pow(2, 10)):
-                    qfault = "Gate Drive PCB Temp Low";
+                    m_mcfault = "Gate Drive PCB Temp Low";
                     break;
                 case ((uint32_t) pow(2, 11)):
-                    qfault = "Gate Drive PCB Temp Hi";
+                    m_mcfault = "Gate Drive PCB Temp Hi";
                     break;
                 case ((uint32_t) pow(2, 12)):
-                    qfault = "5V Sense Volt Lo";
+                    m_mcfault = "5V Sense Volt Lo";
                     break;
                 case ((uint32_t) pow(2, 13)):
-                    qfault = "5V Sense Volt Hi";
+                    m_mcfault = "5V Sense Volt Hi";
                     break;
                 case ((uint32_t) pow(2, 14)):
-                    qfault = "12V Sense Volt Lo";
+                    m_mcfault = "12V Sense Volt Lo";
                     break;
                 case ((uint32_t) pow(2, 15)):
-                    qfault = "12V Sense Volt Hi";
+                    m_mcfault = "12V Sense Volt Hi";
                     break;
                 case ((uint32_t) pow(2, 16)):
-                    qfault = "2.5V Sense Volt Lo";
+                    m_mcfault = "2.5V Sense Volt Lo";
                     break;
                 case ((uint32_t) pow(2, 17)):
-                    qfault = "2.5V Sense Volt Hi";
+                    m_mcfault = "2.5V Sense Volt Hi";
                     break;
                 case ((uint32_t) pow(2, 18)):
-                    qfault = "1.5V Sense Volt Lo";
+                    m_mcfault = "1.5V Sense Volt Lo";
                     break;
                 case ((uint32_t) pow(2, 19)):
-                    qfault = "1.5V Sense Volt Hi";
+                    m_mcfault = "1.5V Sense Volt Hi";
                     break;
                 case ((uint32_t) pow(2, 20)):
-                    qfault = "DC Bus Volt Hi";
+                    m_mcfault = "DC Bus Volt Hi";
                     break;
                 case ((uint32_t) pow(2, 21)):
-                    qfault = "DC Bus Volt Lo";
+                    m_mcfault = "DC Bus Volt Lo";
                     break;
                 case ((uint32_t) pow(2, 22)):
-                    qfault = "Precharge Timeout";
+                    m_mcfault = "Precharge Timeout";
                     break;
                 case ((uint32_t) pow(2, 23)):
-                    qfault = "Precharge Volt Fail";
+                    m_mcfault = "Precharge Volt Fail";
                     break;
                 case ((uint32_t) pow(2, 24)):
-                    qfault = "EEPROM Checksum Invalid";
+                    m_mcfault = "EEPROM Checksum Invalid";
                     break;
                 case ((uint32_t) pow(2, 25)):
-                    qfault = "EEPROM Data Out of Range";
+                    m_mcfault = "EEPROM Data Out of Range";
                     break;
                 case ((uint32_t) pow(2, 26)): 
-                    qfault = "EEPROM Update Req";
+                    m_mcfault = "EEPROM Update Req";
                     break;
                 case ((uint32_t) pow(2, 27)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 28)):
-                    qfault = "Gate Drive Init";
+                    m_mcfault = "Gate Drive Init";
                     break;
                 case ((uint32_t) pow(2, 29)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 30)):
-                    qfault = "Brake Shorted";
+                    m_mcfault = "Brake Shorted";
                     break;
                 case ((uint32_t) pow(2, 31)):
-                    qfault = "Brake Open";
+                    m_mcfault = "Brake Open";
                     break;
                 default:
                     m_mcfault = "YO WTF?";
+                    m_errormode = true;
                     break;
             }
         } else {
             switch (fault) {
                 case ((uint32_t) pow(2, 0)):
-                    qfault = "Motor Overspeed";
+                    m_mcfault = "Motor Overspeed";
                     break;
                 case (fault == (uint32_t) pow(2, 1)):
-                    qfault = "Overcurrent fault";
+                    m_mcfault = "Overcurrent fault";
                     break;
                 case ((uint32_t) pow(2, 2)):
-                    qfault = "Overvolt fault";
+                    m_mcfault = "Overvolt fault";
                     break;
                 case ((uint32_t) pow(2, 3)):
-                    qfault = "Inverter Overtemp";
+                    m_mcfault = "Inverter Overtemp";
                     break;
                 case ((uint32_t) pow(2, 4)):
-                    qfault = "Accelerator Input Shorted";
+                    m_mcfault = "Accelerator Input Shorted";
                     break;
                 case ((uint32_t) pow(2, 5)):
-                    qfault = "Accelerator Input Open";
+                    m_mcfault = "Accelerator Input Open";
                     break;
                 case ((uint32_t) pow(2, 6)):
-                    qfault = "Direction Command Fault";
+                    m_mcfault = "Direction Command Fault";
                     break;
                 case ((uint32_t) pow(2, 7)):
-                    qfault = "Inverter Response Timeout";
+                    m_mcfault = "Inverter Response Timeout";
                     break;
                 case ((uint32_t) pow(2, 8)):
-                    qfault = "Hardware Gate/Desaturation";
+                    m_mcfault = "Hardware Gate/Desaturation";
                     break;
                 case ((uint32_t) pow(2, 9)):
-                    qfault = "Hardware Overcurrent";
+                    m_mcfault = "Hardware Overcurrent";
                     break;
                 case ((uint32_t) pow(2, 10)):
-                    qfault = "Undervolt";
+                    m_mcfault = "Undervolt";
                     break;
                 case ((uint32_t) pow(2, 11)):
-                    qfault = "CAN Cmd Msg Lost";
+                    m_mcfault = "CAN Cmd Msg Lost";
                     break;
                 case ((uint32_t) pow(2, 12)):
-                    qfault = "Motor Overtemp";
+                    m_mcfault = "Motor Overtemp";
                     break;
                 case ((uint32_t) pow(2, 13)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 14)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 15)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 16)):
-                    qfault = "Brake Input Shorted";
+                    m_mcfault = "Brake Input Shorted";
                     break;
                 case ((uint32_t) pow(2, 17)):
-                    qfault = "Brake Input Open";
+                    m_mcfault = "Brake Input Open";
                     break;
                 case ((uint32_t) pow(2, 18)):
-                    qfault = "Module A Overtemp";
+                    m_mcfault = "Module A Overtemp";
                     break;
                 case ((uint32_t) pow(2, 19)):
-                    qfault = "Module B Overtemp";
+                    m_mcfault = "Module B Overtemp";
                     break;
                 case ((uint32_t) pow(2, 20)):
-                    qfault = "Module C Overtemp";
+                    m_mcfault = "Module C Overtemp";
                     break;
                 case ((uint32_t) pow(2, 21)):
-                    qfault = "PCB Overtemp";
+                    m_mcfault = "PCB Overtemp";
                     break;
                 case ((uint32_t) pow(2, 22)):
-                    qfault = "GDB1 Overtemp";
+                    m_mcfault = "GDB1 Overtemp";
                     break;
                 case ((uint32_t) pow(2, 23)):
-                    qfault = "GDB2 Overtemp";
+                    m_mcfault = "GDB2 Overtemp";
                     break;
                 case ((uint32_t) pow(2, 24)):
-                    qfault = "GDB3 Overtemp";
+                    m_mcfault = "GDB3 Overtemp";
                     break;
                 case ((uint32_t) pow(2, 25)):
-                    qfault = "Curr Sensor fault";
+                    m_mcfault = "Curr Sensor fault";
                     break;
                 case ((uint32_t) pow(2, 26)):
-                    qfault = "Gate Driver Overvolt";
+                    m_mcfault = "Gate Driver Overvolt";
                     break;
                 case ((uint32_t) pow(2, 27)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 28)):
-                    qfault = "Hardware Overvolt";
+                    m_mcfault = "Hardware Overvolt";
                     break;
                 case ((uint32_t) pow(2, 29)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 case ((uint32_t) pow(2, 30)):
-                    qfault = "Resolver Fault";
+                    m_mcfault = "Resolver Fault";
                     break;
                 case ((uint32_t) pow(2, 31)):
-                    qfault = "Reserved";
+                    m_mcfault = "Reserved";
                     break;
                 default:
                     m_mcfault = "YO WTF?";
+                    m_errormode = true;
                     break;
             }
         }
         prevfault = fault;
         emit mcfaultChanged();
+        emit errormodeChanged();
     }
 
     void Variables::setpacktemp(int temp) {
