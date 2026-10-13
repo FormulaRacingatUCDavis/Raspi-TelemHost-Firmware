@@ -1,0 +1,554 @@
+[
+    {
+        "id": "999c06ba44161ae7",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "175d0a9d1423c451",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "5755c454fca6f8be",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#fcfcfd",
+            "primary": "#0d74ce",
+            "bgPage": "#f9f9fb",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9e0"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "6169d039ac9e9d01",
+        "type": "ui-page",
+        "name": "Telemetry GUI",
+        "ui": "175d0a9d1423c451",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "5755c454fca6f8be",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "tabs": [],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "f00f8328f47360b6",
+        "type": "ui-group",
+        "name": "Download CAN Logs",
+        "page": "6169d039ac9e9d01",
+        "width": 6,
+        "height": 1,
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default",
+        "tab": ""
+    },
+    {
+        "id": "fc0502477daedbd4",
+        "type": "ui-group",
+        "name": "Log",
+        "page": "6169d039ac9e9d01",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default",
+        "tab": ""
+    },
+    {
+        "id": "3eb72aeff7f65baf",
+        "type": "http request",
+        "z": "999c06ba44161ae7",
+        "name": "List of raw CAN data logs",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://backend:8000/api/logs/list",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 450,
+        "y": 80,
+        "wires": [
+            [
+                "572ddecace8e3d28"
+            ]
+        ]
+    },
+    {
+        "id": "2efcc844c6e4805c",
+        "type": "ui-button",
+        "z": "999c06ba44161ae7",
+        "group": "f00f8328f47360b6",
+        "name": "Download Logs",
+        "label": "Download",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 240,
+        "y": 280,
+        "wires": [
+            [
+                "86f5141cef4b9c1a"
+            ]
+        ]
+    },
+    {
+        "id": "4ca54881313bad61",
+        "type": "ui-radio-group",
+        "z": "999c06ba44161ae7",
+        "group": "f00f8328f47360b6",
+        "name": "Select type of log",
+        "label": "",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Raw (CANDump)",
+                "value": "raw",
+                "type": "str"
+            },
+            {
+                "label": "Processed (CSV)",
+                "value": "parsed",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 250,
+        "y": 160,
+        "wires": [
+            [
+                "316b143978e477b9"
+            ]
+        ]
+    },
+    {
+        "id": "572ddecace8e3d28",
+        "type": "ui-table",
+        "z": "999c06ba44161ae7",
+        "group": "f00f8328f47360b6",
+        "name": "CAN data logs",
+        "label": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": false,
+        "showSearch": false,
+        "deselect": true,
+        "selectionType": "checkbox",
+        "columns": [
+            {
+                "title": "File Name",
+                "key": "file_name",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Created",
+                "key": "creation_date",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Size (R)",
+                "key": "file_size_raw",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Size (P)",
+                "key": "file_size_parsed",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            }
+        ],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "action": "replace",
+        "className": "",
+        "x": 680,
+        "y": 80,
+        "wires": [
+            [
+                "82ae746cb37650d9"
+            ]
+        ]
+    },
+    {
+        "id": "4b48f632335fdf1d",
+        "type": "ui-event",
+        "z": "999c06ba44161ae7",
+        "ui": "175d0a9d1423c451",
+        "name": "Refresh page",
+        "x": 230,
+        "y": 80,
+        "wires": [
+            [
+                "3eb72aeff7f65baf"
+            ]
+        ]
+    },
+    {
+        "id": "82ae746cb37650d9",
+        "type": "change",
+        "z": "999c06ba44161ae7",
+        "name": "Save selected logs",
+        "rules": [
+            {
+                "t": "set",
+                "p": "selectedFiles",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 890,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "316b143978e477b9",
+        "type": "change",
+        "z": "999c06ba44161ae7",
+        "name": "Save log type",
+        "rules": [
+            {
+                "t": "set",
+                "p": "logType",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "86f5141cef4b9c1a",
+        "type": "function",
+        "z": "999c06ba44161ae7",
+        "name": "Build ZIP request",
+        "func": "\nconst files = flow.get(\"selectedFiles\") || [];\nconst type = flow.get(\"logType\");\n\nfunction error(message) {\n    return [null, { payload: message }];\n}\n\nif (!files.length || !type) {\n    return error(\"Please select files and a log type.\");\n}\n\nif (type === \"parsed\") {\n    const missing = files.filter(file =>\n        file.file_size_parsed === \"N/A\"\n    );\n\n    if (missing.length > 0) {\n        return error(\n            `${missing.length} selected file(s) have no parsed version.`\n        );\n    }\n}\n\nmsg.payload = {\n    filenames: files.map(file => file.file_name),\n    type: type\n};\n\nmsg.downloadId = msg._msgid;\n\nreturn [msg, null];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 280,
+        "wires": [
+            [
+                "69ab87a0b7b48fe4"
+            ],
+            [
+                "e221a1f6b94791c5"
+            ]
+        ]
+    },
+    {
+        "id": "69ab87a0b7b48fe4",
+        "type": "ui-template",
+        "z": "999c06ba44161ae7",
+        "group": "f00f8328f47360b6",
+        "page": "",
+        "ui": "",
+        "name": "Download in browser",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "\n<template>\n  <div style=\"display: none\"></div>\n</template>\n\n<script>\nexport default {\n  watch: {\n    async msg(msg) {\n      if (!msg?.payload?.filenames || !msg?.downloadId) return\n\n      // Prevent duplicate downloads on page refresh\n      const key = \"lastDownloadId\"\n\n      if (sessionStorage.getItem(key) === msg.downloadId) return\n\n      sessionStorage.setItem(key, msg.downloadId)\n\n      const { filenames, type } = msg.payload\n\n      try {\n        const response = await fetch(\n          `http://127.0.0.1:8000/api/can/logs/zip/${type}`,\n          {\n            method: \"POST\",\n            headers: {\n              \"Content-Type\": \"application/json\"\n            },\n            body: JSON.stringify({ filenames })\n          }\n        )\n\n        if (!response.ok) {\n          throw new Error(`HTTP ${response.status}`)\n        }\n\n        const blob = await response.blob()\n        const url = URL.createObjectURL(blob)\n\n        const a = document.createElement(\"a\")\n        a.href = url\n        a.download = \"canlogs.zip\"\n        document.body.appendChild(a)\n        a.click()\n        a.remove()\n\n        setTimeout(() => URL.revokeObjectURL(url), 1000)\n\n      } catch (error) {\n        console.error(\"ZIP download failed:\", error)\n        sessionStorage.removeItem(key)\n      }\n    }\n  }\n}\n</script>\n",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 700,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e221a1f6b94791c5",
+        "type": "ui-notification",
+        "z": "999c06ba44161ae7",
+        "ui": "175d0a9d1423c451",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 1,
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "allowConfirm": false,
+        "confirmText": "Confirm",
+        "raw": false,
+        "className": "",
+        "name": "Warn (no processed file)",
+        "x": 710,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e4be54845f65abe4",
+        "type": "ui-button",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "Start logging",
+        "label": "Record",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 330,
+        "y": 520,
+        "wires": [
+            [
+                "a58001fc215e6851"
+            ]
+        ]
+    },
+    {
+        "id": "dfe958de6d3a32d6",
+        "type": "ui-button",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "Stop logging",
+        "label": "Stop",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 330,
+        "y": 600,
+        "wires": [
+            [
+                "104df952baa32adb"
+            ]
+        ]
+    },
+    {
+        "id": "2cc12a2a47dc101a",
+        "type": "ui-text",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Logging status",
+        "label": "Status",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "Logging",
+        "valueType": "str",
+        "x": 340,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "a58001fc215e6851",
+        "type": "exec",
+        "z": "999c06ba44161ae7",
+        "command": "",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Start CANDump logging",
+        "x": 550,
+        "y": 520,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "104df952baa32adb",
+        "type": "exec",
+        "z": "999c06ba44161ae7",
+        "command": "",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Stop CANDump logging",
+        "x": 550,
+        "y": 600,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    }
+]

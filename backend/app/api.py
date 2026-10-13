@@ -11,6 +11,8 @@ import contextlib
 import asyncio
 import json
 import os
+import humanize
+from datetime import datetime
 from watchfiles import awatch
 
 from .canhelper import CANHelper
@@ -76,10 +78,12 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
+    allow_origins=[
+        "http://127.0.0.1:1880",
+        "http://localhost:1880"
+    ],
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 @app.get("/")
@@ -98,15 +102,24 @@ def zip_logs(type: str, payload: FileRequest):
     if type not in log_dirs:
         raise HTTPException(status_code=400, detail=f"Invalid log type: {type}")
 
-    log_dir = Path(log_dirs[type])
+    log_dir = Path(log_dirs[type]).resolve()
     memory_file = BytesIO()
 
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as zf:
         for filename in payload.filenames:
-            file_path = (log_dir / filename).resolve(strict=True)
+            file_path = (log_dir / filename).resolve()
 
-            if log_dir not in file_path.parents and file_path != log_dir:
-                raise HTTPException(status_code=400, detail=f"Invalid filename: {filename}")
+            if file_path.parent != log_dir:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Invalid filename: {filename}"
+                )
+
+            if not file_path.is_file():
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Log file not found: {filename}"
+                )
 
             zf.write(file_path, arcname=file_path.name)
 
@@ -160,15 +173,23 @@ async def update_telemetry_config(payload: TelemetryConfig):
 
     return {"message": "Telemetry config updated"}
 
-@app.get("/api/{source}/logs/list/{type}")
-async def get_log_list(source: str, type: str):
-    path = Path(getattr(settings, f"can_{type}_path"))
+@app.get("/api/logs/list")
+async def get_log_list():
+    raw_path = Path(settings.can_raw_path)
+    parsed_path = Path(settings.can_parsed_path)
     logs = []
 
-    for file in path.iterdir():
+    for file in raw_path.iterdir():
         if file.is_file():
             stats = file.stat()
-            logs.append({"file_name": file.name, "creation_date": stats.st_mtime,"file_size": stats.st_size})
+            parsed_file = parsed_path / file.name
+
+            logs.append({
+                "file_name": file.name,
+                "creation_date": datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
+                "file_size_raw": humanize.naturalsize(stats.st_size, binary=True),
+                "file_size_parsed": (humanize.naturalsize(parsed_file.stat().st_size, binary=True) if parsed_file.is_file() else "N/A")
+            })
 
     logs.sort(key=lambda x: x["creation_date"], reverse=True)
 

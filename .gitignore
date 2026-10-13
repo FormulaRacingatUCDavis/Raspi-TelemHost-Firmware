@@ -10,5 +10,6 @@ CMakeUserPresets.json
 
 # Node-RED
 resources/node-red/node_modules/
+resources/node-red/.npm/
 resources/node-red/.config.*
 resources/node-red/*_cred.json
