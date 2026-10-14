@@ -1,7 +1,7 @@
 #!/bin/bash
-export DISPLAY=:0
 
-# Wait for display (LCD or VNC)
+# Display GUI to LCD screen
+export DISPLAY=:0
 for i in {1..20}; do
     if [ -S /tmp/.X11-unix/X0 ]; then
         echo "Display ready"
@@ -11,21 +11,8 @@ for i in {1..20}; do
     sleep 2
 done
 
-# Set up virtual CAN for testing
-sudo ip link add dev vcan0 type vcan
-sudo ip link set up vcan0
-sudo ip link add dev vcan1 type vcan
-sudo ip link set up vcan1
-
-# Set up CAN channels
-sudo ip link set can0 up type can bitrate 500000
-sudo ip link set can1 up type can bitrate 500000
-sudo ifconfig can0 txqueuelen 65536
-sudo ifconfig can1 txqueuelen 65536
-
 # Run dashboard if display available, else fallback
 cd /home/frucd/Raspi-TelemHost-Firmware
-
 if [ -S /tmp/.X11-unix/X0 ]; then
     echo "Starting dashboard"
     ./dashboard/build/driver_dashboard

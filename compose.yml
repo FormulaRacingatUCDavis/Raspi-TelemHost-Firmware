@@ -48,12 +48,11 @@ services:
       - ./resources/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   node-red:
-    image: nodered/node-red:latest
+    build:
+      context: ./resources/node-red
     container_name: node-red
+    network_mode: host
     restart: unless-stopped
-
-    ports:
-      - "127.0.0.1:1880:1880"
 
     environment:
       TZ: America/Los_Angeles
@@ -61,6 +60,5 @@ services:
 
     volumes:
       - ./resources/node-red:/data
-
-    depends_on:
-      - mosquitto
+      - ./scripts:/app/scripts
+      - ./data:/app/data

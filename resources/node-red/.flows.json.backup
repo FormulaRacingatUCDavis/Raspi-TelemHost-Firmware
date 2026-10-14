@@ -53,7 +53,7 @@
         "ui": "175d0a9d1423c451",
         "path": "/page1",
         "icon": "home",
-        "layout": "grid",
+        "layout": "tabs",
         "theme": "5755c454fca6f8be",
         "breakpoints": [
             {
@@ -84,13 +84,13 @@
         "disabled": "false"
     },
     {
-        "id": "f00f8328f47360b6",
+        "id": "fc0502477daedbd4",
         "type": "ui-group",
-        "name": "Download CAN Logs",
+        "name": "Logging",
         "page": "6169d039ac9e9d01",
         "width": 6,
         "height": 1,
-        "order": 2,
+        "order": 1,
         "showTitle": true,
         "className": "",
         "visible": "true",
@@ -99,14 +99,14 @@
         "tab": ""
     },
     {
-        "id": "fc0502477daedbd4",
+        "id": "80bcc988a33ffde4",
         "type": "ui-group",
-        "name": "Log",
+        "name": "Live Data",
         "page": "6169d039ac9e9d01",
         "width": 6,
         "height": 1,
-        "order": 1,
-        "showTitle": false,
+        "order": 2,
+        "showTitle": true,
         "className": "",
         "visible": "true",
         "disabled": "false",
@@ -121,7 +121,7 @@
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
-        "url": "http://backend:8000/api/logs/list",
+        "url": "http://127.0.0.1:8000/api/logs/list",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -141,10 +141,10 @@
         "id": "2efcc844c6e4805c",
         "type": "ui-button",
         "z": "999c06ba44161ae7",
-        "group": "f00f8328f47360b6",
+        "group": "fc0502477daedbd4",
         "name": "Download Logs",
         "label": "Download",
-        "order": 3,
+        "order": 7,
         "width": 0,
         "height": 0,
         "emulateClick": false,
@@ -180,10 +180,10 @@
         "id": "4ca54881313bad61",
         "type": "ui-radio-group",
         "z": "999c06ba44161ae7",
-        "group": "f00f8328f47360b6",
+        "group": "fc0502477daedbd4",
         "name": "Select type of log",
         "label": "",
-        "order": 4,
+        "order": 6,
         "width": 0,
         "height": 0,
         "columns": 1,
@@ -216,16 +216,16 @@
         "id": "572ddecace8e3d28",
         "type": "ui-table",
         "z": "999c06ba44161ae7",
-        "group": "f00f8328f47360b6",
+        "group": "fc0502477daedbd4",
         "name": "CAN data logs",
         "label": "",
-        "order": 2,
+        "order": 5,
         "width": 0,
         "height": 0,
         "maxrows": 0,
         "passthru": false,
         "autocols": false,
-        "showSearch": false,
+        "showSearch": true,
         "deselect": true,
         "selectionType": "checkbox",
         "columns": [
@@ -365,11 +365,11 @@
         "id": "69ab87a0b7b48fe4",
         "type": "ui-template",
         "z": "999c06ba44161ae7",
-        "group": "f00f8328f47360b6",
+        "group": "fc0502477daedbd4",
         "page": "",
         "ui": "",
         "name": "Download in browser",
-        "order": 1,
+        "order": 4,
         "width": 0,
         "height": 0,
         "head": "",
@@ -440,8 +440,8 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 330,
-        "y": 520,
+        "x": 570,
+        "y": 440,
         "wires": [
             [
                 "a58001fc215e6851"
@@ -465,7 +465,7 @@
         "className": "",
         "icon": "",
         "iconPosition": "left",
-        "payload": "",
+        "payload": "SIGTERM",
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
@@ -479,11 +479,11 @@
         "enablePointerup": false,
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
-        "x": 330,
-        "y": 600,
+        "x": 370,
+        "y": 520,
         "wires": [
             [
-                "104df952baa32adb"
+                "cc1d582674b2b879"
             ]
         ]
     },
@@ -495,8 +495,8 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "name": "Logging status",
-        "label": "Status",
+        "name": "Display logging status",
+        "label": "Logging Status",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
         "style": false,
@@ -505,17 +505,17 @@
         "color": "#717171",
         "wrapText": false,
         "className": "",
-        "value": "Logging",
-        "valueType": "str",
-        "x": 340,
-        "y": 680,
+        "value": "payload",
+        "valueType": "msg",
+        "x": 820,
+        "y": 620,
         "wires": []
     },
     {
         "id": "a58001fc215e6851",
         "type": "exec",
         "z": "999c06ba44161ae7",
-        "command": "",
+        "command": "bash /app/scripts/log_can.sh",
         "addpay": "",
         "append": "",
         "useSpawn": "false",
@@ -523,8 +523,8 @@
         "winHide": false,
         "oldrc": false,
         "name": "Start CANDump logging",
-        "x": 550,
-        "y": 520,
+        "x": 790,
+        "y": 480,
         "wires": [
             [],
             [],
@@ -532,22 +532,217 @@
         ]
     },
     {
-        "id": "104df952baa32adb",
-        "type": "exec",
+        "id": "cc1d582674b2b879",
+        "type": "change",
         "z": "999c06ba44161ae7",
-        "command": "",
-        "addpay": "",
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "winHide": false,
-        "oldrc": false,
-        "name": "Stop CANDump logging",
-        "x": 550,
-        "y": 600,
+        "name": "Message kill signal",
+        "rules": [
+            {
+                "t": "set",
+                "p": "kill",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 520,
         "wires": [
-            [],
-            [],
+            [
+                "a58001fc215e6851"
+            ]
+        ]
+    },
+    {
+        "id": "4e60d1c686d4e76f",
+        "type": "status",
+        "z": "999c06ba44161ae7",
+        "name": "CANDump logging status",
+        "scope": [
+            "a58001fc215e6851"
+        ],
+        "x": 370,
+        "y": 620,
+        "wires": [
+            [
+                "c4f85edbf59c93ce"
+            ]
+        ]
+    },
+    {
+        "id": "c4f85edbf59c93ce",
+        "type": "change",
+        "z": "999c06ba44161ae7",
+        "name": "Status message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "status.text",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 620,
+        "wires": [
+            [
+                "2cc12a2a47dc101a"
+            ]
+        ]
+    },
+    {
+        "id": "94e82c839d193d5c",
+        "type": "ui-chart",
+        "z": "999c06ba44161ae7",
+        "group": "80bcc988a33ffde4",
+        "name": "",
+        "label": "chart",
+        "order": 3,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "",
+        "ymax": "",
+        "bins": 10,
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#a347e1",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "interpolation": "linear",
+        "x": 610,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "39da493ac7aafa74",
+        "type": "ui-radio-group",
+        "z": "999c06ba44161ae7",
+        "group": "80bcc988a33ffde4",
+        "name": "",
+        "label": "Select Option:",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 420,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d5a1497e8e2a57e0",
+        "type": "ui-gauge",
+        "z": "999c06ba44161ae7",
+        "name": "",
+        "group": "80bcc988a33ffde4",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "gauge",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "units",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": 10,
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 470,
+        "y": 860,
+        "wires": [
             []
         ]
     }
